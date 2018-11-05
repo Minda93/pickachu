@@ -3,3 +3,6 @@ devel
 .catkin_workspace
 .vscode/
 .pyc
+ecl_core
+ecl_lite
+ecl_tools
