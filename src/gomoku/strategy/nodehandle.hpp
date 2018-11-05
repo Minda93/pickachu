@@ -5,6 +5,8 @@
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Twist.h>
 
+#include "vacuum_cmd_msg/VacuumCmd.h"
+
 #include <vector>
 
 #define FILENAME ""
@@ -43,6 +45,8 @@ class NodeHandle
     inline bool IS_GetChess() const { return getChess; };
     inline bool IS_PushButton() const { return pushButton; };
 
+    inline bool Is_grip() const { return is_grip; };
+
     inline geometry_msgs::Twist Get_pHome() const { return pHome; };
     inline geometry_msgs::Twist Get_pChess() const { return pChess; };
     inline geometry_msgs::Twist Get_pBoardCenter() const { return pBoardCenter; };
@@ -52,6 +56,7 @@ class NodeHandle
     void Pub_GetPos();
     void Pub_HomePos();
     void Pub_DataPos(const geometry_msgs::Twist pos);
+    void suction_cmd_client(std::string cmd);
 
     /* service */
     /* will build service */
@@ -69,6 +74,9 @@ class NodeHandle
     void Sub_PushButton(const std_msgs::Bool msg);
     void Sub_GetChess(const std_msgs::Bool msg);
     void Sub_RobotPos(const std_msgs::String msg);
+
+    void Sub_is_grip(const std_msgs::Bool::ConstPtr& msg);
+    
 
   private:
     ros::NodeHandle nh;
@@ -89,9 +97,14 @@ class NodeHandle
     ros::Subscriber subGetChess; // 是否吃到棋子 maybe delete
     ros::Subscriber subRobotPos;
 
+    ros::Subscriber subGripped;
+    ros::ServiceClient suction_service;
+
     bool start;
     int again;
     int side;
+
+    bool is_grip;
 
     bool getChess;  
 
@@ -99,6 +112,8 @@ class NodeHandle
 
     Player player;
     geometry_msgs::Twist Robot;
+
+    vacuum_cmd_msg::VacuumCmd suctionCmd;
 
     // Target pos
     geometry_msgs::Twist pHome;

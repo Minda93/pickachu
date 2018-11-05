@@ -472,15 +472,19 @@ bool Strategy::Check_Decide()
         nh.Pub_GetPos();
         if (nh.Get_Robot() == nh.Get_pChess())
         {   
-            if(nh.IS_GetChess())
+            // if(nh.IS_GetChess())
+            if(nh.Is_grip())
                 pcState = 4;
             else
                 pcState = 3;
         }
         return false;
     case 3: // Suction chess
-        //Suction_Chess()
-        if(nh.IS_GetChess()){
+        // Suction_Chess()
+        nh.Pub_DataPos(nh.Get_pChess());
+        nh.Pub_GetPos();
+        nh.suction_cmd_client(std::string("vacuumOn"));
+        if(nh.Get_Robot() == nh.Get_pChess()){
             pcState = 2;
         }
         return false;
@@ -488,7 +492,10 @@ bool Strategy::Check_Decide()
         nh.Pub_DataPos(nh.Get_pBoardCenter());
         nh.Pub_GetPos();
         if (nh.Get_Robot() == nh.Get_pBoardCenter()){
-            pcState = 5;
+            if(nh.Is_grip())
+                pcState = 5;
+            else
+                pcState = 1;
         }
         return false;
     case 5: // move board (i,j)
@@ -498,8 +505,17 @@ bool Strategy::Check_Decide()
             pcState = 6;
         }
         return false;
-    case 6:
+    case 6: // move to goal pos
+        nh.Pub_DataPos(nh.Get_pChess());
+        nh.Pub_GetPos();
+        if (nh.Get_Robot() == nh.Get_pBoard(chess.x,chess.y)){
+            pcState = 7;
+        }
         return false;
+    case 7: // plase chess
+        nh.suction_cmd_client(std::string("vacuumOff"));
+        pcState = 4;
+
     default:
         printf("pcState error\n");
         return false;

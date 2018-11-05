@@ -25,6 +25,8 @@ NodeHandle::NodeHandle()
 
   player.decide = 0;
 
+  is_grip = false;
+
   /* publish */
   pubMove = nh.advertise<std_msgs::String>("/accupick3d/cmdString", 1);
 
@@ -39,8 +41,10 @@ NodeHandle::NodeHandle()
   subPushButton = nh.subscribe("/accupick3d/push_button", 1, &NodeHandle::Sub_PushButton, this);
   subGetChess = nh.subscribe("/accupick3d/get_chess", 1, &NodeHandle::Sub_GetChess, this);
   subRobotPos = nh.subscribe("/accupick3d/msgString", 1, &NodeHandle::Sub_RobotPos, this);
+  subGripped = nh.subscribe("/right/is_grip", 1, &NodeHandle::Sub_is_grip, this);
 
   /* service */
+  suction_service = nh.serviceClient<vacuum_cmd_msg::VacuumCmd>("/right/suction_cmd", 0);
   // callSuction = n.serviceClient<beginner_tutorials::AddTwoInts>("add_two_ints");
 }
 
@@ -217,4 +221,20 @@ void NodeHandle::Init_Player()
 void NodeHandle::Init_Again()
 {
   again = 0;
+}
+
+void NodeHandle::Sub_is_grip(const std_msgs::Bool::ConstPtr& msg)
+{
+  is_grip = msg->data;
+}
+
+void NodeHandle::suction_cmd_client(std::string cmd)
+{
+  suctionCmd.request.cmd = cmd;
+  if( suction_service.call(suctionCmd) )
+  {
+    std::cout<<"suction service success = "<<suctionCmd.response.success<<std::endl;
+  }
+  else
+    std::cout<<"fail to call suction_service."<<std::endl;
 }

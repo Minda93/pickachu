@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
+  vacuum_cmd_msg
 )
 
 ## System dependencies are found with CMake's conventions
@@ -59,12 +60,13 @@ find_package(catkin REQUIRED COMPONENTS
 #)
 
 ## Generate services in the 'srv' folder
-#add_service_files(
+# add_service_files(
 #  FILES
 #  strategy_start.srv
 #   Service1.srv
 #   Service2.srv
-#)
+# VacuumCmd.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
