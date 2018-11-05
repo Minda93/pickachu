@@ -1,0 +1,38 @@
+
+#ROS Kinetic install
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+sudo apt-get update
+sudo apt-get install ros-kinetic-desktop-full
+apt-cache search ros-kinetic
+sudo rosdep init
+rosdep update
+history
+echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+sudo apt install git
+git clone -b release/0.61-indigo-kinetic https://github.com/stonier/ecl_tools.git
+git clone -b release/0.61-indigo-kinetic https://github.com/stonier/ecl_core.git
+git clone -b release/0.61-indigo-kinetic https://github.com/stonier/ecl_lite.git
+sudo apt-get install ros-kinetic-sophus
+
+cd ~/catkin_ws/
+catkin_make
+source ./devel/setup.bash
+roslaunch accupick3d accupick3d.launch 
+
+
+
+######## Option for install ###################################################
+#dropbox install
+cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+~/.dropbox-dist/dropboxd
+
+#VS Code install
+download from https://code.visualstudio.com/docs/?dv=linux64_deb
+cd ~/Downloads
+sudo dpkg -i code_1.25.1-1531323788_amd64.deb
+code
