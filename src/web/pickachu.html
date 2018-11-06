@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="author" content="Minda">
+    <title>Pickachu</title>
+
+    <!-- css lib -->
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="jquery-ui-1.12.1/jquery-ui.css">
+    <!-- js lib -->
+    <script src="jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+    <script src="jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script src="bootstrap-3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Ros lib -->
+    <script src="js/ros/eventemitter2.min.js"></script>
+    <script src="js/ros/roslib.js"></script>
+
+    <!-- =========================== Custom ============================ -->
+    <!-- css lib -->
+    <link rel="stylesheet" href="css/form.css">
+
+
+    <!-- js lib -->
+</head>
+
+<body class="Overflow">
+    <div class="modal-dialog UI_Background UI_Size Overflow">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Pickachu</h2>
+                <div id="WifiButton">
+                    <i class="fa fa-3x fa-wifi" id="WifiButton-style" aria-hidden="true" data-toggle="modal"
+                        data-target="#connect_Robot"></i>
+                </div>
+            </div>
+            <div class="modal-body UI_BodySize">
+                <table id="body_base">
+                    <tr>
+                        <td id="strategy_base">
+                            <table id="level_table">
+                                <tr id="Lbutton_tr">
+                                    <td>
+                                        <table id="Lbutton_table">
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <input type="radio" id="gomoku" name="Lbutton" href="#gomoku_setting"
+                                                            tabindex="-1" class="active" checked="checked" />
+                                                        <label for="gomoku">gomoku</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <input type="radio" id="flaw_detection" name="Lbutton" href="#flaw_setting"
+                                                            tabindex="-1" />
+                                                        <label for="flaw_detection">flaw_detection</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <input type="radio" id="aircraft" name="Lbutton" href="#aircraft_setting"
+                                                            tabindex="-1" />
+                                                        <label for="aircraft">aircraft</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr id="level_param">
+                                    <td>
+                                        <label>fuck</label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td id="display_base">
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Wifi Setting-->
+    <div class="modal fade UI_Background" id="connect_Robot" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Connect To Robot</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Robot_IP:</label>
+                            <input name="RobotIPDATA" type="text" class="form-control" id="RobotIP" value=IP.textContent>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotHostDATA" class="control-label">Robot_Host:</label>
+                            <input name="RobotHostDATA" type="text" class="form-control" id="RobotHost" value=Host.textContent>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ros.close();">Close</button>
+                    <button type="button" class="btn btn-primary" id="send-message" onclick="RobotConnect();history.go(0);">Connect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<footer>
+    <!-- ros lib -->
+    <script src="js/ros/RobotConnect.js"></script>
+
+    <script>
+        $("#Lbutton_table").buttonset();
+        $('input[name="Lbutton"]').click(function () {
+            $(this).tab('show');
+        });
+    </script>
+</footer>
+
+</html>

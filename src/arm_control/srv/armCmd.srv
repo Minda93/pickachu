@@ -1,0 +1,5 @@
+string cmd
+float64[] pos
+float64[] euler
+---
+bool success
