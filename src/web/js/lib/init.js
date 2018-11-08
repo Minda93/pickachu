@@ -1,20 +1,9 @@
 function Init(){
     console.log("init");
-    joystick_main();
+    Init_Board();
+
 
     setTimeout(function(){
-        Init_Manual();
-    },1000);
-
-    setTimeout(function(){
-        Init_ScanBlack_Param();
-    },500);
-
-    setTimeout(function(){
-        Init_Strategy_Param();
-    },500);
-
-    setTimeout(function(){
-        Init_QRcode_Param();
+        Init_Gomoku_Param();
     },500);
 }

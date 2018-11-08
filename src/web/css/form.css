@@ -132,3 +132,57 @@
     width: 33%;
     height: 100%;
 }
+
+/*===============================
+ * 
+ * param setting 
+ *
+ *===============================*/
+
+#param_setting{
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+/*===============================
+ * 
+ * display table 
+ *
+ *===============================*/
+
+ #display_table{
+    width: 100%;
+    height: 100%;
+ }
+
+ #display_ui{
+    width: 100%;
+    height: 70%;
+ }
+
+ #display_manual{
+    width: 100%;
+    height: 30%;
+ }
+
+ #gomoku_board{
+    width: 100%;
+    height: 100%;
+    background-color: #67efd8;
+    display: block;
+ }
+
+ #flaw_image{
+    width: 100%;
+    height: 100%;
+    background-color: #1836c0;
+    display: none;
+ }
+
+ #aircraft_image{
+    width: 100%;
+    height: 100%;
+    background-color: #a921e9;
+    display: none;
+ }

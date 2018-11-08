@@ -134,7 +134,7 @@ class NodeHandle(object):
             self.__robot.euler.append(float(data_[5]))
             self.__robot.euler.append(float(data_[6]))
             
-            # print(self.__robot.pos,self.__robot.euler)
+            # print(self.__robot.pos,self.__robot.euler)"""  """
 
     """ service  """
     def Arm_Cmd(self,req):

@@ -16,11 +16,15 @@ class RosTopic {
     Pub(msg) {
         this.object.publish(msg);
     }
-    // Sub(){
-    //     this.object.subscribe(function(msg){
-    //         return msg
-    //     });
-    // }
+
+    Sub(){
+        var _this = this;
+        return new Promise(function(resolve) {
+            _this.object.subscribe(function (msg) {
+                resolve(msg);
+            });
+        });
+    }
 }
 // =======================================================================
 var delay = function (s) {
@@ -66,8 +70,11 @@ class RosService {
     }
 
     Call(request) {
-        this.object.callService(request, function (res) {
-            return res;
-        });
+        var _this = this;
+        return new Promise(function(resolve) {
+            _this.object.callService(request, function (res) {
+                resolve(res);
+            });
+        }); 
     }
 }

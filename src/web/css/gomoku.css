@@ -1,0 +1,45 @@
+/*==============================================
+ *
+ * param
+ *  
+ ===============================================*/
+#gomoku_table{
+    width: 100%;
+    height: 693px;
+}
+
+#gomoku_button{
+    width: 100%;
+    height: 20%;
+}
+#gomoku_bTable{
+    width: 100%;
+    height: 100%;
+}
+
+#gomoku_param{
+    width: 100%;
+    height: 80%;
+    border: 1px solid rgba(0, 0, 0, 1);
+}
+
+/*==============================================
+ *
+ * display
+ *  
+ ===============================================*/
+
+#board_table {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: #814207;
+}
+
+#board_table tr {
+    border: 1px solid rgba(0, 0, 0, 1);
+}
+
+#board_table td {
+    border: 1px solid rgba(0, 0, 0, 1);
+}

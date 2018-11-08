@@ -21,12 +21,15 @@
     <!-- =========================== Custom ============================ -->
     <!-- css lib -->
     <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/gomoku.css">
 
 
     <!-- js lib -->
+    <script src="js/lib/CloseCenterRightButton.js"></script>
+    <script src="js/lib/CloseReverseOut.js"></script>
 </head>
 
-<body class="Overflow">
+<body class="Overflow" onload="Init();">
     <div class="modal-dialog UI_Background UI_Size Overflow">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,16 +75,409 @@
                                 </tr>
                                 <tr id="level_param">
                                     <td>
-                                        <label>fuck</label>
+                                        <div id="param_setting" class="tab-content">
+                                            <div id="gomoku_setting" class="tab-pane fade in active">
+                                                <table id="gomoku_table">
+                                                    <tr id="gomoku_button">
+                                                        <td>
+                                                            <table id="gomoku_bTable">
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_button">Home</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_button">Chess</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_button">Center</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_button">Button</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_board1">Board_1</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="gomoku_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#gomokuUI_board2">Board_2</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <!-- <button name="gomoku_pButtion" class="btn btn-default">Center</button> -->
+                                                                    </td>
+                                                                    <td>
+                                                                        <div>
+                                                                            <input id="gomoku_adjust" type="checkbox"
+                                                                                name="gomoku_pCheckbox" checked="checked" />
+                                                                            <label id="gomoku_adjust" for="gomoku_adjust">adjust</label>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="gomoku_param">
+                                                        <td></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div id="flaw_setting" class="tab-pane fade">
+                                                <label>fuck</label>
+                                            </div>
+                                            <div id="aircraft_setting" class="tab-pane fade">
+                                                <label>fuck1</label>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
                         </td>
                         <td id="display_base">
+                            <table id="display_table">
+                                <tr id="display_ui">
+                                    <td>
+                                        <div id="gomoku_board">
+                                            <table id="board_table">
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                    <td name="gomoku_pos" data-toggle="modal" data-target="#gomoku_ui"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div id="flaw_image">
 
+                                        </div>
+                                        <div id="aircraft_image">
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="display_manual">
+                                    <td>
+
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
+            </div>
+        </div>
+    </div>
+    <!-- gomoku -->
+    <div class="modal fade UI_Background" id="gomoku_ui" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">gomoku</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="gomokuUI_label" for="RobotIPDATA" class="control-label">0-0</label>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Pos:</label>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Euler:</label>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUI_pos" value=0>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="gomokuUI_pNow">當前點</button>
+                    <button type="button" class="btn btn-primary" id="gomokuUI_confirm">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade UI_Background" id="gomokuUI_button" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">gomoku</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="gomokuUIButton_label">home</label>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Pos:</label>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Euler:</label>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="gomokuUIButtion_pos" value=0>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="gomokuUIButton_pNow">當前點</button>
+                    <button type="button" class="btn btn-primary" id="gomokuUIButton_confirm">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade UI_Background" id="gomokuUI_board1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">gomoku</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label>0-0</label>
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard1_pNow">當前點</button>
+                        <br>
+                        <label>0-1</label>
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard1_pNow">當前點</button>
+                        <br>
+                        <label>1-0</label>
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard1_pNow">當前點</button>
+                        <br>
+                        <br>
+                        <label>error_x</label>
+                        <input type="text" class="form-control" name="gomokuUIBoard1_error" value=0>
+                        <label>error_y</label>
+                        <input type="text" class="form-control" name="gomokuUIBoard1_error" value=0>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="gomokuUIBoard1_confirm">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade UI_Background" id="gomokuUI_board2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">gomoku</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label>0-0</label>
+                        &nbsp;
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard2_pNow">當前點</button>
+                        <br>
+                        <label>0-13</label>
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard2_pNow">當前點</button>
+                        <br>
+                        <label>13-0</label>
+                        <button type="button" class="btn btn-primary" name="gomokuUIBoard2_pNow">當前點</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="gomokuUIBoard2_confirm">確認</button>
+                </div>
             </div>
         </div>
     </div>
@@ -117,8 +513,19 @@
     </div>
 </body>
 <footer>
+    <!-- lib -->
+    <script src="js/lib/show_display.js"></script>
+    <script src="js/lib/variable.js"></script>
+    
     <!-- ros lib -->
     <script src="js/ros/RobotConnect.js"></script>
+    <script src="js/ros/class.js"></script>
+    <script src="js/ros/ros_variable.js"></script>
+    <script src="js/ros/rostopic.js"></script>
+    <script src="js/ros/rosparam.js"></script>
+    <!-- Init -->
+    <script src="js/lib/init.js"></script>
+    <script src="js/lib/gomoku_adjust.js"></script>
 
     <script>
         $("#Lbutton_table").buttonset();
