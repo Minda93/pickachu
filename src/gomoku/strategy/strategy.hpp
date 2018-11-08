@@ -26,9 +26,11 @@ class Strategy
   public:
     Strategy();
     ~Strategy();
+    
 
     void Process();
 
+    void Init_Param();
     void Init_Gomoku();
     void Show_Gomoku();
     int Line_Check(SIDE s);
@@ -52,6 +54,7 @@ class Strategy
     // bool gameStart;
     // int step;
     int first;
+    bool isBusy;
 
     int pcState; //robot decide state 
     int buttonState;  //push button state

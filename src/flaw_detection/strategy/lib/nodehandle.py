@@ -40,13 +40,18 @@ class NodeHandle(object):
         self.__pFlaw = Pos()
         self.__pNFlaw = Pos()
         
+        self.__pItem = []
+        self.__pItemFlaw = []
+        
         """ topic pub """
 
         """ topic sub """
         rospy.Subscriber("accupick3d/save_param",Bool,self.Save_Param)
+
+        self.Load_Param()
         
     def Save_Param(self,msg):
-        self.Set_Param()
+        # self.Set_Param()
         if (rospy.has_param('accupick3d/flaw_detection')):
             print('dump')
             subprocess.call(['rosparam','dump',FILENAME,'/accupick3d/flaw_detection'])

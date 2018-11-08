@@ -2,31 +2,54 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <iostream>
 #include <time.h>
 
 using namespace std;
 
+std::vector<double> NodeHandle::errorPos;
 /*=========================================
  * 
  * friend OPERATORS
  * 
  ==========================================*/
 
+double Round(double value, int num)
+{
+    double rate = 10;
+    rate = pow(rate, num);
+    return (roundf(value * rate) / rate);
+}
+
 bool operator==(const geometry_msgs::Twist pos1, const geometry_msgs::Twist pos2)
 {
-    if (pos1.linear.x != pos2.linear.x)
+    // if (pos1.linear.x != pos2.linear.x)
+    //     return false;
+    // if (pos1.linear.y != pos2.linear.y)
+    //     return false;
+    // if (pos1.linear.z != pos2.linear.z)
+    //     return false;
+    // if (pos1.angular.x != pos2.angular.x)
+    //     return false;
+    // if (pos1.angular.y != pos2.angular.y)
+    //     return false;
+    // if (pos1.angular.z != pos2.angular.z)
+    //     return false;
+
+    if (Round(abs(pos1.linear.x - pos2.linear.x), ERROR_DECIMAL) > NodeHandle::errorPos[0])
         return false;
-    if (pos1.linear.y != pos2.linear.y)
+    if (Round(abs(pos1.linear.y - pos2.linear.y), ERROR_DECIMAL) > NodeHandle::errorPos[1])
         return false;
-    if (pos1.linear.z != pos2.linear.z)
+    if (Round(abs(pos1.linear.z - pos2.linear.z), ERROR_DECIMAL) > NodeHandle::errorPos[2])
         return false;
-    if (pos1.angular.x != pos2.angular.x)
+    if (Round(abs(pos1.angular.x - pos2.angular.x), ERROR_DECIMAL) > NodeHandle::errorPos[3])
         return false;
-    if (pos1.angular.y != pos2.angular.y)
+    if (Round(abs(pos1.angular.y - pos2.angular.y), ERROR_DECIMAL) > NodeHandle::errorPos[4])
         return false;
-    if (pos1.angular.z != pos2.angular.z)
+    if (Round(abs(pos1.angular.z - pos2.angular.z), ERROR_DECIMAL) > NodeHandle::errorPos[5])
         return false;
+
     return true;
 }
 
@@ -37,14 +60,20 @@ bool operator==(const geometry_msgs::Twist pos1, const geometry_msgs::Twist pos2
  ==========================================*/
 Strategy::Strategy()
 {
-    state = INIT;
-    first = -1;
-    pcState = 0;
-    buttonState = 0;
+    Init_Param();
 }
 
 Strategy::~Strategy()
 {
+}
+
+void Strategy::Init_Param()
+{
+    state = INIT;
+    first = -1;
+    pcState = 0;
+    buttonState = 0;
+    isBusy = false;
 }
 
 /*=========================================
@@ -59,18 +88,29 @@ void Strategy::Process()
     {
         if (state == INIT)
         {
+            Init_Param();
+            nh.Init_Param();
             Init_Gomoku();
             Show_Gomoku();
             Choose_First();
             state = CHOOSE_SIDE;
         }
         else if (state == CHOOSE_SIDE)
-        {
-
+        {   
             if (first == 0)
-            {
-                PC_Strategy(SIDE_PC);
-                state = PLAYER;
+            {   
+                // PC_Strategy(SIDE_PC);
+                // state = PLAYER;
+                if (pcState == 0)
+                {
+                    PC_Strategy(SIDE_PC);
+                    pcState = 1;
+                }
+                else if (Check_Decide())
+                {
+                    state = PUSH_BUTTON;
+                    pcState = 0;
+                }
             }
             else if (first == 1)
             {
@@ -82,7 +122,7 @@ void Strategy::Process()
             }
             else
             {
-                Cin_First();
+                Cin_First(1);
                 Who_First();
             }
         }
@@ -116,6 +156,7 @@ void Strategy::Process()
                 }
                 else if (Check_Decide())
                 {
+                    printf("pcState: %d", pcState);
                     state = PUSH_BUTTON;
                     pcState = 0;
                 }
@@ -296,6 +337,7 @@ void Strategy::Choose_First()
 
 void Strategy::Cin_First(bool s)
 {
+    printf("%d\n", first);
     if (s == 0)
     {
         cin >> first;
@@ -303,6 +345,7 @@ void Strategy::Cin_First(bool s)
     else
     {
         first = nh.Get_Side();
+        // printf("%d\n",first);
     }
 }
 /* -----------------------------------------*/
@@ -341,10 +384,10 @@ int Strategy::Player_1(bool s) //玩家1
         Player player = nh.Get_Player();
         if (player.decide == 1)
         {
-            if (gomoku[player.point.x][player.point.y])
-            {
-                return -1;
-            }
+            // if (gomoku[player.point.x][player.point.y])
+            // {
+            //     return -1;
+            // }
             gomoku[player.point.x][player.point.y] = 1;
             Line_Check(SIDE_PLAYER);
             nh.Init_Player();
@@ -434,8 +477,8 @@ int Strategy::PC_Strategy(SIDE s)
     if (state == CHOOSE_SIDE)
     {
         gomoku[ROW / 2][COL / 2] = s;
-        chess.x = ROW/2;
-        chess.y = COL/2;
+        chess.x = ROW / 2;
+        chess.y = COL / 2;
     }
     else
     {
@@ -460,62 +503,105 @@ bool Strategy::Check_Decide()
     switch (pcState)
     {
     case 1: // init home
-        nh.Pub_HomePos();
-        nh.Pub_GetPos();
-        if (nh.Get_Robot() == nh.Get_pHome())
+        if (isBusy == false)
         {
-            pcState = 2;
+            // nh.Pub_HomePos();
+            nh.Pub_DataPos(nh.Get_pHome());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pHome())
+            {
+                pcState = 2;
+                isBusy = false;
+            }
         }
         return false;
     case 2: // move chess pos
-        nh.Pub_DataPos(nh.Get_pChess());
-        nh.Pub_GetPos();
-        if (nh.Get_Robot() == nh.Get_pChess())
-        {   
-            // if(nh.IS_GetChess())
-            if(nh.Is_grip())
-                pcState = 4;
-            else
-                pcState = 3;
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pChess());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pChess())
+            {
+                isBusy = false;
+                if (nh.Is_grip())
+                    pcState = 4;
+                else
+                    pcState = 3;
+            }
         }
         return false;
     case 3: // Suction chess
-        // Suction_Chess()
-        nh.Pub_DataPos(nh.Get_pChess());
-        nh.Pub_GetPos();
-        nh.suction_cmd_client(std::string("vacuumOn"));
-        if(nh.Get_Robot() == nh.Get_pChess()){
-            pcState = 2;
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pChess());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            nh.suction_cmd_client(std::string("vacuumOn"));
+            if (nh.Get_Robot() == nh.Get_pChess())
+            {
+                isBusy = false;
+                pcState = 2;
+            }
         }
         return false;
     case 4: // move board center pos
-        nh.Pub_DataPos(nh.Get_pBoardCenter());
-        nh.Pub_GetPos();
-        if (nh.Get_Robot() == nh.Get_pBoardCenter()){
-            if(nh.Is_grip())
-                pcState = 5;
-            else
-                pcState = 1;
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pBoardCenter());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pBoardCenter())
+            {
+                isBusy = false;
+                if (nh.Is_grip())
+                    pcState = 5;
+                else
+                    return true;
+            }
         }
         return false;
     case 5: // move board (i,j)
-        nh.Pub_DataPos(nh.Get_pBoard(chess.x,chess.y));
-        nh.Pub_GetPos();
-        if (nh.Get_Robot() == nh.Get_pBoard(chess.x,chess.y)){
-            pcState = 6;
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pBoard(chess.x, chess.y));
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pBoard(chess.x, chess.y))
+            {
+                isBusy = false;
+                pcState = 7;
+            }
         }
         return false;
-    case 6: // move to goal pos
-        nh.Pub_DataPos(nh.Get_pChess());
-        nh.Pub_GetPos();
-        if (nh.Get_Robot() == nh.Get_pBoard(chess.x,chess.y)){
-            pcState = 7;
-        }
-        return false;
+    // case 6: // move to goal pos
+    //     nh.Pub_DataPos(nh.Get_pChess());
+    //     nh.Pub_GetPos();
+    //     if (nh.Get_Robot() == nh.Get_pBoard(chess.x, chess.y))
+    //     {
+    //         pcState = 7;
+    //     }
+    //     return false;
     case 7: // plase chess
         nh.suction_cmd_client(std::string("vacuumOff"));
         pcState = 4;
-
+        return false;
     default:
         printf("pcState error\n");
         return false;

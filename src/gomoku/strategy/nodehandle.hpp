@@ -9,10 +9,12 @@
 
 #include <vector>
 
-#define FILENAME ""
+#define FILENAME ros::package::getPath("gomoku")+"/config/gomoku.yaml"
 
-#define ROW 10
-#define COL 10
+#define ROW 9
+#define COL 9
+
+#define ERROR_DECIMAL 3
 
 typedef struct Point
 {
@@ -27,12 +29,18 @@ typedef struct Player
 } Player;
 
 class NodeHandle
-{   
+{
   public:
     NodeHandle();
     ~NodeHandle();
 
+    void Init_Param();
+
+    void Load_Param();
+    void Set_Point_Value(std::string name,XmlRpc::XmlRpcValue &pos,XmlRpc::XmlRpcValue &euler);
+
     void Init_Player();
+    void Init_Push_Button();
     void Init_Again();
 
     inline Player Get_Player() const { return player; };
@@ -42,7 +50,7 @@ class NodeHandle
     inline bool IS_Start() const { return start; };
     inline int IS_Again() const { return again; };
 
-    inline bool IS_GetChess() const { return getChess; };
+    inline bool IS_PlayDecide() const { return player.decide; };
     inline bool IS_PushButton() const { return pushButton; };
 
     inline bool Is_grip() const { return is_grip; };
@@ -51,32 +59,29 @@ class NodeHandle
     inline geometry_msgs::Twist Get_pChess() const { return pChess; };
     inline geometry_msgs::Twist Get_pBoardCenter() const { return pBoardCenter; };
     inline geometry_msgs::Twist Get_pButton() const { return pButton; };
-    geometry_msgs::Twist Get_pBoard(int i,int j) const { return pBoard[i*COL+j]; };
+    geometry_msgs::Twist Get_pBoard(int i, int j) const { return pBoard[i * COL + j]; };
+    // inline double Get_ErrorPos(int i) const { return errorPos[i]; };
 
     void Pub_GetPos();
     void Pub_HomePos();
     void Pub_DataPos(const geometry_msgs::Twist pos);
     void suction_cmd_client(std::string cmd);
-
-    /* service */
-    /* will build service */
-    ros::ServiceClient callSuction; //string cmd, bool sucess
-
+    
+    static std::vector <double> errorPos;
   private:
     /* subscribe */
     void Sub_Save(const std_msgs::Bool msg);
 
     void Sub_Player(const geometry_msgs::Point msg);
+    void Sub_Player_PushButton(const std_msgs::Bool msg);
     void Sub_Start(const std_msgs::Bool msg);
     void Sub_Again(const std_msgs::Int32 msg);
     void Sub_Side(const std_msgs::Int32 msg);
 
     void Sub_PushButton(const std_msgs::Bool msg);
-    void Sub_GetChess(const std_msgs::Bool msg);
     void Sub_RobotPos(const std_msgs::String msg);
 
-    void Sub_is_grip(const std_msgs::Bool::ConstPtr& msg);
-    
+    void Sub_is_grip(const std_msgs::Bool::ConstPtr &msg);
 
   private:
     ros::NodeHandle nh;
@@ -91,10 +96,9 @@ class NodeHandle
     ros::Subscriber subAgain;
     ros::Subscriber subSide;
     ros::Subscriber subPlayer;
-    // ros::Subscriber subPlayerButton;
+    ros::Subscriber subPlayerButton;
 
-    ros::Subscriber subPushButton; 
-    ros::Subscriber subGetChess; // 是否吃到棋子 maybe delete
+    ros::Subscriber subPushButton;
     ros::Subscriber subRobotPos;
 
     ros::Subscriber subGripped;
@@ -106,19 +110,18 @@ class NodeHandle
 
     bool is_grip;
 
-    bool getChess;  
-
-    bool pushButton; // same player.decide maybe delete
+    bool pushButton;
 
     Player player;
     geometry_msgs::Twist Robot;
 
     vacuum_cmd_msg::VacuumCmd suctionCmd;
 
-    // Target pos
+    // Target pos param
     geometry_msgs::Twist pHome;
     geometry_msgs::Twist pChess;
     geometry_msgs::Twist pBoardCenter;
-    std::vector <geometry_msgs::Twist> pBoard;
+    std::vector<geometry_msgs::Twist> pBoard;
     geometry_msgs::Twist pButton;
+    
 };
