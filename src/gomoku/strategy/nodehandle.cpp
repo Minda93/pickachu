@@ -23,6 +23,7 @@ NodeHandle::NodeHandle()
 
   /* subscribe */
   subSave = nh.subscribe("/gomoku/save", 1, &NodeHandle::Sub_Save, this);
+  subState = nh.subscribe("/gomoku/behavior_state", 1, &NodeHandle::Sub_State, this);
 
   subStart = nh.subscribe("/gomoku/start", 1, &NodeHandle::Sub_Start, this);
   subAgain = nh.subscribe("/gomoku/again", 1, &NodeHandle::Sub_Again, this);
@@ -30,7 +31,7 @@ NodeHandle::NodeHandle()
   subPlayer = nh.subscribe("/gomoku/player_point", 1, &NodeHandle::Sub_Player, this);
   subPlayerButton = nh.subscribe("/gomoku/player_pushbutton", 1, &NodeHandle::Sub_Player_PushButton, this);
 
-  subPushButton = nh.subscribe("/accupick3d/push_button", 1, &NodeHandle::Sub_PushButton, this);
+  subPushButton = nh.subscribe("/gomoku/push_button", 1, &NodeHandle::Sub_PushButton, this);
   subRobotPos = nh.subscribe("/accupick3d/msgString", 1, &NodeHandle::Sub_RobotPos, this);
   subGripped = nh.subscribe("/right/is_grip", 1, &NodeHandle::Sub_is_grip, this);
 
@@ -45,16 +46,19 @@ NodeHandle::~NodeHandle()
 
 void NodeHandle::Init_Param()
 {
+  loadState = false;
+  state = 0;
+
   again = 0;
   side = -1;
-
+  
   pushButton = 0;
 
   player.decide = 0;
 
   is_grip = false;
 
-  eButton = 3;
+  // eButton = 3;
 
   for (int i = 0; i < 6; i++)
   {
@@ -106,6 +110,11 @@ void NodeHandle::Sub_Save(const std_msgs::Bool msg)
   str += FILENAME;
   str += STORE_FORM;
   system(str.c_str());
+}
+
+void NodeHandle::Sub_State(const std_msgs::Int32 msg){
+  state = msg.data;
+  loadState = true;
 }
 
 void NodeHandle::Sub_Start(const std_msgs::Bool msg)
@@ -261,6 +270,10 @@ void NodeHandle::Pub_DataPos(const geometry_msgs::Twist pos)
  * function
  * 
  ==========================================*/
+void NodeHandle::Init_Load_State()
+{
+  loadState = false;
+}
 
 void NodeHandle::Init_Player()
 {
