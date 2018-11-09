@@ -22,7 +22,6 @@ class Strategy
 {
   /* friend OPERATORS */
     friend bool operator==(const geometry_msgs::Twist pos1,const geometry_msgs::Twist pos2);
-
   public:
     Strategy();
     ~Strategy();
@@ -44,6 +43,7 @@ class Strategy
     int PC_Strategy(SIDE s);
 
     bool Check_Decide();
+    bool Check_Push_Buttion();
 
     void Show_Player();
 

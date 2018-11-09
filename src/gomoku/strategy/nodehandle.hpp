@@ -1,4 +1,5 @@
 #include "ros/ros.h"
+#include <ros/package.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
@@ -10,6 +11,7 @@
 #include <vector>
 
 #define FILENAME ros::package::getPath("gomoku")+"/config/gomoku.yaml"
+#define STORE_FORM " /accupick3d/gomoku"
 
 #define ROW 9
 #define COL 9
@@ -61,6 +63,7 @@ class NodeHandle
     inline geometry_msgs::Twist Get_pButton() const { return pButton; };
     geometry_msgs::Twist Get_pBoard(int i, int j) const { return pBoard[i * COL + j]; };
     // inline double Get_ErrorPos(int i) const { return errorPos[i]; };
+    inline double Get_eButton() const { return eButton; };
 
     void Pub_GetPos();
     void Pub_HomePos();
@@ -123,5 +126,5 @@ class NodeHandle
     geometry_msgs::Twist pBoardCenter;
     std::vector<geometry_msgs::Twist> pBoard;
     geometry_msgs::Twist pButton;
-    
+    double eButton; //push button error height
 };

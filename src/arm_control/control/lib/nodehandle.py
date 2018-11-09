@@ -69,12 +69,17 @@ class NodeHandle(object):
     def Init(self):
         self.Pub_GetPos()
         self.Init_tRobot()
+        self.Init_Robot()
         # self.Test_Robot()
     
     def Init_tRobot(self):
         self.__tRobot.cmd = 'none'
         self.__tRobot.pos = []
         self.__tRobot.euler = []
+
+    def Init_Robot(self):
+        self.__robot.pos = []
+        self.__robot.euler = []
 
     def Test_Robot(self):
         self.__robot.pos = [0,0,0]
@@ -142,7 +147,7 @@ class NodeHandle(object):
         self.__tRobot.pos = req.pos
         self.__tRobot.euler = req.euler
 
-        # print(self.__tRobot.cmd,self.__tRobot.pos,self.__tRobot.euler)
+        print(self.__tRobot.cmd,self.__tRobot.pos,self.__tRobot.euler)
         return armCmdResponse(True)
 
     @property

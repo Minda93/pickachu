@@ -92,6 +92,7 @@ document.getElementById("gomokuUIButton_confirm").addEventListener("click", func
             Gomoku_Set_Param('button');
             break;
     }
+    Pub_Gomoku_Save();
 });
 
 function Init_Gomoku_Fix_Point(state) {
@@ -189,10 +190,10 @@ document.getElementById("gomokuUIBoard2_confirm").addEventListener("click", func
     // 分點公式
     gomoku_pBoard[0].euler = gomoku_pBoard_2[0].euler;
     gomoku_pBoard[0].pos = gomoku_pBoard_2[0].pos;
-    gomoku_pBoard[12].euler = gomoku_pBoard_2[1].euler;
-    gomoku_pBoard[12].pos = gomoku_pBoard_2[1].pos;
-    gomoku_pBoard[12 * 13].euler = gomoku_pBoard_2[2].euler;
-    gomoku_pBoard[12 * 13].pos = gomoku_pBoard_2[2].pos;
+    gomoku_pBoard[(COL-1)].euler = gomoku_pBoard_2[1].euler;
+    gomoku_pBoard[(COL-1)].pos = gomoku_pBoard_2[1].pos;
+    gomoku_pBoard[(ROW-1) * COL].euler = gomoku_pBoard_2[2].euler;
+    gomoku_pBoard[(ROW-1) * COL].pos = gomoku_pBoard_2[2].pos;
     for (let i = 1; i < COL - 1; i++) {
         gomoku_pBoard[i].euler = gomoku_pBoard[0].euler;
         gomoku_pBoard[i].pos[0] = ((i) * gomoku_pBoard_2[1].pos[0] + (COL - (i + 1)) * gomoku_pBoard_2[0].pos[0]) / (COL - 1);
@@ -220,6 +221,7 @@ document.getElementById("gomokuUIBoard2_confirm").addEventListener("click", func
     }
 
     Gomoku_Set_Param('board');
+    Pub_Gomoku_Save();
 });
 
 function Init_Board() {
@@ -228,14 +230,19 @@ function Init_Board() {
         board[i].addEventListener("click", function () {
             let label = document.getElementById("gomokuUI_label");
             let pos = document.getElementsByName("gomokuUI_pos");
-
-            label.innerHTML = String(parseInt(i / 13)) + "-" + String(i % 13);
+            let check = document.getElementById("gomoku_adjust");
+            label.innerHTML = String(parseInt(i / ROW)) + "-" + String(i % ROW);
             for (let j = 0; j < pos.length; j++) {
                 if (j < 3) {
                     pos[j].value = gomoku_pBoard[i].pos[j];
                 } else {
                     pos[j].value = gomoku_pBoard[i].euler[j - 3];
                 }
+            }
+            if(check.checked == false){
+                console.log(String(parseInt(i / ROW)) + "-" + String(i % ROW));
+
+                Call_ArmControl(gomoku_pBoard[parseInt(i / ROW)*COL+(i % ROW)]);
             }
         });
     }
@@ -265,4 +272,22 @@ document.getElementById("gomokuUI_confirm").addEventListener("click", function (
     }
     // console.log(str[0],str[1],gomoku_pBoard[parseInt(str[0])*COL+parseInt(str[1])]);
     Gomoku_Set_Param('board');
+    Pub_Gomoku_Save();
+});
+
+// ========================================================
+/* 
+ * gomoku board close adjust
+ *
+ * --------------------------------------------------------*/
+
+document.getElementById("gomoku_adjust").addEventListener("click", function () {
+    if(this.checked == true){
+        for(let i = 0;i<document.getElementsByName("gomoku_pos").length;i++)
+            document.getElementsByName("gomoku_pos")[i].dataset.toggle = "modal";
+    }else{
+        for(let i = 0;i<document.getElementsByName("gomoku_pos").length;i++)
+            document.getElementsByName("gomoku_pos")[i].dataset.toggle = "";
+    }
+    // Init_Board();
 });

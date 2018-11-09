@@ -54,6 +54,8 @@ void NodeHandle::Init_Param()
 
   is_grip = false;
 
+  eButton = 3;
+
   for (int i = 0; i < 6; i++)
   {
     errorPos.push_back(0.01);
@@ -89,7 +91,8 @@ void NodeHandle::Load_Param()
   for(int i = 0;i<list1.size();i++){
     Set_Point_Value("board",list1[i]["pos"],list1[i]["euler"]);
   }
-  cout<<pBoard[0*13+2];
+
+  nh.getParam("/accupick3d/gomoku/error_height", eButton);
 }
 /*=========================================
  * 
@@ -98,6 +101,11 @@ void NodeHandle::Load_Param()
  ==========================================*/
 void NodeHandle::Sub_Save(const std_msgs::Bool msg)
 {
+  cout<<"dump"<<endl;
+  string str = "rosparam dump ";
+  str += FILENAME;
+  str += STORE_FORM;
+  system(str.c_str());
 }
 
 void NodeHandle::Sub_Start(const std_msgs::Bool msg)
@@ -129,7 +137,9 @@ void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)
 
 void NodeHandle::Sub_PushButton(const std_msgs::Bool msg)
 {
-  pushButton = msg.data;
+  if(pushButton == 0)
+    pushButton = msg.data;
+
 }
 
 void NodeHandle::Sub_RobotPos(const std_msgs::String msg)
@@ -191,18 +201,18 @@ void NodeHandle::Sub_RobotPos(const std_msgs::String msg)
   }
 
   // cout<<data_<<endl;
-  cout << endl
-       << Robot.linear.x
-       << endl
-       << Robot.linear.y
-       << endl
-       << Robot.linear.z
-       << endl
-       << Robot.angular.x
-       << endl
-       << Robot.angular.y
-       << endl
-       << Robot.angular.z << endl;
+  // cout << endl
+  //      << Robot.linear.x
+  //      << endl
+  //      << Robot.linear.y
+  //      << endl
+  //      << Robot.linear.z
+  //      << endl
+  //      << Robot.angular.x
+  //      << endl
+  //      << Robot.angular.y
+  //      << endl
+  //      << Robot.angular.z << endl;
 }
 
 /*=========================================
@@ -260,6 +270,11 @@ void NodeHandle::Init_Player()
 void NodeHandle::Init_Again()
 {
   again = 0;
+}
+
+void NodeHandle::Init_Push_Button()
+{
+  pushButton = 0;
 }
 
 void NodeHandle::Sub_is_grip(const std_msgs::Bool::ConstPtr &msg)

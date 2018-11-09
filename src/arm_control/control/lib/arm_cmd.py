@@ -38,7 +38,7 @@ class ArmCmd(object):
     
     def Run(self):
         if(self.nh.tRobot.cmd == Cmd.P2P.value):
-            print('p2p')
+            # print('p2p')
             self.P2P_Cmd()
         elif(self.nh.tRobot.cmd == Cmd.MOVE.value):
             print('move')
@@ -65,36 +65,45 @@ class ArmCmd(object):
     """ cmd """
     def P2P_Cmd(self):
         self.nh.Pub_GetPos()
-        if(self.Is_Same_Pos(self.nh.robot,self.nh.tRobot,ERROR_POS)):
-            print('success')
-            self.__isBusy = False
-            self.nh.Init_tRobot()
+        if(self.nh.robot.pos != []):
+            if(self.Is_Same_Pos(self.nh.robot,self.nh.tRobot,ERROR_POS)):
+                print('success')
+                self.__isBusy = False
+                self.nh.Init_tRobot()
+            else:
+                if(self.__isBusy == False):
+                    self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
+                    self.__isBusy = True
+                print('p2p: not this point')
         else:
-            if(self.__isBusy == False):
-                self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
-                self.__isBusy = True
-        
-        self.nh.Pub_IsBusy(self.__isBusy)
+            print("fuck Get Pos")
 
+        self.nh.Init_Robot()  
+        self.nh.Pub_IsBusy(self.__isBusy)
+        
     def Move_Cmd(self):
         pass
 
     def Move_Pose_Cmd(self):
         self.nh.Pub_GetPos()
-        if(self.__isBusy == False):
-            self.__isBusy = True
-            pos = []
-            for i in range(3):
-                pos.append(self.nh.robot.pos[i] + self.nh.tRobot.pos[i])
+        if(self.nh.robot.pos != []):
+            if(self.__isBusy == False):
+                self.__isBusy = True
+                pos = []
+                for i in range(3):
+                    pos.append(self.nh.robot.pos[i] + self.nh.tRobot.pos[i])
 
-            self.nh.tRobot.pos = pos
-            self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.robot.euler)
+                self.nh.tRobot.pos = pos
+                self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.robot.euler)
+            else:
+                if(self.Is_Same_Pos(self.nh.robot,self.nh.tRobot,ERROR_POS)):
+                    print('success')
+                    self.__isBusy = False
+                    self.nh.Init_tRobot()
         else:
-            if(self.Is_Same_Pos(self.nh.robot,self.nh.tRobot,ERROR_POS)):
-                print('success')
-                self.__isBusy = False
-                self.nh.Init_tRobot()
-                
+            print("fuck Get Pos")
+
+        self.nh.Init_Robot()      
         self.nh.Pub_IsBusy(self.__isBusy)
 
     def Move_Euler_Cmd(self):
@@ -132,9 +141,11 @@ class ArmCmd(object):
         elif(state == 1):
             for i in range(6):
                 if(i < 3):
+                    # print("fuck",i)
                     if(round(abs(robot.pos[i]-target.pos[i]),5) > self.nh.error[i]):
                         return False
                 else:
+                    # print("fuck2",i)
                     if(round(abs(robot.euler[i-3]-target.euler[i-3]),5) > self.nh.error[i]):
                         return False
             return True

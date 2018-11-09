@@ -1,4 +1,3 @@
-
 /*========================================================*/
 /*
     gomoku node
@@ -25,6 +24,9 @@ const Init_Gomoku_Param = async () => {
                         break;
                     case "pBoard":
                         gomoku_pBoard = param.pBoard;
+                        break;
+                    case "error_height":
+                        document.getElementsByName("gomoku_pElement")[0].value = param.error_height;
                         break;
                     default:
                         break;

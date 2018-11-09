@@ -96,9 +96,9 @@ void Strategy::Process()
             state = CHOOSE_SIDE;
         }
         else if (state == CHOOSE_SIDE)
-        {   
+        {
             if (first == 0)
-            {   
+            {
                 // PC_Strategy(SIDE_PC);
                 // state = PLAYER;
                 if (pcState == 0)
@@ -156,7 +156,7 @@ void Strategy::Process()
                 }
                 else if (Check_Decide())
                 {
-                    printf("pcState: %d", pcState);
+                    printf("decide success: %d", pcState);
                     state = PUSH_BUTTON;
                     pcState = 0;
                 }
@@ -166,19 +166,14 @@ void Strategy::Process()
         }
         else if (state == PUSH_BUTTON)
         {
-            if (buttonState == 0)
+            if (Check_Push_Buttion())
             {
-                // Pub_Push_Button();
-                // if(Check_Push_Button())
-                //     buttonState = 1;
+                printf("push button success: %d", buttonState);
+                state = PLAYER;
             }
-            else if (buttonState == 1)
+            else
             {
-                // Pub_Home();
-                // if(Check_Home()){
-                //     buttonState = 0;
-                //     state = PLAYER;
-                // }
+                printf("buttonState: %d", buttonState);
             }
         }
         else if (state == END)
@@ -604,6 +599,76 @@ bool Strategy::Check_Decide()
         return false;
     default:
         printf("pcState error\n");
+        return false;
+    }
+}
+
+bool Strategy::Check_Push_Buttion()
+{
+    geometry_msgs::Twist robot_;
+    switch (buttonState)
+    {
+    case 0: // go to button
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pButton());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pButton())
+            {
+                isBusy = false;
+                if (nh.IS_PushButton())
+                {
+                    buttonState = 2;
+                    nh.Init_Push_Button();
+                }
+                else
+                {
+                    buttonState = 1;
+                }
+            }
+        }
+        return false;
+    case 1: // push button
+        robot_ = nh.Get_pButton();
+        robot_.linear.z += nh.Get_eButton();
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(robot_);
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == robot_)
+            {
+                isBusy = false;
+                buttonState = 0;
+            }
+        }
+        return false;
+    case 2: // go home
+        if (isBusy == false)
+        {
+            // nh.Pub_HomePos();
+            nh.Pub_DataPos(nh.Get_pHome());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pHome())
+            {
+                buttonState = 0;
+                return true;
+            }
+        }
+        return false;
+    default:
+        printf("buttonState error\n");
         return false;
     }
 }

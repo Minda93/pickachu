@@ -1,4 +1,3 @@
-
 // =======================================================================
 /*  ros topic  
 
@@ -20,9 +19,14 @@
                     ex: start.object.subscribe(function(msg){return msg.data});
 
 */
-
+var isBusy = false;
 var topicCmdString = new RosTopic(ros, '/accupick3d/cmdString', '/std_msgs/String');
-var topicMsgString = new RosTopic(ros, '/accupick3d/msgString', '/std_msgs/String')
+var topicMsgString = new RosTopic(ros, '/accupick3d/msgString', '/std_msgs/String');
+var topicIsBusy = new RosTopic(ros, '/accupick3d/is_busy', '/std_msgs/Bool');
+
+// gomoku
+var topicGomokuSave = new RosTopic(ros, '/gomoku/save', '/std_msgs/Bool');
+
 
 // =======================================================================
 /* 
@@ -35,9 +39,8 @@ var paramGomokupHome = new RosParam(ros, '/accupick3d/gomoku/pHome');
 var paramGomokupChess = new RosParam(ros, '/accupick3d/gomoku/pChess');
 var paramGomokupBoardCenter = new RosParam(ros, '/accupick3d/gomoku/pBoardCenter');
 var paramGomokupBoard = new RosParam(ros, '/accupick3d/gomoku/pBoard');
-var paramGomokupButton= new RosParam(ros, '/accupick3d/gomoku/pButton');
-
-
+var paramGomokupButton = new RosParam(ros, '/accupick3d/gomoku/pButton');
+var paramGomokuErrorHeight = new RosParam(ros, '/accupick3d/gomoku/error_height');
 
 // =======================================================================
 /* 
@@ -45,4 +48,4 @@ var paramGomokupButton= new RosParam(ros, '/accupick3d/gomoku/pButton');
  */
 /*--------------------------------------------------------*/
 
-// var serviceLogin = new RosService(ros,'cloud_web/login','login');
+var serviceControl = new RosService(ros, '/accupick3d/arm_contol', 'armCmd');
