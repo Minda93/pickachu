@@ -41,9 +41,13 @@ class NodeHandle
     void Load_Param();
     void Set_Point_Value(std::string name,XmlRpc::XmlRpcValue &pos,XmlRpc::XmlRpcValue &euler);
 
+    void Init_Load_State();
     void Init_Player();
     void Init_Push_Button();
     void Init_Again();
+
+    inline bool Get_Load_State() const { return loadState; };
+    inline int Get_State() const { return state; };
 
     inline Player Get_Player() const { return player; };
     inline geometry_msgs::Twist Get_Robot() const { return Robot; };
@@ -74,6 +78,7 @@ class NodeHandle
   private:
     /* subscribe */
     void Sub_Save(const std_msgs::Bool msg);
+    void Sub_State(const std_msgs::Int32 msg);
 
     void Sub_Player(const geometry_msgs::Point msg);
     void Sub_Player_PushButton(const std_msgs::Bool msg);
@@ -94,6 +99,7 @@ class NodeHandle
 
     /* subscribe */
     ros::Subscriber subSave;
+    ros::Subscriber subState;
 
     ros::Subscriber subStart;
     ros::Subscriber subAgain;
@@ -106,6 +112,9 @@ class NodeHandle
 
     ros::Subscriber subGripped;
     ros::ServiceClient suction_service;
+
+    int state;
+    bool loadState;
 
     bool start;
     int again;

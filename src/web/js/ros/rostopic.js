@@ -113,6 +113,8 @@ document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", funct
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
     Call_ArmControl(pos_);
     console.log("Call pushButton");
+
+
 });
 
 /*========================================================*/
@@ -140,3 +142,36 @@ document.getElementById("gomoku_paramSave").addEventListener("click", function (
     Pub_Gomoku_Save();
 });
 
+/*========================================================*/
+/*
+    fuction
+ */
+/*--------------------------------------------------------*/
+document.getElementById("gomoku_Init").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: 0
+    });
+    topicGomokuState.Pub(msg);
+});
+
+document.getElementById("gomoku_Start").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: true
+    });
+    topicGomokuStart.Pub(msg);
+});
+
+document.getElementById("gomoku_Stop").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: false
+    });
+    topicGomokuStart.Pub(msg);
+});
+
+document.getElementById("gomoku_Side").addEventListener("click", function () {
+    let value = parseInt(document.getElementById("gomoku_sideValue").value);
+    var msg = new ROSLIB.Message({
+        data: value
+    });
+    topicGomokuSide.Pub(msg);
+});

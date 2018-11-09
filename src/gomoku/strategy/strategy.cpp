@@ -86,10 +86,15 @@ void Strategy::Process()
 {
     if (nh.IS_Start())
     {
+        if(nh.Get_Load_State() == true){
+            if(nh.Get_State() == 0){
+                state = INIT;
+            }
+            nh.Init_Load_State();
+        }
         if (state == INIT)
         {
             Init_Param();
-            nh.Init_Param();
             Init_Gomoku();
             Show_Gomoku();
             Choose_First();
@@ -182,6 +187,7 @@ void Strategy::Process()
             {
                 nh.Init_Again();
                 state = INIT;
+                nh.Init_Param();
             }
             else if (nh.IS_Again() == -1)
             {
@@ -332,7 +338,7 @@ void Strategy::Choose_First()
 
 void Strategy::Cin_First(bool s)
 {
-    printf("%d\n", first);
+    // printf("%d\n", first);
     if (s == 0)
     {
         cin >> first;
@@ -642,6 +648,12 @@ bool Strategy::Check_Push_Buttion()
         }
         else
         {
+            if (nh.IS_PushButton())
+            {
+                buttonState = 0;
+                return false;
+            }
+
             nh.Pub_GetPos();
             if (nh.Get_Robot() == robot_)
             {

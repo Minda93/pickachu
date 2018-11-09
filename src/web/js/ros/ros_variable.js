@@ -26,6 +26,9 @@ var topicIsBusy = new RosTopic(ros, '/accupick3d/is_busy', '/std_msgs/Bool');
 
 // gomoku
 var topicGomokuSave = new RosTopic(ros, '/gomoku/save', '/std_msgs/Bool');
+var topicGomokuStart = new RosTopic(ros, '/gomoku/start', '/std_msgs/Bool');
+var topicGomokuSide = new RosTopic(ros, '/gomoku/decide_side', '/std_msgs/Int32');
+var topicGomokuState = new RosTopic(ros, '/gomoku/behavior_state', '/std_msgs/Int32');
 
 
 // =======================================================================

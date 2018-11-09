@@ -148,12 +148,15 @@
                                                                     </td>
                                                                 </tr>
                                                                 <tr class="gomoku_tTableTr10">
-                                                                    <td colspan="5">
+                                                                    <td colspan="4">
                                                                         <div>
                                                                             <input id="gomoku_adjust" type="checkbox"
                                                                                 name="gomoku_pCheckbox" checked="checked" />
                                                                             <label id="gomoku_adjust" for="gomoku_adjust">adjust</label>
                                                                         </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button id="gomoku_Init" class="btn btn-default">Init</button>
                                                                     </td>
                                                                 </tr>
                                                                 <tr class="gomoku_tTableTr10">
@@ -169,7 +172,8 @@
                                                                                     <label>error_height</label>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <input name="gomoku_pElement" class="gomoku_input" value="0" />
+                                                                                    <input name="gomoku_pElement" class="gomoku_input"
+                                                                                        value="0" />
                                                                                 </td>
                                                                             </tr>
                                                                             <tr>
@@ -180,10 +184,26 @@
                                                                                     <input class="gomoku_input" value="0" />
                                                                                 </td> -->
                                                                             </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <input id="gomoku_sideValue"
+                                                                                        class="gomoku_input" value="0" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button id="gomoku_Side" class="btn btn-default">decide_side</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <button id="gomoku_Start" class="btn btn-default">Start</button>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button id="gomoku_Stop" class="btn btn-default">Stop</button>
+                                                                                </td>
+                                                                            </tr>
                                                                             <tr class="gomoku_tTableTr20">
                                                                                 <td colspan="2">
-                                                                                    <button id="gomoku_paramSave"
-                                                                                        class="btn btn-default">Save</button>
+                                                                                    <button id="gomoku_paramSave" class="btn btn-default">Save</button>
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
