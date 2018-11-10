@@ -344,8 +344,13 @@ void Strategy::Cin_First(bool s)
         cin >> first;
     }
     else
-    {
-        first = nh.Get_Side();
+    {   
+        if(nh.IS_PlayDecide()){
+            first = 0;
+        }else if(nh.IS_PushButton()){
+            first = 1;
+        }
+        // first = nh.Get_Side();
         // printf("%d\n",first);
     }
 }
@@ -626,15 +631,20 @@ bool Strategy::Check_Push_Buttion()
             if (nh.Get_Robot() == nh.Get_pButton())
             {
                 isBusy = false;
-                if (nh.IS_PushButton())
-                {
-                    buttonState = 2;
-                    nh.Init_Push_Button();
-                }
-                else
-                {
-                    buttonState = 1;
-                }
+
+                /* for push button */
+                // if (nh.IS_PushButton())
+                // {
+                //     buttonState = 2;
+                //     nh.Init_Push_Button();
+                // }
+                // else
+                // {
+                //     buttonState = 1;
+                // }
+
+                /* for no push button */
+                buttonState = 1;
             }
         }
         return false;
@@ -647,18 +657,26 @@ bool Strategy::Check_Push_Buttion()
             isBusy = true;
         }
         else
-        {
-            if (nh.IS_PushButton())
-            {
-                buttonState = 0;
-                return false;
-            }
+        {   
+            /* for push button */
+            // if (nh.IS_PushButton())
+            // {
+            //     buttonState = 0;
+            //     return false;
+            // }
 
-            nh.Pub_GetPos();
+            // nh.Pub_GetPos();
+            // if (nh.Get_Robot() == robot_)
+            // {
+            //     isBusy = false;
+            //     buttonState = 0;
+            // }
+
+            /* for no push button */
             if (nh.Get_Robot() == robot_)
             {
                 isBusy = false;
-                buttonState = 0;
+                buttonState = 3;
             }
         }
         return false;
@@ -676,6 +694,23 @@ bool Strategy::Check_Push_Buttion()
             {
                 buttonState = 0;
                 return true;
+            }
+        }
+        return false;
+    case 3:
+        if (isBusy == false)
+        {
+            nh.Pub_DataPos(nh.Get_pButton());
+            isBusy = true;
+        }
+        else
+        {
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pButton())
+            {
+                isBusy = false;
+                buttonState = 2;
+
             }
         }
         return false;

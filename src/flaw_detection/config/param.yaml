@@ -1,3 +1,5 @@
+checkROI: 100
+flaw_threshold: 1000
 pCenter:
   euler: [0.0, 0.0, 0.0]
   pos: [0.0, 0.0, 0.0]
@@ -5,8 +7,12 @@ pFlaw:
   euler: [0.0, 0.0, 0.0]
   pos: [0.0, 0.0, 0.0]
 pHome:
-  euler: [1.0, 0.0, 0.0]
+  euler: [0.0, 0.0, 0.0]
   pos: [0.0, 0.0, 0.0]
 pNFlaw:
   euler: [0.0, 0.0, 0.0]
   pos: [0.0, 0.0, 0.0]
+pixelRate: 0.2
+score_threshold: 50
+slideX: 130.0
+slideY: 30.0

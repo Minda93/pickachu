@@ -146,7 +146,7 @@ void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)
 
 void NodeHandle::Sub_PushButton(const std_msgs::Bool msg)
 {
-  if(pushButton == 0)
+  // if(pushButton == 0)
     pushButton = msg.data;
 
 }
@@ -276,7 +276,7 @@ void NodeHandle::Init_Load_State()
 }
 
 void NodeHandle::Init_Player()
-{
+{ 
   player.decide = 0;
 }
 

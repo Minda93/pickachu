@@ -9,7 +9,7 @@ import subprocess
 """ ros topic lib """
 from std_msgs.msg import Bool,Int32
 from geometry_msgs.msg import Twist
-
+from flaw_detection.msg import ROI
 """ ros service lib """
 from arm_control.srv import armCmd,armCmdResponse
 
@@ -24,18 +24,24 @@ class NodeHandle(object):
             behavior
             isBusy
         param
-            pHome
-            pCenter
-            pFlaw
-            pNFlaw
+            pHome: home point
+            pCenter:  above item point
+            pFlaw:  flaw box point
+            pNFlaw: Nflaw box point
+
+            checkROI: 
+            pixelRate: 
+            slide_x: move slide x distance
+            slide_y: move slide y distance
+            scoreThreshold: detect flaw score threshold
+            flawThreshold: calculate number of flaw threshold
         get vision
-            pItem: get item center
-            pItemFlaw: get flaw center
+            itemROI: get item center
     """
     def __init__(self):
         """ strategy """
         self.__loadParam = False
-        self.__start = 1
+        self.__start = 0
         self.__behavior = 0
         self.__isBusy = False
 
@@ -44,23 +50,27 @@ class NodeHandle(object):
         self.__pCenter = {'pos':[],'euler':[]}
         self.__pFlaw = {'pos':[],'euler':[]}
         self.__pNFlaw = {'pos':[],'euler':[]}
+
+        self.__checkROI = 100
+        self.__pixelRate = 0.2
+        self.__slideX = 130.0
+        self.__slideY = 30.0
+        self.__scoreThreshold = 50
+        self.__flawThreshold = 1000
         
         """ get vision """
-        self.__pItem = []
-        self.__pItemFlaw = []
+        self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
         
         """ topic pub """
 
         """ topic sub """
-        
         rospy.Subscriber("flaw_detection/save",Bool,self.Save_Param)
         
         rospy.Subscriber("flaw_detection/start",Bool,self.Sub_Start)
         rospy.Subscriber("flaw_detection/behavior_state",Int32,self.Sub_Behavior)
         rospy.Subscriber("/accupick3d/is_busy",Bool,self.Sub_Is_Busy)
 
-        rospy.Subscriber("flaw_detection/pItem",Bool,self.Sub_pItem)
-        rospy.Subscriber("flaw_detection/pItemFlaw",Bool,self.Sub_pItem_Flaw)
+        rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
 
         self.Load_Param()
         # self.Test_Param()
@@ -89,11 +99,14 @@ class NodeHandle(object):
     def Sub_Is_Busy(self,msg):
         self.__isBusy = msg.data
 
-    def Sub_pItem(self,msg):
-        pass
+    def Sub_Item_ROI(self,msg):
+        self.__itemROI['name'] = msg.class_name
+        self.__itemROI['score'] = msg.score
+        self.__itemROI['x_min'] = msg.x_min
+        self.__itemROI['x_Max'] = msg.x_Max
+        self.__itemROI['y_min'] = msg.y_min
+        self.__itemROI['y_Max'] = msg.y_Max
 
-    def Sub_pItem_Flaw(self,msg):
-        pass
 
     """ save param """
     def Save_Param(self,msg):
@@ -115,12 +128,32 @@ class NodeHandle(object):
             self.__pFlaw = rospy.get_param("accupick3d/flaw_detection/pFlaw")
         if (rospy.has_param('accupick3d/flaw_detection/pNFlaw')):
             self.__pNFlaw = rospy.get_param("accupick3d/flaw_detection/pNFlaw")
+        
+        if (rospy.has_param('accupick3d/flaw_detection/checkROI')):
+            self.__checkROI = rospy.get_param("accupick3d/flaw_detection/checkROI")
+        if (rospy.has_param('accupick3d/flaw_detection/pixelRate')):
+            self.__pixelRate = rospy.get_param("accupick3d/flaw_detection/pixelRate")
+        if (rospy.has_param('accupick3d/flaw_detection/slideX')):
+            self.__slideX = rospy.get_param("accupick3d/flaw_detection/slideX")
+        if (rospy.has_param('accupick3d/flaw_detection/slideY')):
+            self.__slideY = rospy.get_param("accupick3d/flaw_detection/slideY")
+        if (rospy.has_param('accupick3d/flaw_detection/score_threshold')):
+            self.__scoreThreshold = rospy.get_param("accupick3d/flaw_detection/score_threshold")
+        if (rospy.has_param('accupick3d/flaw_detection/flaw_threshold')):
+            self.__flawThreshold = rospy.get_param("accupick3d/flaw_detection/flaw_threshold")
 
     def Set_Param(self):
         rospy.set_param('accupick3d/flaw_detection/pHome', self.__pHome)
         rospy.set_param('accupick3d/flaw_detection/pCenter', self.__pCenter)
         rospy.set_param('accupick3d/flaw_detection/pFlaw', self.__pFlaw)
         rospy.set_param('accupick3d/flaw_detection/pNFlaw', self.__pNFlaw)
+
+        rospy.set_param('accupick3d/flaw_detection/checkROI', self.__checkROI)
+        rospy.set_param('accupick3d/flaw_detection/pixelRate', self.__pixelRate)
+        rospy.set_param('accupick3d/flaw_detection/slideX', self.__slideX)
+        rospy.set_param('accupick3d/flaw_detection/slideY', self.__slideY)
+        rospy.set_param('accupick3d/flaw_detection/score_threshold', self.__scoreThreshold)
+        rospy.set_param('accupick3d/flaw_detection/flaw_threshold', self.__flawThreshold)
 
     """ service client """
     def Arm_Contorl(self,cmd,pos_):
@@ -176,11 +209,27 @@ class NodeHandle(object):
     def pNFlaw(self):
         return self.__pNFlaw
 
+    @property
+    def checkROI(self):
+        return self.__checkROI
+    @property
+    def pixelRate(self):
+        return self.__pixelRate
+    @property
+    def slideX(self):
+        return self.__slideX
+    @property
+    def slideY(self):
+        return self.__slideY
+    @property
+    def scoreThreshold(self):
+        return self.__scoreThreshold
+    @property
+    def flawThreshold(self):
+        return self.__flawThreshold
+
 
     """ vision """
     @property
     def pItem(self):
-        return self.__pItem
-    @property
-    def pItemFlaw(self):
-        return self.__pItemFlaw
+        return self.__itemROI
