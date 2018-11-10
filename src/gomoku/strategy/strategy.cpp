@@ -764,18 +764,20 @@ void Strategy::Show_Player()
 
 void Strategy::Transform_Board()
 {   
-    int color;
-    for (int i = 0; i < ROW; i++)
-    {
-        for (int j = 0; j < COL; j++)
+    if(nh.Check_vBorad_Size()){
+        int color;
+        for (int i = 0; i < ROW; i++)
         {
-            color = nh.Get_vBoard(i,j);
-            if(color == pcColor){
-                gomoku[i][j] = SIDE_PC;
-            }else if(color == playerColor){
-                gomoku[i][j] = SIDE_PLAYER;
-            }else{
-                gomoku[i][j] = NOCOLOR;
+            for (int j = 0; j < COL; j++)
+            {
+                color = nh.Get_vBoard(i,j);
+                if(color == pcColor){
+                    gomoku[i][j] = SIDE_PC;
+                }else if(color == playerColor){
+                    gomoku[i][j] = SIDE_PLAYER;
+                }else{
+                    gomoku[i][j] = NOCOLOR;
+                }
             }
         }
     }
