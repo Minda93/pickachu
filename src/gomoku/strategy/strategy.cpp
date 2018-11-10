@@ -86,8 +86,10 @@ void Strategy::Process()
 {
     if (nh.IS_Start())
     {
-        if(nh.Get_Load_State() == true){
-            if(nh.Get_State() == 0){
+        if (nh.Get_Load_State() == true)
+        {
+            if (nh.Get_State() == 0)
+            {
                 state = INIT;
             }
             nh.Init_Load_State();
@@ -219,7 +221,7 @@ void Strategy::Init_Gomoku()
     {
         for (int j = 0; j < COL; j++)
         {
-            gomoku[i][j] = 0;
+            gomoku[i][j] = NOCOLOR;
         }
     }
 }
@@ -345,10 +347,21 @@ void Strategy::Cin_First(bool s)
     }
     else
     {   
-        if(nh.IS_PlayDecide()){
+        //pc first
+        if (nh.IS_PlayDecide())
+        { 
             first = 0;
-        }else if(nh.IS_PushButton()){
+            pcColor = BLACK;
+            playerColor = WHITE;
+            nh.Init_Player();
+            Delay(TIME);
+        }// player first
+        else if (nh.IS_PushButton())
+        { 
             first = 1;
+            pcColor = WHITE;
+            playerColor = BLACK;
+            nh.Init_Push_Button();
         }
         // first = nh.Get_Side();
         // printf("%d\n",first);
@@ -386,21 +399,33 @@ int Strategy::Player_1(bool s) //玩家1
         return gomoku[a][b];
     }
     else
-    {
-        Player player = nh.Get_Player();
-        if (player.decide == 1)
-        {
-            // if (gomoku[player.point.x][player.point.y])
-            // {
-            //     return -1;
-            // }
-            gomoku[player.point.x][player.point.y] = 1;
+    {   
+        /* case 1 */
+        // Player player = nh.Get_Player();
+        // if (player.decide == 1)
+        // {
+        //     // if (gomoku[player.point.x][player.point.y])
+        //     // {
+        //     //     return -1;
+        //     // }
+        //     gomoku[player.point.x][player.point.y] = 1;
+        //     Line_Check(SIDE_PLAYER);
+        //     nh.Init_Player();
+        //     return gomoku[player.point.x][player.point.y];
+        // }
+        // else
+        // {
+        //     return -1;
+        // }
+
+        /* case 2 */
+        if(nh.IS_PlayDecide()){
+            Delay(TIME);
+            Transform_Board();
             Line_Check(SIDE_PLAYER);
             nh.Init_Player();
-            return gomoku[player.point.x][player.point.y];
-        }
-        else
-        {
+            return SIDE_PLAYER;
+        }else{
             return -1;
         }
     }
@@ -657,7 +682,7 @@ bool Strategy::Check_Push_Buttion()
             isBusy = true;
         }
         else
-        {   
+        {
             /* for push button */
             // if (nh.IS_PushButton())
             // {
@@ -710,7 +735,6 @@ bool Strategy::Check_Push_Buttion()
             {
                 isBusy = false;
                 buttonState = 2;
-
             }
         }
         return false;
@@ -730,4 +754,34 @@ void Strategy::Show_Player()
 {
     Player player = nh.Get_Player();
     cout << player.point.x << endl;
+}
+
+/*=========================================
+ * 
+ * tool
+ * 
+ ==========================================*/
+
+void Strategy::Transform_Board()
+{   
+    int color;
+    for (int i = 0; i < ROW; i++)
+    {
+        for (int j = 0; j < COL; j++)
+        {
+            color = nh.Get_vBoard(i,j);
+            if(color == pcColor){
+                gomoku[i][j] = SIDE_PC;
+            }else if(color == playerColor){
+                gomoku[i][j] = SIDE_PLAYER;
+            }else{
+                gomoku[i][j] = NOCOLOR;
+            }
+        }
+    }
+}
+
+void Strategy::Delay(double time){
+    /* second */
+    ros::Duration(time).sleep(); 
 }

@@ -1,5 +1,7 @@
 #include "nodehandle.hpp"
 
+#define TIME 5
+
 enum ACTION
 {
     INIT,
@@ -16,6 +18,16 @@ enum SIDE
 {
     SIDE_PLAYER = 1,
     SIDE_PC
+};
+
+/* 
+  first black 
+*/
+enum COLOR 
+{ 
+    WHITE = -1,
+    NOCOLOR = 0,
+    BLACK = 1
 };
 
 class Strategy
@@ -47,6 +59,10 @@ class Strategy
 
     void Show_Player();
 
+    /* tool */
+    void Transform_Board();
+    void Delay(double time);
+
   private:
     NodeHandle nh;
 
@@ -55,6 +71,9 @@ class Strategy
     // int step;
     int first;
     bool isBusy;
+
+    int pcColor;
+    int playerColor;
 
     int pcState; //robot decide state 
     int buttonState;  //push button state

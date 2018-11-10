@@ -28,8 +28,10 @@ NodeHandle::NodeHandle()
   subStart = nh.subscribe("/gomoku/start", 1, &NodeHandle::Sub_Start, this);
   subAgain = nh.subscribe("/gomoku/again", 1, &NodeHandle::Sub_Again, this);
   subSide = nh.subscribe("/gomoku/decide_side", 1, &NodeHandle::Sub_Side, this);
-  subPlayer = nh.subscribe("/gomoku/player_point", 1, &NodeHandle::Sub_Player, this);
+  // subPlayer = nh.subscribe("/gomoku/player_point", 1, &NodeHandle::Sub_Player, this);
   subPlayerButton = nh.subscribe("/gomoku/player_pushbutton", 1, &NodeHandle::Sub_Player_PushButton, this);
+
+  subVBoard = nh.subscribe("/gomoku/vBoard", 1, &NodeHandle::Sub_vBoard, this);
 
   subPushButton = nh.subscribe("/gomoku/push_button", 1, &NodeHandle::Sub_PushButton, this);
   subRobotPos = nh.subscribe("/accupick3d/msgString", 1, &NodeHandle::Sub_RobotPos, this);
@@ -51,7 +53,7 @@ void NodeHandle::Init_Param()
 
   again = 0;
   side = -1;
-  
+
   pushButton = 0;
 
   player.decide = 0;
@@ -78,22 +80,22 @@ void NodeHandle::Load_Param()
   XmlRpc::XmlRpcValue list1;
 
   nh.getParam("/accupick3d/gomoku/pHome", list1);
-  Set_Point_Value("home",list1["pos"],list1["euler"]);
+  Set_Point_Value("home", list1["pos"], list1["euler"]);
 
   nh.getParam("/accupick3d/gomoku/pChess", list1);
-  Set_Point_Value("chess",list1["pos"],list1["euler"]);
+  Set_Point_Value("chess", list1["pos"], list1["euler"]);
 
   nh.getParam("/accupick3d/gomoku/pBoardCenter", list1);
-  Set_Point_Value("boardcenter",list1["pos"],list1["euler"]);
+  Set_Point_Value("boardcenter", list1["pos"], list1["euler"]);
 
   nh.getParam("/accupick3d/gomoku/pButton", list1);
-  Set_Point_Value("button",list1["pos"],list1["euler"]);
-
+  Set_Point_Value("button", list1["pos"], list1["euler"]);
 
   nh.getParam("/accupick3d/gomoku/pBoard", list1);
   pBoard.clear();
-  for(int i = 0;i<list1.size();i++){
-    Set_Point_Value("board",list1[i]["pos"],list1[i]["euler"]);
+  for (int i = 0; i < list1.size(); i++)
+  {
+    Set_Point_Value("board", list1[i]["pos"], list1[i]["euler"]);
   }
 
   nh.getParam("/accupick3d/gomoku/error_height", eButton);
@@ -105,14 +107,15 @@ void NodeHandle::Load_Param()
  ==========================================*/
 void NodeHandle::Sub_Save(const std_msgs::Bool msg)
 {
-  cout<<"dump"<<endl;
+  cout << "dump" << endl;
   string str = "rosparam dump ";
   str += FILENAME;
   str += STORE_FORM;
   system(str.c_str());
 }
 
-void NodeHandle::Sub_State(const std_msgs::Int32 msg){
+void NodeHandle::Sub_State(const std_msgs::Int32 msg)
+{
   state = msg.data;
   loadState = true;
 }
@@ -139,6 +142,22 @@ void NodeHandle::Sub_Player(const geometry_msgs::Point msg)
   // player.decide = 1;
 }
 
+void NodeHandle::Sub_vBoard(const std_msgs::Int32MultiArray msg)
+{
+  if (msg.data.size() != 0) //maybe add protect
+    if (vBoard.size() != 0)
+    {
+      vBoard.clear();
+    }
+    else
+    {
+      for (int i = 0; i < msg.data.size(); i++)
+      {
+        vBoard.push_back(msg.data[i]);
+      }
+    }
+}
+
 void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)
 {
   player.decide = msg.data;
@@ -147,8 +166,7 @@ void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)
 void NodeHandle::Sub_PushButton(const std_msgs::Bool msg)
 {
   // if(pushButton == 0)
-    pushButton = msg.data;
-
+  pushButton = msg.data;
 }
 
 void NodeHandle::Sub_RobotPos(const std_msgs::String msg)
@@ -276,7 +294,7 @@ void NodeHandle::Init_Load_State()
 }
 
 void NodeHandle::Init_Player()
-{ 
+{
   player.decide = 0;
 }
 
@@ -306,189 +324,237 @@ void NodeHandle::suction_cmd_client(std::string cmd)
     std::cout << "fail to call suction_service." << std::endl;
 }
 
-
-
 /*=========================================
  * 
  * set param point value
  * 
  ==========================================*/
 
-void NodeHandle::Set_Point_Value(string name,XmlRpc::XmlRpcValue &pos,XmlRpc::XmlRpcValue &euler){
-  
-  if(name == "home"){
-    for(int j = 0;j<pos.size();j++){
-      if(pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+void NodeHandle::Set_Point_Value(string name, XmlRpc::XmlRpcValue &pos, XmlRpc::XmlRpcValue &euler)
+{
+
+  if (name == "home")
+  {
+    for (int j = 0; j < pos.size(); j++)
+    {
+      if (pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pHome.linear.x = static_cast<double>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pHome.linear.y = static_cast<double>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pHome.linear.z = static_cast<double>(pos[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pHome.linear.x = static_cast<int>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pHome.linear.y = static_cast<int>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pHome.linear.z = static_cast<int>(pos[2]);
       }
     }
-    for(int j = 0;j<euler.size();j++){
-      if(euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < euler.size(); j++)
+    {
+      if (euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pHome.angular.x = static_cast<double>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pHome.angular.y = static_cast<double>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pHome.angular.z = static_cast<double>(euler[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pHome.angular.x = static_cast<int>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pHome.angular.y = static_cast<int>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pHome.angular.z = static_cast<int>(euler[2]);
       }
     }
-  }else if(name == "chess"){
-    for(int j = 0;j<pos.size();j++){
-      if(pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+  }
+  else if (name == "chess")
+  {
+    for (int j = 0; j < pos.size(); j++)
+    {
+      if (pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pChess.linear.x = static_cast<double>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pChess.linear.y = static_cast<double>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pChess.linear.z = static_cast<double>(pos[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pChess.linear.x = static_cast<int>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pChess.linear.y = static_cast<int>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pChess.linear.z = static_cast<int>(pos[2]);
       }
     }
-    for(int j = 0;j<euler.size();j++){
-      if(euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < euler.size(); j++)
+    {
+      if (euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pChess.angular.x = static_cast<double>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pChess.angular.y = static_cast<double>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pChess.angular.z = static_cast<double>(euler[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pChess.angular.x = static_cast<int>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pChess.angular.y = static_cast<int>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pChess.angular.z = static_cast<int>(euler[2]);
       }
     }
-  }else if(name == "boardcenter"){
-    for(int j = 0;j<pos.size();j++){
-      if(pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+  }
+  else if (name == "boardcenter")
+  {
+    for (int j = 0; j < pos.size(); j++)
+    {
+      if (pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pBoardCenter.linear.x = static_cast<double>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pBoardCenter.linear.y = static_cast<double>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pBoardCenter.linear.z = static_cast<double>(pos[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pBoardCenter.linear.x = static_cast<int>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pBoardCenter.linear.y = static_cast<int>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pBoardCenter.linear.z = static_cast<int>(pos[2]);
       }
     }
-    for(int j = 0;j<euler.size();j++){
-      if(euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < euler.size(); j++)
+    {
+      if (euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pBoardCenter.angular.x = static_cast<double>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pBoardCenter.angular.y = static_cast<double>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pBoardCenter.angular.z = static_cast<double>(euler[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pBoardCenter.angular.x = static_cast<int>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pBoardCenter.angular.y = static_cast<int>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pBoardCenter.angular.z = static_cast<int>(euler[2]);
       }
     }
-  }else if(name == "button"){
-    for(int j = 0;j<pos.size();j++){
-      if(pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+  }
+  else if (name == "button")
+  {
+    for (int j = 0; j < pos.size(); j++)
+    {
+      if (pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pButton.linear.x = static_cast<double>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pButton.linear.y = static_cast<double>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pButton.linear.z = static_cast<double>(pos[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pButton.linear.x = static_cast<int>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pButton.linear.y = static_cast<int>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pButton.linear.z = static_cast<int>(pos[2]);
       }
     }
-    for(int j = 0;j<euler.size();j++){
-      if(euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < euler.size(); j++)
+    {
+      if (euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pButton.angular.x = static_cast<double>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pButton.angular.y = static_cast<double>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pButton.angular.z = static_cast<double>(euler[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pButton.angular.x = static_cast<int>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pButton.angular.y = static_cast<int>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pButton.angular.z = static_cast<int>(euler[2]);
       }
     }
-  }else if(name == "board"){
+  }
+  else if (name == "board")
+  {
     geometry_msgs::Twist pos_;
-    for(int j = 0;j<pos.size();j++){
-      if(pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < pos.size(); j++)
+    {
+      if (pos[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pos_.linear.x = static_cast<double>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pos_.linear.y = static_cast<double>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pos_.linear.z = static_cast<double>(pos[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pos_.linear.x = static_cast<int>(pos[0]);
-        else if(j == 1)
+        else if (j == 1)
           pos_.linear.y = static_cast<int>(pos[1]);
-        else if(j == 2)
+        else if (j == 2)
           pos_.linear.z = static_cast<int>(pos[2]);
       }
     }
-    for(int j = 0;j<euler.size();j++){
-      if(euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble){
-        if(j == 0)
+    for (int j = 0; j < euler.size(); j++)
+    {
+      if (euler[j].getType() == XmlRpc::XmlRpcValue::TypeDouble)
+      {
+        if (j == 0)
           pos_.angular.x = static_cast<double>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pos_.angular.y = static_cast<double>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pos_.angular.z = static_cast<double>(euler[2]);
-      }else{
-        if(j == 0)
+      }
+      else
+      {
+        if (j == 0)
           pos_.angular.x = static_cast<int>(euler[0]);
-        else if(j == 1)
+        else if (j == 1)
           pos_.angular.y = static_cast<int>(euler[1]);
-        else if(j == 2)
+        else if (j == 2)
           pos_.angular.z = static_cast<int>(euler[2]);
       }
     }
