@@ -34,10 +34,12 @@ ros::NodeHandle  nh;
 using vacuum_cmd_msg::VacuumCmd;
 
 std_msgs::Bool is_grip_msg;
-std_msgs::Bool is_change_msg;
+std_msgs::Bool is_stop_msg;
+std_msgs::Bool is_start_msg;
 ros::Publisher isGripR("right/is_grip", &is_grip_msg);
 // ros::Publisher isGripL("left/is_grip", &is_grip_msg);
-ros::Publisher isChange("robot/is_change", &is_change_msg);
+ros::Publisher isStop("/gomoku/push_button", &is_stop_msg);
+ros::Publisher isStart("/gomoku/player_pushbutton", &is_start_msg);
 
 void callback(const VacuumCmd::Request& , VacuumCmd::Response& , bool);
 void callback_right(const VacuumCmd::Request& , VacuumCmd::Response& );
@@ -75,8 +77,9 @@ ros::ServiceServer<VacuumCmd::Request, VacuumCmd::Response> vac_srv_right("right
 // int addressMax_H_left = 19;
 
 // const int is_grip_left  = 37;
-const int is_grip_right = 44;
-const int is_change     = 42;
+const int is_grip_right = 46;
+const int is_stop       = 44;
+const int is_start      = 42;
 
 const int led_pin = 13;
 const int vac_pin_right = 39;
@@ -84,17 +87,19 @@ const int vac_pin_right = 39;
 // int ID = 0;
 int vac_pin = 0;
 int change_cnt;
-bool changed;
-
+int stop_cnt;
+bool start;
+bool stop;
+bool button_status;
 
 void setup()
 {
   nh.initNode();
   nh.advertise(isGripR);
   // nh.advertise(isGripL);
-  nh.advertise(isChange);
+  nh.advertise(isStop);
   // nh.subscribe(armTask_sub);
-
+  nh.advertise(isStart);
   nh.advertiseService(vac_srv_right);
   // nh.advertiseService(vac_srv_left);
 
@@ -104,11 +109,13 @@ void setup()
 
   // pinMode(is_grip_left, INPUT_PULLUP);
   pinMode(is_grip_right, INPUT_PULLUP);
-  pinMode(is_change, INPUT_PULLUP);
+  pinMode(is_stop, INPUT_PULLUP);
+  pinMode(is_start, INPUT_PULLUP);
 
   change_cnt = 0;
-  changed = false;
-
+  stop_cnt = 0;
+  start = false;
+  stop = false;
 
   // Dxl_right.begin(1000000, 2);
   // delay(1000);
@@ -393,23 +400,35 @@ void loop()
   // {
   //   RFID();
   // }
-  bool button_status = !digitalRead(is_change);
-  if (changed != button_status)
-  {
-    if (changed == true)
-    {
+  button_status = !digitalRead(is_start);
+  if (start != button_status){
+    if (start == true){
       change_cnt += 1;
-      if (change_cnt > 100)
-      {
-        changed = button_status;
+      if (change_cnt > 100){
+        start = button_status;
         change_cnt = 0;
       }
-    } else {
-      changed = button_status;
+    }else{
+      start = button_status;
     }
   }
-  is_change_msg.data = !digitalRead(is_change);
-  isChange.publish(&is_change_msg);
+  button_status = !digitalRead(is_stop);
+  if (stop != button_status){
+    if (stop == true){
+      stop_cnt += 1;
+      if (stop_cnt > 100){
+        stop = button_status;
+        stop_cnt = 0;
+      }
+    }else{
+        stop = button_status;
+    }
+  }
+
+  is_stop_msg.data = stop;
+  isStop.publish(&is_stop_msg);
+  is_start_msg.data = start;
+  isStart.publish(&is_start_msg);
 
   nh.spinOnce();
   delay(10);

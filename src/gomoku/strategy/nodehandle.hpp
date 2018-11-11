@@ -129,6 +129,9 @@ private:
   int again;
   int side;
 
+  int pickChess_cnt;
+  double chess_offset;
+
   bool is_grip;
 
   bool pushButton;

@@ -60,6 +60,8 @@ void NodeHandle::Init_Param()
 
   is_grip = false;
 
+  pickChess_cnt = 0;
+  chess_offset = 40;
   // eButton = 3;
 
   for (int i = 0; i < 6; i++)
