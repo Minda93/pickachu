@@ -58,9 +58,15 @@ class Strategy(object):
                     0: don't have flaw 
                     1: have flaw
                 checkArrive: check item arrive
+                pItemCenter: item center this time
         strategy function
             INIT
             P2P
+            Item_Center
+            Manual
+        Tool
+            Pixel_To_mm: vision center and item center error pixel to mm
+            Delay: second
     """
     def __init__(self):
         self.nh = NodeHandle()
@@ -76,6 +82,9 @@ class Strategy(object):
 
         self.__checkArrive = 0
         self.__pItemCenter = {'pos':[],'euler':[]}
+        
+        self.__pSliding = {'pos':[],'euler':[]}
+        self.__slidingStep = 0
     
     def Run(self):
         if(self.nh.start == True):
@@ -176,7 +185,10 @@ class Strategy(object):
                 if(self.nh.itemROI['score'] >= self.nh.scoreThreshold):
                     self.__checkArrive += 1
         return False
-        
+    
+    def Sliding_Strategy(self):
+        pass
+
     def Manual_Strategy(self):
         pass
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch> 
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+    <rosparam command="load" file="$(find gomoku)/config/gomoku.yaml" ns="accupick3d/gomoku/"/>
+    
+    <node name="arm_control" pkg="arm_control" type="control.py"/>
+    
+    <!--<node name="gomoku_strategy" pkg="gomoku" type="strategy"/>-->
+
+    <!--<node name="serial_node" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0"/>-->
+</launch>

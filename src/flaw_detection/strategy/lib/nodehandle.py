@@ -55,6 +55,7 @@ class NodeHandle(object):
         self.__pixelRate = 0.2
         self.__slideX = 130.0
         self.__slideY = 30.0
+        self.__slideZ = 10
         self.__scoreThreshold = 0.5
         self.__flawThreshold = 1000
         
@@ -137,6 +138,8 @@ class NodeHandle(object):
             self.__slideX = rospy.get_param("accupick3d/flaw_detection/slideX")
         if (rospy.has_param('accupick3d/flaw_detection/slideY')):
             self.__slideY = rospy.get_param("accupick3d/flaw_detection/slideY")
+        if (rospy.has_param('accupick3d/flaw_detection/slideZ')):
+            self.__slideZ = rospy.get_param("accupick3d/flaw_detection/slideZ")
         if (rospy.has_param('accupick3d/flaw_detection/score_threshold')):
             self.__scoreThreshold = rospy.get_param("accupick3d/flaw_detection/score_threshold")
         if (rospy.has_param('accupick3d/flaw_detection/flaw_threshold')):
@@ -152,6 +155,7 @@ class NodeHandle(object):
         rospy.set_param('accupick3d/flaw_detection/pixelRate', self.__pixelRate)
         rospy.set_param('accupick3d/flaw_detection/slideX', self.__slideX)
         rospy.set_param('accupick3d/flaw_detection/slideY', self.__slideY)
+        rospy.set_param('accupick3d/flaw_detection/slideZ', self.__slideZ)
         rospy.set_param('accupick3d/flaw_detection/score_threshold', self.__scoreThreshold)
         rospy.set_param('accupick3d/flaw_detection/flaw_threshold', self.__flawThreshold)
 
@@ -221,6 +225,9 @@ class NodeHandle(object):
     @property
     def slideY(self):
         return self.__slideY
+    @property
+    def slideZ(self):
+        return self.__slideZ
     @property
     def scoreThreshold(self):
         return self.__scoreThreshold
