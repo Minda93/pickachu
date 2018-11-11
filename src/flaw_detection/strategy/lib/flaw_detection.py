@@ -187,7 +187,20 @@ class Strategy(object):
         return False
     
     def Sliding_Strategy(self):
-        pass
+        if(self.__slidingStep == 0):
+            if(len(self.__pSliding['pos']) == 0):
+                self.__pSliding['pos'].append(self.__pItemCenter['pos'][0])
+                self.__pSliding['pos'].append(self.__pItemCenter['pos'][1])
+                self.__pSliding['pos'].append(self.__pItemCenter['pos'][2]+self.nh.slideZ)
+
+                self.__pSliding['euler'].append(self.__pItemCenter['euler'][0])
+                self.__pSliding['euler'].append(self.__pItemCenter['euler'][1])
+                self.__pSliding['euler'].append(self.__pItemCenter['euler'][2])
+            elif(len(self.__pItemCenter['pos']) != 0):
+                if(self.P2P_Strategy(self.__pItemCenter)):
+                    self.__slidingStep = 1
+        return False
+
 
     def Manual_Strategy(self):
         pass

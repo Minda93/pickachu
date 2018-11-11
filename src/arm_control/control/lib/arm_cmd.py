@@ -78,7 +78,7 @@ class ArmCmd(object):
         else:
             print("fuck Get Pos")
 
-        self.nh.Init_Robot()  
+        rospy.Timer(rospy.Duration(3.0), self.nh.Init_Robot())
         self.nh.Pub_IsBusy(self.__isBusy)
         
     def Move_Cmd(self):
@@ -103,7 +103,7 @@ class ArmCmd(object):
         else:
             print("fuck Get Pos")
 
-        self.nh.Init_Robot()      
+        rospy.Timer(rospy.Duration(3.0), self.nh.Init_Robot())     
         self.nh.Pub_IsBusy(self.__isBusy)
 
     def Move_Euler_Cmd(self):
