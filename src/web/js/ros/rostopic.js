@@ -91,18 +91,23 @@ document.getElementsByName("gomoku_tButtion")[0].addEventListener("click", funct
 });
 
 document.getElementsByName("gomoku_tButtion")[1].addEventListener("click", function () {
+    let pos_ = new Point();
+    pos_.pos = gomoku_pChess.pos;
+    pos_.euler = gomoku_pChess.euler;
+    
+    pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
+    Call_ArmControl(pos_);
+    console.log("Call UpChess");
+});
+
+document.getElementsByName("gomoku_tButtion")[2].addEventListener("click", function () {
     Call_ArmControl(gomoku_pChess);
     console.log("Call Chess");
 });
 
-document.getElementsByName("gomoku_tButtion")[2].addEventListener("click", function () {
+document.getElementsByName("gomoku_tButtion")[3].addEventListener("click", function () {
     Call_ArmControl(gomoku_pCenter);
     console.log("Call Center");
-});
-
-document.getElementsByName("gomoku_tButtion")[3].addEventListener("click", function () {
-    Call_ArmControl(gomoku_pButton);
-    console.log("Call Button");
 });
 
 document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", function () {
@@ -112,9 +117,12 @@ document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", funct
     
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
     Call_ArmControl(pos_);
+    console.log("Call Button");
+});
+
+document.getElementsByName("gomoku_tButtion")[5].addEventListener("click", function () {
+    Call_ArmControl(gomoku_pButton);
     console.log("Call pushButton");
-
-
 });
 
 /*========================================================*/

@@ -15,6 +15,7 @@ class Point {
  * --------------------------------------------------------*/
 var ROW = 9;
 var COL = 9;
+
 var gomoku_pHome = new Point();
 var gomoku_pChess = new Point();
 var gomoku_pCenter = new Point();
