@@ -44,6 +44,7 @@ class NodeHandle(object):
         self.__start = 1
         self.__behavior = 0
         self.__isBusy = False
+        self.__isGrip = False
 
         """ define param """
         self.__pHome = {'pos':[],'euler':[]}
@@ -56,7 +57,7 @@ class NodeHandle(object):
         self.__pixelRate = 0.2
         self.__slideX = 130.0
         self.__slideY = 30.0
-        self.__slideZ = 10
+        self.__slideZ = 10      # why 130 30 10
         self.__scoreThreshold = 0.5
         self.__flawThreshold = 1000
         
@@ -73,6 +74,7 @@ class NodeHandle(object):
         rospy.Subscriber("/accupick3d/is_busy",Bool,self.Sub_Is_Busy)
 
         rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
+        rospy.Subscriber('right/is_grip',Bool,self.Sub_Is_Grip)
 
         self.Load_Param()
         # self.Test_Param()
@@ -112,6 +114,8 @@ class NodeHandle(object):
         self.__itemROI['y_min'] = msg.y_min
         self.__itemROI['y_Max'] = msg.y_Max
 
+    def Sub_Is_Grip(sefl,msg):
+        self.__isGrip = msg.data
 
     """ save param """
     def Save_Param(self,msg):
@@ -176,6 +180,24 @@ class NodeHandle(object):
             return res.success
         except (rospy.ServiceException, e):
             print("Service call failed: %s" %e)
+
+    def Suction_cmd(self, cmd):
+        # suction_service = self.name + '/suction_cmd'
+        # try:
+        #     rospy.wait_for_service(suction_service, timeout=1.)
+        # except rospy.ROSException as e:
+        #     rospy.logwarn('wait_for_service timeout')
+        #     self.robot_cmd_client(cmd)
+        rospy.wait_for_service('right/suction_cmd')
+        try:
+            client = rospy.ServiceProxy(
+                'right/suction_cmd',
+                VacuumCmd
+            )
+            res = client(cmd)
+            print res
+        except rospy.ServiceException, e:
+            print "Service call (Vacuum) failed: %s" % e
 
     """ strategy """
     @property
@@ -244,7 +266,9 @@ class NodeHandle(object):
     @property
     def flawThreshold(self):
         return self.__flawThreshold
-
+    @property
+    def isGrip(self):
+        return self.__isGrip
 
     """ vision """
     @property

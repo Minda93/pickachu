@@ -40,6 +40,17 @@ class State(Enum):
     NO_FLAW_BOX = 9
     DECIDE_BOX = 10
 
+class StepCenter(Enum):
+    ITEM_CENTER = 0
+    SUCTION     = 1
+    DECIDE_BOX  = 2
+
+class StepSliding(Enum):
+    GO_RIGHT    = 0
+    GO_CENTER   = 1
+    GO_LEFT     = 2
+    GO_BACK     = 3
+
 class Strategy(object):
     r"""
         variable
@@ -72,6 +83,8 @@ class Strategy(object):
         self.nh = NodeHandle()
 
         self.__state = State.ITEM_CENTER.value
+        self.__stepCenter = StepCenter.ITEM_CENTER.value
+        self.__stepSliding = StepSliding.GO_RIGHT.value
         # self.__state = State.INIT.value
         self.__strategyBusy = -1
         self.__success = False
@@ -85,6 +98,8 @@ class Strategy(object):
         
         self.__pSliding = {'pos':[],'euler':[]}
         self.__slidingStep = 0
+
+        self.__reSuc = 0
     
     def Run(self):
         if(self.nh.start == True):
@@ -101,11 +116,22 @@ class Strategy(object):
                 print('Home') 
                 if(self.P2P_Strategy(self.nh.pHome)):
                     self.__state = State.CENTER.value
+                    self.__stepCenter = StepCenter.ITEM_CENTER.value
 
             elif(self.__state == State.CENTER.value):
                 print('Center')
                 if(self.P2P_Strategy(self.nh.pCenter)):
-                    self.__state = State.ITEM_CENTER.value
+                    if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
+                        self.__state = State.ITEM_CENTER.value
+                    elif(self.__stepCenter = StepCenter.SUCTION.value):
+                        self.__state == State.SUCTION.value
+                    elif(self.__stepCenter = StepCenter.BOX.value):
+                        if(nh.isGrip is True):
+                            self.__reSuc  = 0
+                            self.__state == State.DECIDE_BOX.value
+                        else:
+                            self.__reSuc += 1
+                            self.__state == State.SUCTION.value
             
             elif(self.__state == State.ITEM_CENTER.value):
                 print('Item Center')
@@ -114,15 +140,29 @@ class Strategy(object):
             
             elif(self.__state == State.SLIDING.value):
                 print('Sliding')
+                if(self.Sliding_Strategy()):
+                    self.__state = State.CENTER.value
+                    self.__stepCenter = StepCenter.SUCTION.value
                 pass
             
             #########################################
             elif(self.__state == State.SUCTION.value):
                 print('suction')
+                goal_pos = self.__pItemCenter
+                goal_pos['pos'][2] = self.nh.pSuction['pos'][2]
+                if(self.__reSuc is not 0):
+                    goal_pos['euler'][0] += (2*(self.__reSuc % 2) - 1) * 20
+                if(self.P2P_Strategy(goal_pos)):
+                    nh.Suction_cmd('vacuumOn')
+                    self.__state = State.CENTER.value
+                    self.__stepCenter = StepCenter.DECIDE_BOX.value
                 pass
             #########################################
             elif(self.__state == State.RELEASE_SUCTION.value):
                 print('release suction')
+                nh.Suction_cmd('vacuumOff')
+                self.__state = State.CENTER.value
+                self.__stepCenter = StepCenter.ITEM_CENTER.value
                 pass
                     
             elif(self.__state == State.FLAW_BOX.value):
@@ -200,7 +240,34 @@ class Strategy(object):
                 if(self.P2P_Strategy(self.__pItemCenter)):
                     self.__slidingStep = 1
         return False
+        ################################################################
+        if(self.__stepSliding == StepSliding.GO_RIGHT.value):
+            goal_pos = self.__pItemCenter
+            goal_pos['pos'][0] += self.nh.slideX
+            goal_pos['pos'][1] += self.nh.slideY
+            goal_pos['pos'][2] += self.nh.slideZ
+            if(self.P2P_Strategy(goal_pos)):
+                self.__stepSliding = StepSliding.GO_CENTER.value
 
+        elif(self.__stepSliding == StepSliding.GO_CENTER.value):
+            goal_pos = self.__pItemCenter
+            goal_pos['pos'][2] += self.nh.slideZ
+            if(self.P2P_Strategy(goal_pos)):
+                self.__stepSliding = StepSliding.GO_LEFT.value
+
+        elif(self.__stepSliding == StepSliding.GO_LEFT.value):
+            goal_pos = self.__pItemCenter
+            goal_pos['pos'][0] -= self.nh.slideX
+            goal_pos['pos'][1] -= self.nh.slideY
+            goal_pos['pos'][2] += self.nh.slideZ
+            if(self.P2P_Strategy(goal_pos)):
+                self.__stepSliding = StepSliding.GO_BACK.value
+                
+        elif(self.__stepSliding == StepSliding.GO_BACK.value):
+            if(self.P2P_Strategy(self.__pItemCenter)):
+                self.__stepSliding = StepSliding.GO_RIGHT.value
+                return True
+        return False
 
     def Manual_Strategy(self):
         pass
