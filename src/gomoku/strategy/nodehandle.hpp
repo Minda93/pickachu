@@ -63,15 +63,18 @@ public:
   inline bool Is_grip() const { return is_grip; };
 
   inline geometry_msgs::Twist Get_pHome() const { return pHome; };
-  inline geometry_msgs::Twist Get_pChess() const { return pChess; };
+  // inline geometry_msgs::Twist Get_pChess() const { return pChess; };
   inline geometry_msgs::Twist Get_pBoardCenter() const { return pBoardCenter; };
   inline geometry_msgs::Twist Get_pButton() const { return pButton; };
   geometry_msgs::Twist Get_pBoard(int i, int j) const { return pBoard[i * COL + j]; };
+  geometry_msgs::Twist Get_pBoard_up(int i, int j);
+  geometry_msgs::Twist Get_pChess(bool pick, bool armBusy);
   // inline double Get_ErrorPos(int i) const { return errorPos[i]; };
   inline double Get_eButton() const { return eButton; };
   inline int Get_vBoard(int i, int j) { return vBoard[i * COL + j]; };
   inline int Check_vBorad_Size() { return vBoard.size();};
-
+  inline double Get_chess_offset() const { return chess_offset; };
+  
   void Pub_GetPos();
   void Pub_HomePos();
   void Pub_DataPos(const geometry_msgs::Twist pos);

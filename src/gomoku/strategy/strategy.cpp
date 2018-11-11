@@ -551,37 +551,15 @@ bool Strategy::Check_Decide()
         }
         return false;
     case 2: // move chess pos
-        geometry_msgs::Twist Chess_pos = nh.Get_pChess();
-        switch(pickChess_cnt)
-        {
-        case 0:
-            Chess_pos.linear.x += chess_offset;
-            Chess_pos.linear.y += chess_offset;
-            break;
-        case 1:
-            Chess_pos.linear.x -= chess_offset;
-            Chess_pos.linear.y += chess_offset;
-            break;
-        case 2:
-            Chess_pos.linear.x -= chess_offset;
-            Chess_pos.linear.y -= chess_offset;
-            break;
-        case 3:
-            Chess_pos.linear.x += chess_offset;
-            Chess_pos.linear.y -= chess_offset;
-            break;
-        }
-        Chess_pos.linear.z += 150;
-
         if (isBusy == false)
         {
-            nh.Pub_DataPos(Chess_pos);
+            nh.Pub_DataPos(nh.Get_pChess(false, isBusy));
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == Chess_pos)
+            if (nh.Get_Robot() == nh.Get_pChess(false, isBusy))
             {
                 isBusy = false;
                 if (nh.Is_grip())
@@ -592,39 +570,15 @@ bool Strategy::Check_Decide()
         }
         return false;
     case 3: // Suction chess
-        geometry_msgs::Twist Chess_pos = nh.Get_pChess();
-        switch(pickChess_cnt)
-        {
-        case 0:
-            Chess_pos.linear.x += chess_offset;
-            Chess_pos.linear.y += chess_offset;
-            pickChess_cnt++;
-            break;
-        case 1:
-            Chess_pos.linear.x -= chess_offset;
-            Chess_pos.linear.y += chess_offset;
-            pickChess_cnt++;
-            break;
-        case 2:
-            Chess_pos.linear.x -= chess_offset;
-            Chess_pos.linear.y -= chess_offset;
-            pickChess_cnt++;
-            break;
-        case 3:
-            Chess_pos.linear.x += chess_offset;
-            Chess_pos.linear.y -= chess_offset;
-            pickChess_cnt = 0;
-            break;
-        }
         if (isBusy == false)
         {
-            nh.Pub_DataPos(Chess_pos);
+            nh.Pub_DataPos(nh.Get_pChess(true, isBusy));
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == Chess_pos)
+            if (nh.Get_Robot() == nh.Get_pChess(true, isBusy))
             {
                 isBusy = false;
                 pcState = 8;
@@ -632,17 +586,15 @@ bool Strategy::Check_Decide()
         }
         return false;
     case 4: // move board center pos
-        geometry_msgs::Twist aboveBoard = nh.Get_pBoard(chess.x, chess.y);
-        aboveBoard.linear.z += 100;
         if (isBusy == false)
         {
-            nh.Pub_DataPos(aboveBoard);
+            nh.Pub_DataPos(nh.Get_pBoard_up(chess.x, chess.y));
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == aboveBoard)
+            if (nh.Get_Robot() == nh.Get_pBoard_up(chess.x, chess.y))
             {
                 isBusy = false;
                 if (nh.Is_grip())

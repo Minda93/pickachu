@@ -325,7 +325,40 @@ void NodeHandle::suction_cmd_client(std::string cmd)
   else
     std::cout << "fail to call suction_service." << std::endl;
 }
-
+geometry_msgs::Twist NodeHandle::Get_pChess(bool pick, bool armBusy)
+{
+  geometry_msgs::Twist Chess_pos = pChess;
+  switch(pickChess_cnt)
+  {
+  case 0:
+      Chess_pos.linear.x += chess_offset;
+      Chess_pos.linear.y += chess_offset;
+      break;
+  case 1:
+      Chess_pos.linear.x -= chess_offset;
+      Chess_pos.linear.y += chess_offset;
+      break;
+  case 2:
+      Chess_pos.linear.x -= chess_offset;
+      Chess_pos.linear.y -= chess_offset;
+      break;
+  case 3:
+      Chess_pos.linear.x += chess_offset;
+      Chess_pos.linear.y -= chess_offset;
+      break;
+  }
+  if( pick && !armBusy)
+    pickChess_cnt = (pickChess_cnt < 3)? pickChess_cnt + 1 : 0;
+  if(!pick)
+    Chess_pos.linear.z += 120;
+  return Chess_pos;
+}
+geometry_msgs::Twist NodeHandle::Get_pBoard_up(int i, int j)
+{
+  geometry_msgs::Twist board_up = Get_pBoard(i, j);
+  board_up.linear.z += 100;
+  return board_up;
+}
 /*=========================================
  * 
  * set param point value
