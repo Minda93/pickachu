@@ -48,6 +48,7 @@ class NodeHandle(object):
         """ define param """
         self.__pHome = {'pos':[],'euler':[]}
         self.__pCenter = {'pos':[],'euler':[]}
+        self.__pSuction = {'pos':[],'euler':[]}
         self.__pFlaw = {'pos':[],'euler':[]}
         self.__pNFlaw = {'pos':[],'euler':[]}
 
@@ -82,6 +83,9 @@ class NodeHandle(object):
 
         self.__pCenter['pos'] = [0.0,0.0,0.0]
         self.__pCenter['euler'] = [0.0,0.0,0.0]
+
+        self.__pSuction['pos'] = [0.0,0.0,0.0]
+        self.__pSuction['euler'] = [0.0,0.0,0.0]
 
         self.__pFlaw['pos'] = [0.0,0.0,0.0]
         self.__pFlaw['euler'] = [0.0,0.0,0.0]
@@ -125,6 +129,8 @@ class NodeHandle(object):
             self.__pHome = rospy.get_param("accupick3d/flaw_detection/pHome")
         if (rospy.has_param('accupick3d/flaw_detection/pCenter')):
             self.__pCenter = rospy.get_param("accupick3d/flaw_detection/pCenter")
+        if (rospy.has_param('accupick3d/flaw_detection/pSuction')):
+            self.__pSuction = rospy.get_param("accupick3d/flaw_detection/pSuction")
         if (rospy.has_param('accupick3d/flaw_detection/pFlaw')):
             self.__pFlaw = rospy.get_param("accupick3d/flaw_detection/pFlaw")
         if (rospy.has_param('accupick3d/flaw_detection/pNFlaw')):
@@ -148,6 +154,7 @@ class NodeHandle(object):
     def Set_Param(self):
         rospy.set_param('accupick3d/flaw_detection/pHome', self.__pHome)
         rospy.set_param('accupick3d/flaw_detection/pCenter', self.__pCenter)
+        rospy.set_param('accupick3d/flaw_detection/pSuction', self.__pSuction)
         rospy.set_param('accupick3d/flaw_detection/pFlaw', self.__pFlaw)
         rospy.set_param('accupick3d/flaw_detection/pNFlaw', self.__pNFlaw)
 
