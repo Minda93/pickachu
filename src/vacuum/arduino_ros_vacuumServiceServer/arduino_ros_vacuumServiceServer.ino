@@ -77,12 +77,12 @@ ros::ServiceServer<VacuumCmd::Request, VacuumCmd::Response> vac_srv_right("right
 // int addressMax_H_left = 19;
 
 // const int is_grip_left  = 37;
-const int is_grip_right = 46;
-const int is_stop       = 44;
-const int is_start      = 42;
+const int is_grip_right = 44;
+const int is_stop       = 42;
+const int is_start      = 39;
 
 const int led_pin = 13;
-const int vac_pin_right = 39;
+const int vac_pin_right = 45;
 // const int vac_pin_left  = 31;
 // int ID = 0;
 int vac_pin = 0;
