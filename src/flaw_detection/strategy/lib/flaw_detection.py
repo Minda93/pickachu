@@ -10,8 +10,9 @@ from lib.counter import TimeCounter
 """ lib """
 from enum import Enum
 
-CAMERA_ROW = 640
-CAMERA_COL = 480
+""" camera param """
+CAMERA_ROW = 480
+CAMERA_COL = 640
 
 class State(Enum):
     r"""
@@ -64,7 +65,8 @@ class Strategy(object):
     def __init__(self):
         self.nh = NodeHandle()
 
-        self.__state = State.INIT.value
+        self.__state = State.ITEM_CENTER.value
+        # self.__state = State.INIT.value
         self.__strategyBusy = -1
         self.__success = False
 
@@ -73,6 +75,7 @@ class Strategy(object):
         self.__flaw = False
 
         self.__checkArrive = 0
+        self.__pItemCenter = {'pos':[],'euler':[]}
     
     def Run(self):
         if(self.nh.start == True):
@@ -97,7 +100,8 @@ class Strategy(object):
             
             elif(self.__state == State.ITEM_CENTER.value):
                 print('Item Center')
-                pass
+                if(self.Item_Center_Strategy()):
+                    self.__state = State.SLIDING.value
             
             elif(self.__state == State.SLIDING.value):
                 print('Sliding')
@@ -153,14 +157,40 @@ class Strategy(object):
     
     def Item_Center_Strategy(self):
         if(self.__checkArrive >= self.nh.checkROI):
-            pass
+            if(self.nh.itemROI['name'] == 'metal' and len(self.__pItemCenter['pos']) == 0):
+                x,y = self.Pixel_To_mm()
+                
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][0]+x)
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y)
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2])
+
+                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][0])
+                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][1])
+                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][2])
+
+            elif(len(self.__pItemCenter['pos']) != 0):
+                return self.P2P_Strategy(self.__pItemCenter)
+                    
         else:
-            self.__checkArrive += 1
+            if(self.nh.itemROI['name'] == 'metal'):
+                if(self.nh.itemROI['score'] >= self.nh.scoreThreshold):
+                    self.__checkArrive += 1
         return False
         
     def Manual_Strategy(self):
         pass
 
-    """ fucntion """
-    def Pixel_To_mm(self,x_dis,y_dis):
+    """ tool """
+    def Pixel_To_mm(self):
+        x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
+        y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
+
+        x_dis = (CAMERA_ROW/2)-x
+        y_dis = (CAMERA_COL/2)-y
+
         return x_dis*self.nh.pixelRate,y_dis*self.nh.pixelRate
+
+    def Delay(self,time):
+        """ second """
+        d = rospy.Duration(time)
+        rospy.sleep(d)

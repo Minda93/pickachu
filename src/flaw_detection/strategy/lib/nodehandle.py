@@ -41,7 +41,7 @@ class NodeHandle(object):
     def __init__(self):
         """ strategy """
         self.__loadParam = False
-        self.__start = 0
+        self.__start = 1
         self.__behavior = 0
         self.__isBusy = False
 
@@ -55,7 +55,7 @@ class NodeHandle(object):
         self.__pixelRate = 0.2
         self.__slideX = 130.0
         self.__slideY = 30.0
-        self.__scoreThreshold = 50
+        self.__scoreThreshold = 0.5
         self.__flawThreshold = 1000
         
         """ get vision """
@@ -231,5 +231,5 @@ class NodeHandle(object):
 
     """ vision """
     @property
-    def pItem(self):
+    def itemROI(self):
         return self.__itemROI
