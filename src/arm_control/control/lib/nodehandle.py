@@ -51,6 +51,9 @@ class NodeHandle(object):
         self.__robot = Robot()
         self.__tRobot = Robot()
 
+        # self.__robot.pos = []
+        # self.__robot.euler = []
+
         self.__error = [0.01,0.01,0.01,0.01,0.01,0.01]
 
         """ pub """

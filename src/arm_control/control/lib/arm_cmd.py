@@ -65,20 +65,22 @@ class ArmCmd(object):
     """ cmd """
     def P2P_Cmd(self):
         self.nh.Pub_GetPos()
+        print(self.nh.robot.pos)
         if(self.nh.robot.pos != []):
             if(self.Is_Same_Pos(self.nh.robot,self.nh.tRobot,ERROR_POS)):
                 print('success')
                 self.__isBusy = False
                 self.nh.Init_tRobot()
+                self.nh.Init_Robot()
             else:
                 if(self.__isBusy == False):
                     self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
                     self.__isBusy = True
                 print('p2p: not this point')
         else:
-            print("fuck Get Pos")
+            # print("fuck Get Pos")
+            pass
 
-        rospy.Timer(rospy.Duration(3.0), self.nh.Init_Robot())
         self.nh.Pub_IsBusy(self.__isBusy)
         
     def Move_Cmd(self):
@@ -100,10 +102,11 @@ class ArmCmd(object):
                     print('success')
                     self.__isBusy = False
                     self.nh.Init_tRobot()
+                    self.nh.Init_Robot()
         else:
             print("fuck Get Pos")
 
-        rospy.Timer(rospy.Duration(3.0), self.nh.Init_Robot())     
+        # rospy.Timer(rospy.Duration(3.0), self.nh.Init_Robot)    
         self.nh.Pub_IsBusy(self.__isBusy)
 
     def Move_Euler_Cmd(self):
