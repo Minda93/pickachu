@@ -104,6 +104,7 @@ class YOLO(object):
 
     def detect_image(self, image):
         ROI = None
+        ROI_array=list()
         start = timer()
 
         if self.model_image_size != (None, None):
@@ -165,10 +166,11 @@ class YOLO(object):
                 fill=self.colors[c])
             draw.text(text_origin, label, fill=(0, 0, 0), font=font)
             del draw
-            ROI = [predicted_class,score, left, right,top ,bottom ]
+            ROI = [predicted_class,score, left, right,top ,bottom]
+            ROI_array.append(ROI)
         end = timer()
         print(end - start)
-        return image,ROI
+        return image,ROI_array
 
     def close_session(self):
         self.sess.close()

@@ -91,24 +91,28 @@ def clone_detect_video(yolo, video_path, output_path=""):
             # return_value, frame = vid.read()
             # image = Image.fromarray(frame)
             image = Image.fromarray(cv_image)
-            image,ROI_recive = yolo.detect_image(image)
-            if ROI_recive != None:
-                ROI_msg = ROI()
-                print("class_name type = " + str(ROI_recive[0]))
-                print("score type = "      + str(ROI_recive[1]))
-                print("x_min type = "      + str(ROI_recive[2]))
-                print("x_Max type = "      + str(ROI_recive[3]))
-                print("y_min type = "      + str(ROI_recive[4]))
-                print("y_Max type = "      + str(ROI_recive[5]))
-                
-                ROI_msg.class_name = str(ROI_recive[0])
-                ROI_msg.score      = float(ROI_recive[1])
-                ROI_msg.x_min      = int(ROI_recive[2])
-                ROI_msg.x_Max      = int(ROI_recive[3])
-                ROI_msg.y_min      = int(ROI_recive[4])
-                ROI_msg.y_Max      = int(ROI_recive[5])
-                roi_pub.publish(ROI_msg)
-                suck_msg = estimation_suck_point(ROI_msg)
+            image,ROI_array_recive = yolo.detect_image(image)
+            if ROI_array_recive!=None:
+                ROI_array_msg = ROI_array()
+                for i in range(len(ROI_array_recive)):
+                    ROI_msg = ROI()
+                    print("class_name type = " + str(ROI_array_recive[i][0]))
+                    print("score type = "      + str(ROI_array_recive[i][1]))
+                    print("x_min type = "      + str(ROI_array_recive[i][2]))
+                    print("x_Max type = "      + str(ROI_array_recive[i][3]))
+                    print("y_min type = "      + str(ROI_array_recive[i][4]))
+                    print("y_Max type = "      + str(ROI_array_recive[i][5]))
+
+                    ROI_msg.class_name = str(ROI_array_recive[i][0])
+                    ROI_msg.score      = float(ROI_array_recive[i][1])
+                    ROI_msg.x_min      = int(ROI_array_recive[i][2])
+                    ROI_msg.x_Max      = int(ROI_array_recive[i][3])
+                    ROI_msg.y_min      = int(ROI_array_recive[i][4])
+                    ROI_msg.y_Max      = int(ROI_array_recive[i][5])
+                    
+                    ROI_array_msg.ROI_list.append(ROI_msg)
+                    suck_msg = estimation_suck_point(ROI_msg)
+                roi_array_pub.publish(ROI_array_msg)
             else:
                 print("no object now")
             result = np.asarray(image)
@@ -148,7 +152,7 @@ def callback(data):
 
 FLAGS = None
 rospy.init_node('image_converter', anonymous=True)
-roi_pub = rospy.Publisher("/object/ROI",ROI,queue_size=10)
+roi_array_pub = rospy.Publisher("/object/roi_array_pub",ROI_array,queue_size=10)
 suckpoint_pub = rospy.Publisher("/object/suckpoint",Suck_point,queue_size=10)
 resultimg_pub = rospy.Publisher("/object/result_img",Image_ros,queue_size=10)
 
