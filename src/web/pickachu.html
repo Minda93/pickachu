@@ -22,7 +22,7 @@
     <!-- css lib -->
     <link rel="stylesheet" href="css/form.css">
     <link rel="stylesheet" href="css/gomoku.css">
-
+    <link rel="stylesheet" href="css/flaw.css">
 
     <!-- js lib -->
     <script src="js/lib/CloseCenterRightButton.js"></script>
@@ -218,7 +218,167 @@
                                                 </table>
                                             </div>
                                             <div id="flaw_setting" class="tab-pane fade">
-                                                <label>fuck</label>
+                                                <table id="flaw_table">
+                                                    <tr class="flaw_tableTr20">
+                                                        <td>
+                                                            <table class="flaw_table100">
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="flaw_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#flawUI_button">Home</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#flawUI_button">Center</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#flawUI_button">Suction</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="flawUI_button">Flaw</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="flaw_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="flawUI_button">NFlaw</button>
+                                                                    </td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <table class="flaw_table100 flaw_border">
+                                                                <tr class="flaw_tableTr10">
+                                                                    <td colspan="5">
+                                                                        <h3>Test</h3>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="flaw_tableTr10">
+                                                                    <td>
+                                                                        <button name="flaw_tButtion" class="btn btn-default">Home</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_tButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#flawUI_button">Center</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_tButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#flawUI_button">Suction</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_tButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="flawUI_button">Flaw</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="flaw_tButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="flawUI_button">NFlaw</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="5">
+                                                                        <table id="flaw_paramTable">
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td class="flaw_tableTdW50">
+                                                                                    <label>checkROI</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>pixelRate</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>slideX</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>slideY</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>slideZ</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>scoreThreshold</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td>
+                                                                                    <label>flawThreshold</label>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="flaw_pElement" class="flaw__input"
+                                                                                        value="0" />
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr5">
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr10">
+                                                                                <td colspan="2">
+                                                                                    <button id="flaw_paramSave" class="btn btn-default">Save</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr10">
+                                                                                <td colspan="2">
+                                                                                    <button id="flaw_Init" class="btn btn-default">Init_Strategy</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr class="flaw_tableTr10">
+                                                                                <td>
+                                                                                    <button id="flaw_Start" class="btn btn-default">Start</button>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button id="flaw_Stop" class="btn btn-default">Stop</button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
                                             <div id="aircraft_setting" class="tab-pane fade">
                                                 <label>fuck1</label>
@@ -470,6 +630,38 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="gomokuUIBoard2_confirm">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- flaw_detection -->
+    <div class="modal fade UI_Background" id="flawUI_button" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">flaw_detection</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="gomokuUIButton_label">home</label>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Pos:</label>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Euler:</label>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="flawUIButton_pNow">當前點</button>
+                    <button type="button" class="btn btn-primary" id="flawUIButton_confirm">確認</button>
                 </div>
             </div>
         </div>

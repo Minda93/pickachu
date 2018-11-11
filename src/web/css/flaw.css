@@ -1,0 +1,50 @@
+/*==============================================
+ *
+ * param
+ *  
+ ===============================================*/
+
+#flaw_table{
+    width: 100%;
+    height: 693px;
+}
+
+.flaw_border{
+    border: 1px solid rgba(0, 0, 0, 1);
+}
+
+.flaw_table100{
+    width: 100%;
+    height: 100%;
+}
+
+.flaw_tableTr20{
+    width: 100%;
+    height: 20%;
+}
+
+.flaw_tableTr10{
+    width: 100%;
+    height: 10%;
+}
+
+.flaw_tableTr5{
+    width: 100%;
+    height: 5%;
+}
+
+.flaw_tableTdW50{
+    width: 50%;
+}
+
+#flaw_paramTable{
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, 1);
+    text-align: center;
+}
+
+.flaw__input{
+    width: 80%;
+    height: 80%;
+}
