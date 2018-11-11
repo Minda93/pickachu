@@ -214,6 +214,9 @@ class NodeHandle(object):
     def pCenter(self):
         return self.__pCenter
     @property
+    def pSuction(self):
+        return self.__pSuction
+    @property
     def pFlaw(self):
         return self.__pFlaw
     @property
