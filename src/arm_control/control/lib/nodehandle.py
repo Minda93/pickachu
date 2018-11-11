@@ -134,6 +134,9 @@ class NodeHandle(object):
         data_ = msg.data.split(':')
         
         if(data_[0] == 'Pos'):
+            if(len(self.__robot.pos) != 0):
+                self.__robot.pos = []
+                self.__robot.euler = []
             self.__robot.pos.append(float(data_[1]))
             self.__robot.pos.append(float(data_[2]))
             self.__robot.pos.append(float(data_[3]))
