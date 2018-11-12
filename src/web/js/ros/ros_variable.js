@@ -31,19 +31,42 @@ var topicGomokuSide = new RosTopic(ros, '/gomoku/decide_side', '/std_msgs/Int32'
 var topicGomokuState = new RosTopic(ros, '/gomoku/behavior_state', '/std_msgs/Int32');
 
 
+// flaw
+var topicFlawSave = new RosTopic(ros, '/flaw_detection/save', '/std_msgs/Bool');
+var topicFlawStart = new RosTopic(ros, '/flaw_detection/start', '/std_msgs/Bool');
+var topicFlawState = new RosTopic(ros, '/flaw_detection/behavior_state', '/std_msgs/Int32');
+
 // =======================================================================
 /* 
  * ros param
  */
 /*--------------------------------------------------------*/
 
+/* gomoku point */
 var paramGomoku = new RosParam(ros, '/accupick3d/gomoku');
 var paramGomokupHome = new RosParam(ros, '/accupick3d/gomoku/pHome');
 var paramGomokupChess = new RosParam(ros, '/accupick3d/gomoku/pChess');
 var paramGomokupBoardCenter = new RosParam(ros, '/accupick3d/gomoku/pBoardCenter');
 var paramGomokupBoard = new RosParam(ros, '/accupick3d/gomoku/pBoard');
 var paramGomokupButton = new RosParam(ros, '/accupick3d/gomoku/pButton');
+/* gomoku param */
 var paramGomokuErrorHeight = new RosParam(ros, '/accupick3d/gomoku/error_height');
+
+/* flaw point */
+var paramFlaw = new RosParam(ros, '/accupick3d/flaw_detection');
+var paramFlawpHome = new RosParam(ros, '/accupick3d/flaw_detection/pHome');
+var paramFlawpCenter = new RosParam(ros, '/accupick3d/flaw_detection/pCenter');
+var paramFlawpSuction = new RosParam(ros, '/accupick3d/flaw_detection/pSuction');
+var paramFlawpFlaw = new RosParam(ros, '/accupick3d/flaw_detection/pFlaw');
+var paramFlawpNFlaw = new RosParam(ros, '/accupick3d/flaw_detection/pNFlaw');
+/* flaw param */
+var paramFlawCheckROI = new RosParam(ros, '/accupick3d/flaw_detection/checkROI');
+var paramFlawPixelRate = new RosParam(ros, '/accupick3d/flaw_detection/pixelRate');
+var paramFlawSlideX = new RosParam(ros, '/accupick3d/flaw_detection/slideX');
+var paramFlawSlideY = new RosParam(ros, '/accupick3d/flaw_detection/slideY');
+var paramFlawSlideZ = new RosParam(ros, '/accupick3d/flaw_detection/slideZ');
+var paramFlawScoreTh = new RosParam(ros, '/accupick3d/flaw_detection/score_threshold');
+var paramFlawFlawTh = new RosParam(ros, '/accupick3d/flaw_detection/flaw_threshold');
 
 // =======================================================================
 /* 

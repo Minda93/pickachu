@@ -92,7 +92,6 @@ document.getElementById("gomokuUIButton_confirm").addEventListener("click", func
             Gomoku_Set_Param('button');
             break;
     }
-    Pub_Gomoku_Save();
 });
 
 function Init_Gomoku_Fix_Point(state) {
@@ -221,7 +220,6 @@ document.getElementById("gomokuUIBoard2_confirm").addEventListener("click", func
     }
 
     Gomoku_Set_Param('board');
-    Pub_Gomoku_Save();
 });
 
 function Init_Board() {
@@ -272,7 +270,6 @@ document.getElementById("gomokuUI_confirm").addEventListener("click", function (
     }
     // console.log(str[0],str[1],gomoku_pBoard[parseInt(str[0])*COL+parseInt(str[1])]);
     Gomoku_Set_Param('board');
-    Pub_Gomoku_Save();
 });
 
 // ========================================================

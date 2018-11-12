@@ -123,9 +123,9 @@ class Strategy(object):
                 if(self.P2P_Strategy(self.nh.pCenter)):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
                         self.__state = State.ITEM_CENTER.value
-                    elif(self.__stepCenter = StepCenter.SUCTION.value):
+                    elif(self.__stepCenter == StepCenter.SUCTION.value):
                         self.__state == State.SUCTION.value
-                    elif(self.__stepCenter = StepCenter.BOX.value):
+                    elif(self.__stepCenter == StepCenter.BOX.value):
                         if(nh.isGrip is True):
                             self.__reSuc  = 0
                             self.__state == State.DECIDE_BOX.value
@@ -239,7 +239,7 @@ class Strategy(object):
             elif(len(self.__pItemCenter['pos']) != 0):
                 if(self.P2P_Strategy(self.__pItemCenter)):
                     self.__slidingStep = 1
-        return False
+        # return False
         ################################################################
         if(self.__stepSliding == StepSliding.GO_RIGHT.value):
             goal_pos = self.__pItemCenter

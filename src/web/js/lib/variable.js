@@ -28,3 +28,14 @@ var gomoku_pBoard_2 = [new Point(),new Point(),new Point()];
 for(let i = 0;i<ROW*COL;i++){
     gomoku_pBoard.push(new Point());
 }
+
+// ========================================================
+/* 
+ * flaw
+ * --------------------------------------------------------*/
+
+var flaw_pHome = new Point();
+var flaw_pCenter = new Point();
+var flaw_pSuction = new Point();
+var flaw_pFlaw = new Point();
+var flaw_pNFlaw = new Point();

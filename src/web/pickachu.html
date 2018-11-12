@@ -205,8 +205,11 @@
                                                                                 </td>
                                                                             </tr>
                                                                             <tr class="gomoku_tTableTr20">
-                                                                                <td colspan="2">
+                                                                                <td>
                                                                                     <button id="gomoku_paramSave" class="btn btn-default">Save</button>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button id="gomoku_paramSet" class="btn btn-default">Set</button>
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
@@ -351,8 +354,11 @@
                                                                                 <td></td>
                                                                             </tr>
                                                                             <tr class="flaw_tableTr10">
-                                                                                <td colspan="2">
+                                                                                <td>
                                                                                     <button id="flaw_paramSave" class="btn btn-default">Save</button>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <button id="flaw_paramSet" class="btn btn-default">Set</button>
                                                                                 </td>
                                                                             </tr>
                                                                             <tr class="flaw_tableTr10">
@@ -640,24 +646,24 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <label id="gomokuUIButton_label">home</label>
+                        <label id="flawUI_label">home</label>
                         <div class="form-group">
                             <label for="RobotIPDATA" class="control-label">Pos:</label>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
                         </div>
                         <div class="form-group">
                             <label for="RobotIPDATA" class="control-label">Euler:</label>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
-                            <input type="text" class="form-control" name="flawUIButtion_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
+                            <input type="text" class="form-control" name="flawUI_pos" value=0>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="flawUIButton_pNow">當前點</button>
-                    <button type="button" class="btn btn-primary" id="flawUIButton_confirm">確認</button>
+                    <button type="button" class="btn btn-primary" id="flawUI_pNow">當前點</button>
+                    <button type="button" class="btn btn-primary" id="flawUI_confirm">確認</button>
                 </div>
             </div>
         </div>
@@ -708,7 +714,7 @@
     <!-- Init -->
     <script src="js/lib/init.js"></script>
     <script src="js/lib/gomoku_adjust.js"></script>
-
+    <script src="js/lib/flaw_adjust.js"></script>
     <script>
         $("#Lbutton_table").buttonset();
         $('input[name="Lbutton"]').click(function () {

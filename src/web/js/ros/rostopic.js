@@ -31,9 +31,9 @@ const GetPos = async (name) => {
         str = param.data.split(":");
 
         let obj = document.getElementsByName(name);
-        if(str[0] == 'Pos'){
-            for(let i = 1;i<str.length;i++){
-                obj[i-1].value = str[i];
+        if (str[0] == 'Pos') {
+            for (let i = 1; i < str.length; i++) {
+                obj[i - 1].value = str[i];
             }
         }
         console.log(name, param);
@@ -81,9 +81,18 @@ const GetPos_Board = async (name, i) => {
     /accupick3d/is_busy
  */
 /*--------------------------------------------------------*/
-topicIsBusy.object.subscribe(function(msg){
+topicIsBusy.object.subscribe(function (msg) {
     isBusy = msg.data;
 });
+
+/*========================================================*/
+/*========================================================*/
+
+/*========================================================*/
+/*
+    gomoku test button
+ */
+/*--------------------------------------------------------*/
 
 document.getElementsByName("gomoku_tButtion")[0].addEventListener("click", function () {
     Call_ArmControl(gomoku_pHome);
@@ -94,7 +103,7 @@ document.getElementsByName("gomoku_tButtion")[1].addEventListener("click", funct
     let pos_ = new Point();
     pos_.pos = gomoku_pChess.pos;
     pos_.euler = gomoku_pChess.euler;
-    
+
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
     Call_ArmControl(pos_);
     console.log("Call UpChess");
@@ -114,7 +123,7 @@ document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", funct
     let pos_ = new Point();
     pos_.pos = gomoku_pButton.pos;
     pos_.euler = gomoku_pButton.euler;
-    
+
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
     Call_ArmControl(pos_);
     console.log("Call Button");
@@ -130,7 +139,7 @@ document.getElementsByName("gomoku_tButtion")[5].addEventListener("click", funct
     /gomoku/save
  */
 /*--------------------------------------------------------*/
-function Pub_Gomoku_Save(){
+function Pub_Gomoku_Save() {
     var msg = new ROSLIB.Message({
         data: true
     });
@@ -138,21 +147,20 @@ function Pub_Gomoku_Save(){
 }
 
 document.getElementById("gomoku_paramSave").addEventListener("click", function () {
+    Pub_Gomoku_Save();
     console.log('save');
-    // let param = [];
+});
+
+document.getElementById("gomoku_paramSet").addEventListener("click", function () {
     let valueList = document.getElementsByName("gomoku_pElement");
 
     paramGomokuErrorHeight.Set(parseFloat(valueList[0].value));
-    
-    
-    // console.log(param);
-    // Pub_Gomoku_Save();
-    Pub_Gomoku_Save();
+
 });
 
 /*========================================================*/
 /*
-    fuction
+    gomoku tool
  */
 /*--------------------------------------------------------*/
 document.getElementById("gomoku_Init").addEventListener("click", function () {
@@ -183,3 +191,99 @@ document.getElementById("gomoku_Side").addEventListener("click", function () {
     });
     topicGomokuSide.Pub(msg);
 });
+
+/*========================================================*/
+/*========================================================*/
+
+/*========================================================*/
+/*
+    flaw tool
+ */
+/*--------------------------------------------------------*/
+
+document.getElementById("flaw_Init").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: 0
+    });
+    topicFlawState.Pub(msg);
+});
+
+document.getElementById("flaw_Start").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: true
+    });
+    topicFlawStart.Pub(msg);
+});
+
+document.getElementById("flaw_Stop").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: false
+    });
+    topicFlawStart.Pub(msg);
+});
+
+
+/*========================================================*/
+/*
+    flaw save
+ */
+/*--------------------------------------------------------*/
+
+function Pub_Flaw_Save() {
+    let msg = new ROSLIB.Message({
+        data: true
+    });
+    topicFlawSave.Pub(msg);
+}
+
+document.getElementById("flaw_paramSave").addEventListener("click", function () {
+    Pub_Flaw_Save();
+    console.log('save');
+});
+
+document.getElementById("flaw_paramSet").addEventListener("click", function () {
+    let valueList = document.getElementsByName("flaw_pElement");
+
+    paramFlawCheckROI.Set(parseFloat(valueList[0].value));
+    paramFlawPixelRate.Set(parseFloat(valueList[1].value));
+    paramFlawSlideX.Set(parseFloat(valueList[2].value));
+    paramFlawSlideY.Set(parseFloat(valueList[3].value));
+    paramFlawSlideZ.Set(parseFloat(valueList[4].value));
+    paramFlawScoreTh.Set(parseFloat(valueList[5].value));
+    paramFlawFlawTh.Set(parseFloat(valueList[6].value));
+
+});
+
+/*========================================================*/
+/*
+    flaw test button
+ */
+/*--------------------------------------------------------*/
+
+document.getElementsByName("gomoku_tButtion")[0].addEventListener("click", function () {
+    Call_ArmControl(flaw_pHome);
+    console.log("Call Home");
+});
+
+document.getElementsByName("gomoku_tButtion")[1].addEventListener("click", function () {
+    Call_ArmControl(flaw_pCenter);
+    console.log("Call Center");
+});
+
+document.getElementsByName("gomoku_tButtion")[2].addEventListener("click", function () {
+    Call_ArmControl(flaw_pSuction);
+    console.log("Call Scuction");
+});
+
+document.getElementsByName("gomoku_tButtion")[3].addEventListener("click", function () {
+    Call_ArmControl(flaw_pFlaw);
+    console.log("Call Flaw");
+});
+
+document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", function () {
+    Call_ArmControl(flaw_pNFlaw);
+    console.log("Call NFlaw");
+});
+
+/*========================================================*/
+/*========================================================*/

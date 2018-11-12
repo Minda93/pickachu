@@ -41,7 +41,7 @@ class NodeHandle(object):
     def __init__(self):
         """ strategy """
         self.__loadParam = False
-        self.__start = 1
+        self.__start = 0
         self.__behavior = 0
         self.__isBusy = False
         self.__isGrip = False
@@ -195,9 +195,9 @@ class NodeHandle(object):
                 VacuumCmd
             )
             res = client(cmd)
-            print res
-        except rospy.ServiceException, e:
-            print "Service call (Vacuum) failed: %s" % e
+            print(res)
+        except (rospy.ServiceException, e):
+            print("Service call (Vacuum) failed: %s" % e)
 
     """ strategy """
     @property
