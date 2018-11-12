@@ -3,7 +3,7 @@
 
 import rospy
 import rospkg
-
+import copy
 from lib.nodehandle import NodeHandle
 from lib.counter import TimeCounter
 
@@ -85,7 +85,7 @@ class Strategy(object):
 
         self.__state = State.INIT.value
         self.__stepCenter = StepCenter.ITEM_CENTER.value
-        self.__stepSliding = StepSliding.GO_RIGHT.value
+        self.__stepSliding = StepSliding.GO_LTOP.value
         # self.__state = State.INIT.value
         self.__strategyBusy = -1
         self.__success = False
@@ -98,6 +98,7 @@ class Strategy(object):
         self.__pItemCenter = {'pos':[],'euler':[]}
         
         self.__pSliding = {'pos':[],'euler':[]}
+
         self.__slidingStep = 0
 
         self.__reSuc = 0
@@ -125,12 +126,12 @@ class Strategy(object):
                 print('Center')
                 if(self.P2P_Strategy(self.nh.pCenter)):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
-                        if(self.nh.itemCounter > self.nh.checkROI)
-                            self.__state = State.ITEM_CENTER.value
+                        # if(self.nh.itemCounter > self.nh.checkROI):
+                        self.__state = State.ITEM_CENTER.value
                     elif(self.__stepCenter == StepCenter.SUCTION.value):
-                        self.__state == State.SUCTION.value
+                        self.__state = State.SUCTION.value
                     elif(self.__stepCenter == StepCenter.BOX.value):
-                        if(nh.isGrip is True):
+                        if(self.nh.isGrip is True):
                             self.__reSuc  = 0
                             self.__state == State.DECIDE_BOX.value
                         else:
@@ -144,7 +145,7 @@ class Strategy(object):
                     self.__state = State.SLIDING.value
             
             elif(self.__state == State.SLIDING.value):
-                print('Sliding')
+                # print('Sliding')
                 if(self.Sliding_Strategy()):
                     self.__state = State.CENTER.value
                     self.__stepCenter = StepCenter.SUCTION.value
@@ -153,19 +154,19 @@ class Strategy(object):
             #########################################
             elif(self.__state == State.SUCTION.value):
                 print('suction')
-                goal_pos = self.__pItemCenter
-                goal_pos['pos'][2] = self.nh.pSuction['pos'][2]
+                goal_pos = copy.deepcopy(self.__pItemCenter)
+                goal_pos['pos'][2] = copy.deepcopy(self.nh.pSuction['pos'][2])
                 if(self.__reSuc is not 0):
                     goal_pos['euler'][0] += (2*(self.__reSuc % 2) - 1) * 20
                 if(self.P2P_Strategy(goal_pos)):
-                    nh.Suction_cmd('vacuumOn')
+                    self.nh.Suction_cmd('vacuumOn')
                     self.__state = State.CENTER.value
                     self.__stepCenter = StepCenter.DECIDE_BOX.value
                 pass
             #########################################
             elif(self.__state == State.RELEASE_SUCTION.value):
                 print('release suction')
-                nh.Suction_cmd('vacuumOff')
+                self.nh.Suction_cmd('vacuumOff')
                 self.__state = State.CENTER.value
                 self.__stepCenter = StepCenter.ITEM_CENTER.value
                 self.nh.itemCounter = 0
@@ -181,7 +182,7 @@ class Strategy(object):
                 if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
 
-            elif(self.__state == State.DECIDE_BOX.value)
+            elif(self.__state == State.DECIDE_BOX.value):
                 if(self.__flaw):
                     self.__state = State.FLAW_BOX.value
                 else:
@@ -206,10 +207,11 @@ class Strategy(object):
                 self.__success = False
 
         elif(self.__strategyBusy == 0):
-            if(self.nh.isBusy == True):
-                self.__strategyBusy = 1
-            else:
-                print("Don't get pos")
+            # if(self.nh.isBusy == True):
+            #     self.__strategyBusy = 1
+            # else:
+            #     print("Don't get pos")
+            self.__strategyBusy = 1
         else:
             if(self.nh.isBusy == False):
                 self.__strategyBusy = -1
@@ -223,7 +225,7 @@ class Strategy(object):
                 print('fuck  ',x,y)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][0]+x)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y)
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-100)
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-50)
 
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][0])
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][1])
@@ -254,22 +256,26 @@ class Strategy(object):
         #             self.__slidingStep = 1
         # return False
         ################################################################
-        
+        print('item center',self.__pItemCenter['pos'])
         if(self.__stepSliding == StepSliding.GO_LTOP.value):
-            goal_pos = self.__pItemCenter
+            goal_pos = copy.deepcopy(self.__pItemCenter)
+            print('fuck11111111',goal_pos['pos'])
             goal_pos['pos'][0] -= self.nh.slideX
             goal_pos['pos'][1] += self.nh.slideY
             goal_pos['pos'][2]  = self.nh.slideZ
+            print('fuck222222',goal_pos['pos'])
             if(self.P2P_Strategy(goal_pos)):
                 self.__stepSliding = StepSliding.GO_RTOP.value
                 self.nh.flawConuter = 0
                 self.__flaw = False
 
         elif(self.__stepSliding == StepSliding.GO_RTOP.value):
-            goal_pos = self.__pItemCenter
+            goal_pos = copy.deepcopy(self.__pItemCenter)
+            print('11111111',goal_pos)
             goal_pos['pos'][0] += self.nh.slideX
             goal_pos['pos'][1] += self.nh.slideY
             goal_pos['pos'][2]  = self.nh.slideZ
+            print('22222222',goal_pos)
             if(self.P2P_Strategy(goal_pos)):
                 if(self.nh.flawConuter >= self.nh.flawThreshold):
                     self.__stepSliding = StepSliding.GO_BACK.value
@@ -278,7 +284,7 @@ class Strategy(object):
                     self.__stepSliding = StepSliding.GO_RBOTTOM.value
 
         elif(self.__stepSliding == StepSliding.GO_RBOTTOM.value):
-            goal_pos = self.__pItemCenter
+            goal_pos = copy.deepcopy(self.__pItemCenter)
             goal_pos['pos'][0] += self.nh.slideX
             goal_pos['pos'][1] -= self.nh.slideY
             goal_pos['pos'][2]  = self.nh.slideZ
@@ -290,7 +296,7 @@ class Strategy(object):
                     self.__stepSliding = StepSliding.GO_LBOTTOM.value
 
         elif(self.__stepSliding == StepSliding.GO_LBOTTOM.value):
-            goal_pos = self.__pItemCenter
+            goal_pos = copy.deepcopy(self.__pItemCenter)
             goal_pos['pos'][0] -= self.nh.slideX
             goal_pos['pos'][1] -= self.nh.slideY
             goal_pos['pos'][2]  = self.nh.slideZ
@@ -314,8 +320,8 @@ class Strategy(object):
         x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
         y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
 
-        x_dis = (CAMERA_ROW/2)-x
-        y_dis = (CAMERA_COL/2)-y
+        y_dis = -((CAMERA_ROW/2)-x)
+        x_dis = -((CAMERA_COL/2)-y)
 
         return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
 

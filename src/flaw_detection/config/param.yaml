@@ -13,10 +13,10 @@ pNFlaw:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
 pSuction:
-  euler: [0.023, 0.1678, 179.9692]
-  pos: [250.1638, -0.0451, 563.2059]
-pixelRate: 3.59
+  euler: [57.0756, -4.6104, -175.2413]
+  pos: [-9.8251, 399.8471, 362.8767]
+pixelRate: 0.359
 score_threshold: 0.5
 slideX: 130
 slideY: 30
-slideZ: 120
+slideZ: 400

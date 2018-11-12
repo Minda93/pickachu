@@ -114,13 +114,13 @@ class NodeHandle(object):
     def Sub_Item_ROI(self,msg):
         self.__itemROI['name'] = msg.class_name
         self.__itemROI['score'] = msg.score
-        if(msg.score > self.__scoreThreshold and msg.class_name is 'defect')
+        if(msg.score > self.__scoreThreshold and msg.class_name is 'defect'):
             self.__flawConuter += 1
-            if(self.__flawConuter > self.__flawThreshold)
+            if(self.__flawConuter > self.__flawThreshold):
                 self.__flawConuter = self.__flawThreshold + 1
-        if(msg.score > self.__scoreThreshold and msg.class_name is 'metal')
+        if(msg.score > self.__scoreThreshold and msg.class_name is 'metal'):
             self.__itemCounter += 1
-            if(self.__itemCounter > self.__checkROI)
+            if(self.__itemCounter > self.__checkROI):
                 self.__itemCounter = self.__checkROI + 1
             self.__itemROI['x_min'] = msg.x_min
             self.__itemROI['x_Max'] = msg.x_Max
@@ -150,10 +150,14 @@ class NodeHandle(object):
             else:
                 self.__defectROI['name']  = msg.ROI_list[i].class_name 
                 self.__defectROI['score'] = msg.ROI_list[i].score
-                self.__defectROI['x_min'] = msg.ROI_list[i].x_min
-                self.__defectROI['x_Max'] = msg.ROI_list[i].x_Max
-                self.__defectROI['y_min'] = msg.ROI_list[i].y_min
-                self.__defectROI['y_Max'] = msg.ROI_list[i].y_Max
+                # self.__defectROI['x_min'] = msg.ROI_list[i].x_min
+                # self.__defectROI['x_Max'] = msg.ROI_list[i].x_Max
+                # self.__defectROI['y_min'] = msg.ROI_list[i].y_min
+                # self.__defectROI['y_Max'] = msg.ROI_list[i].y_Max
+                if(self.__defectROI['score'] > self.__scoreThreshold):
+                    self.__flawConuter += 1
+                    if(self.__flawConuter > self.__flawThreshold):
+                        self.__flawConuter = self.__flawThreshold + 1
 
     def Sub_Is_Grip(sefl,msg):
         self.__isGrip = msg.data
@@ -314,12 +318,11 @@ class NodeHandle(object):
     @property
     def itemROI(self):
         return self.__itemROI
-<<<<<<< HEAD
     
     @property
     def defectROI(self):
         return self.__defectROI
-=======
+
     @property
     def flawConuter(self):
         return self.__flawConuter
@@ -335,4 +338,4 @@ class NodeHandle(object):
     @flawConuter.setter
     def itemCounter(self,value):
         self.__itemCounter = value
->>>>>>> 3164f2c861734b894ab592a0a5169e31d9db55d0
+
