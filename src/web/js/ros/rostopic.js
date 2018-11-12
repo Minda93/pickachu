@@ -260,27 +260,27 @@ document.getElementById("flaw_paramSet").addEventListener("click", function () {
  */
 /*--------------------------------------------------------*/
 
-document.getElementsByName("gomoku_tButtion")[0].addEventListener("click", function () {
+document.getElementsByName("flaw_tButtion")[0].addEventListener("click", function () {
     Call_ArmControl(flaw_pHome);
     console.log("Call Home");
 });
 
-document.getElementsByName("gomoku_tButtion")[1].addEventListener("click", function () {
+document.getElementsByName("flaw_tButtion")[1].addEventListener("click", function () {
     Call_ArmControl(flaw_pCenter);
     console.log("Call Center");
 });
 
-document.getElementsByName("gomoku_tButtion")[2].addEventListener("click", function () {
+document.getElementsByName("flaw_tButtion")[2].addEventListener("click", function () {
     Call_ArmControl(flaw_pSuction);
     console.log("Call Scuction");
 });
 
-document.getElementsByName("gomoku_tButtion")[3].addEventListener("click", function () {
+document.getElementsByName("flaw_tButtion")[3].addEventListener("click", function () {
     Call_ArmControl(flaw_pFlaw);
     console.log("Call Flaw");
 });
 
-document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", function () {
+document.getElementsByName("flaw_tButtion")[4].addEventListener("click", function () {
     Call_ArmControl(flaw_pNFlaw);
     console.log("Call NFlaw");
 });

@@ -149,9 +149,12 @@ class NodeHandle(object):
 
     """ service  """
     def Arm_Cmd(self,req):
-        self.__tRobot.cmd = req.cmd
-        self.__tRobot.pos = req.pos
-        self.__tRobot.euler = req.euler
+        if(self.__tRobot.cmd == 'none'):
+            self.__tRobot.cmd = req.cmd
+            self.__tRobot.pos = req.pos
+            self.__tRobot.euler = req.euler
+        else:
+            print('busy')
 
         print(self.__tRobot.cmd,self.__tRobot.pos,self.__tRobot.euler)
         return armCmdResponse(True)
