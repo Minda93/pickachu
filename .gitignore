@@ -14,3 +14,5 @@ ecl_tools
 *.h5
 
 CATKIN_IGNORE
+
+*.pyc
