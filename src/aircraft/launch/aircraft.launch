@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <launch> 
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
-    <rosparam command="load" file="$(find flaw_detection)/config/param.yaml" ns="accupick3d/flaw_detection/"/>
+    <rosparam command="load" file="$(find aircraft)/config/param.yaml" ns="accupick3d/aircraft/"/>
     
     <node name="arm_control" pkg="arm_control" type="control.py"/>
     

@@ -28,22 +28,22 @@ class State(Enum):
         No_Flaw_box: go to Nflaw bow point
         DECIDE_BOX: 
     """
-    INIT =  0
-    MANUAL = 1
-    HOME = 2
-    CENTER = 3
-    ITEM_CENTER = 4
-    SLIDING = 5
-    SUCTION = 6
+    INIT            = 0
+    MANUAL          = 1
+    HOME            = 2
+    CENTER          = 3
+    ITEM_CENTER     = 4
+    SLIDING         = 5
+    SUCTION         = 6
     RELEASE_SUCTION = 7
-    FLAW_BOX = 8
-    NO_FLAW_BOX = 9
-    DECIDE_BOX = 10
+    FLAW_BOX        = 8
+    NO_FLAW_BOX     = 9
+    DECIDE_BOX      = 10
 
 class StepCenter(Enum):
-    ITEM_CENTER = 0
-    SUCTION     = 1
-    DECIDE_BOX  = 2
+    ITEM_CENTER     = 0
+    SUCTION         = 1
+    DECIDE_BOX      = 2
 
 class StepSliding(Enum):
     GO_LTOP        = 0
@@ -51,6 +51,8 @@ class StepSliding(Enum):
     GO_RBOTTOM     = 2
     GO_LBOTTOM     = 3
     GO_BACK        = 4
+    GO_CTOP        = 5
+    GO_CBOTOM      = 6
 
 class Strategy(object):
     r"""
@@ -124,7 +126,10 @@ class Strategy(object):
 
             elif(self.__state == State.CENTER.value):
                 print('Center')
-                if(self.P2P_Strategy(self.nh.pCenter)):
+                goal_pos = copy.deepcopy(self.nh.pCenter)
+                if(self.__stepCenter is not StepCenter.ITEM_CENTER.value):
+                    goal_pos['pos'][2] -= 450
+                if(self.P2P_Strategy(goal_pos)):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
                         # if(self.nh.itemCounter > self.nh.checkROI):
                         self.__state = State.ITEM_CENTER.value
@@ -265,9 +270,22 @@ class Strategy(object):
             goal_pos['pos'][2]  = self.nh.slideZ
             print('fuck222222',goal_pos['pos'])
             if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_RTOP.value
+                self.__stepSliding = StepSliding.GO_CTOP.value
                 self.nh.flawConuter = 0
                 self.__flaw = False
+
+        elif(self.__stepSliding == StepSliding.GO_CTOP.value):
+            goal_pos = copy.deepcopy(self.__pItemCenter)
+            print('fuck11111111',goal_pos['pos'])
+            goal_pos['pos'][1] += self.nh.slideY
+            goal_pos['pos'][2]  = self.nh.slideZ
+            print('fuck222222',goal_pos['pos'])
+            if(self.P2P_Strategy(goal_pos)):
+                if(self.nh.flawConuter >= self.nh.flawThreshold):
+                    self.__stepSliding = StepSliding.GO_BACK.value
+                    self.__flaw = True
+                else:
+                    self.__stepSliding = StepSliding.GO_RTOP.value
 
         elif(self.__stepSliding == StepSliding.GO_RTOP.value):
             goal_pos = copy.deepcopy(self.__pItemCenter)
@@ -288,6 +306,19 @@ class Strategy(object):
             goal_pos['pos'][0] += self.nh.slideX
             goal_pos['pos'][1] -= self.nh.slideY
             goal_pos['pos'][2]  = self.nh.slideZ
+            if(self.P2P_Strategy(goal_pos)):
+                if(self.nh.flawConuter >= self.nh.flawThreshold):
+                    self.__stepSliding = StepSliding.GO_BACK.value
+                    self.__flaw = True
+                else:
+                    self.__stepSliding = StepSliding.GO_CBOTOM.value
+
+        elif(self.__stepSliding == StepSliding.GO_CBOTOM.value):
+            goal_pos = copy.deepcopy(self.__pItemCenter)
+            print('fuck11111111',goal_pos['pos'])
+            goal_pos['pos'][1] -= self.nh.slideY
+            goal_pos['pos'][2]  = self.nh.slideZ
+            print('fuck222222',goal_pos['pos'])
             if(self.P2P_Strategy(goal_pos)):
                 if(self.nh.flawConuter >= self.nh.flawThreshold):
                     self.__stepSliding = StepSliding.GO_BACK.value

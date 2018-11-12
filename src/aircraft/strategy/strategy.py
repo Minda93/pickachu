@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-+
 
 import roslib
-roslib.load_manifest('flaw_detection')
+roslib.load_manifest('aircraft')
 import rospy
 
-from lib.flaw_detection import Strategy
+from lib.aircraft import Strategy
 
 
 
 def main():
-    rospy.init_node('flaw_detection', anonymous=True)
+    rospy.init_node('aircraft', anonymous=True)
     robot = Strategy()
     # 25 hz
     rate = rospy.Rate(25)
