@@ -36,7 +36,7 @@ class NodeHandle(object):
             pixelRate: 
           
             scoreThreshold: detect flaw score threshold
-            flawThreshold: calculate number of flaw threshold
+            
         get vision
             itemROI: get item center
     """
@@ -70,11 +70,8 @@ class NodeHandle(object):
 
         self.__checkROI = 5
         self.__pixelRate = 0.2
-        # self.__slideX = 130.0
-        # self.__slideY = 30.0
-        # self.__slideZ = 10      # why 130 30 10
         self.__scoreThreshold = 0.5
-        self.__flawThreshold = 50
+
         
         """ get vision """
         self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
@@ -158,7 +155,7 @@ class NodeHandle(object):
         """
         
         for i in range(len(msg.ROI_list)):
-            # print(msg.ROI_list[0].class_name)
+            print(msg.ROI_list[0].class_name)
             if(msg.ROI_list[i].score > self.__scoreThreshold):
                 self.__ROICounter[msg.ROI_list[i].class_name] += 1
 
@@ -199,34 +196,26 @@ class NodeHandle(object):
         if (rospy.has_param('accupick3d/aircraft/pSuction')):
             self.__pSuction = rospy.get_param("accupick3d/aircraft/pSuction")
         if (rospy.has_param('accupick3d/aircraft/pHead')):
-            self.__pFlaw = rospy.get_param("accupick3d/aircraft/pHead")
+            self.__pHead = rospy.get_param("accupick3d/aircraft/pHead")
         if (rospy.has_param('accupick3d/aircraft/pFront')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pFront")
+            self.__pFront = rospy.get_param("accupick3d/aircraft/pFront")
         if (rospy.has_param('accupick3d/aircraft/pLeftWing')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pLeftWing")
+            self.__pLeftWing = rospy.get_param("accupick3d/aircraft/pLeftWing")
         if (rospy.has_param('accupick3d/aircraft/pRightWing')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pRightWing")
+            self.__pRightWin = rospy.get_param("accupick3d/aircraft/pRightWing")
         if (rospy.has_param('accupick3d/aircraft/pRear')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pRear")
+            self.__pRear = rospy.get_param("accupick3d/aircraft/pRear")
         if (rospy.has_param('accupick3d/aircraft/pTail')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pTail")
+            self.__pTail = rospy.get_param("accupick3d/aircraft/pTail")
         if (rospy.has_param('accupick3d/aircraft/rollObject')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/rollObject")
+            self.__rollObject = rospy.get_param("accupick3d/aircraft/rollObject")
 
         if (rospy.has_param('accupick3d/aircraft/checkROI')):
             self.__checkROI = rospy.get_param("accupick3d/aircraft/checkROI")
         if (rospy.has_param('accupick3d/aircraft/pixelRate')):
             self.__pixelRate = rospy.get_param("accupick3d/aircraft/pixelRate")
-        # if (rospy.has_param('accupick3d/flaw_detection/slideX')):
-        #     self.__slideX = rospy.get_param("accupick3d/flaw_detection/slideX")
-        # if (rospy.has_param('accupick3d/flaw_detection/slideY')):
-        #     self.__slideY = rospy.get_param("accupick3d/flaw_detection/slideY")
-        # if (rospy.has_param('accupick3d/flaw_detection/slideZ')):
-        #     self.__slideZ = rospy.get_param("accupick3d/flaw_detection/slideZ")
         if (rospy.has_param('accupick3d/aircraft/score_threshold')):
             self.__scoreThreshold = rospy.get_param("accupick3d/aircraft/score_threshold")
-        if (rospy.has_param('accupick3d/aircraft/rollObject')):
-            self.__scoreThreshold = rospy.get_param("accupick3d/aircraft/rollObject")
 
     def Set_Param(self):
         rospy.set_param('accupick3d/aircraft/pHome', self.__pHome)
@@ -244,11 +233,7 @@ class NodeHandle(object):
 
         rospy.set_param('accupick3d/aircraft/checkROI', self.__checkROI)
         rospy.set_param('accupick3d/aircraft/pixelRate', self.__pixelRate)
-        # rospy.set_param('accupick3d/flaw_detection/slideX', self.__slideX)
-        # rospy.set_param('accupick3d/flaw_detection/slideY', self.__slideY)
-        # rospy.set_param('accupick3d/flaw_detection/slideZ', self.__slideZ)
         rospy.set_param('accupick3d/aircraft/score_threshold', self.__scoreThreshold)
-        rospy.set_param('accupick3d/aircraft/flaw_threshold', self.__flawThreshold)
 
     """ service client """
     def Arm_Contorl(self,cmd,pos_):
@@ -262,12 +247,6 @@ class NodeHandle(object):
             print("Service call failed: %s" %e)
 
     def Suction_cmd(self, cmd):
-        # suction_service = self.name + '/suction_cmd'
-        # try:
-        #     rospy.wait_for_service(suction_service, timeout=1.)
-        # except rospy.ROSException as e:
-        #     rospy.logwarn('wait_for_service timeout')
-        #     self.robot_cmd_client(cmd)
         rospy.wait_for_service('right/suction_cmd')
         try:
             client = rospy.ServiceProxy(
@@ -324,34 +303,19 @@ class NodeHandle(object):
     @property
     def pSuction(self):
         return self.__pSuction
-    # @property
-    # def pFlaw(self):
-    #     return self.__pFlaw
-    # @property
-    # def pNFlaw(self):
-    #     return self.__pNFlaw
 
     @property
     def checkROI(self):
         return self.__checkROI
+
     @property
     def pixelRate(self):
         return self.__pixelRate
-    # @property
-    # def slideX(self):
-    #     return self.__slideX
-    # @property
-    # def slideY(self):
-    #     return self.__slideY
-    # @property
-    # def slideZ(self):
-    #     return self.__slideZ
+
     @property
     def scoreThreshold(self):
         return self.__scoreThreshold
-    @property
-    def flawThreshold(self):
-        return self.__flawThreshold
+    
     @property
     def isGrip(self):
         return self.__isGrip

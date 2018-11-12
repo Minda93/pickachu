@@ -77,23 +77,15 @@ class Strategy(object):
 
         self.__state = State.INIT.value
         self.__stepCenter = StepCenter.CAM.value
-        # self.__state = State.INIT.value
         self.__strategyBusy = -1
         
         self.__success = False
         self.__camRight = False
-        # self.__itemCounter = 0
-        # self.__flawConuter = 0
-        # self.__flaw = False
         self.__ROIFail = 0
         self.__checkArrive = 0
         self.__pItemCenter = {'pos':[],'euler':[]}
         self.__ObjectName = ''
-        self.__pSliding = {'pos':[],'euler':[]}
         self.__cam_pos = {'pos':[],'euler':[]}
-        self.__slidingStep = 0
-
-        self.__reSuc = 0
     
     def Run(self):
         if(self.nh.start == True):
