@@ -53,13 +53,16 @@ class NodeHandle(object):
         self.__pFlaw = {'pos':[],'euler':[]}
         self.__pNFlaw = {'pos':[],'euler':[]}
 
-        self.__checkROI = 100
+        self.__checkROI = 50
         self.__pixelRate = 0.2
         self.__slideX = 130.0
         self.__slideY = 30.0
         self.__slideZ = 10      # why 130 30 10
         self.__scoreThreshold = 0.5
-        self.__flawThreshold = 1000
+        self.__flawThreshold = 15
+
+        self.__itemCounter = 0
+        self.__flawConuter = 0
         
         """ get vision """
         self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
@@ -109,10 +112,19 @@ class NodeHandle(object):
     def Sub_Item_ROI(self,msg):
         self.__itemROI['name'] = msg.class_name
         self.__itemROI['score'] = msg.score
-        self.__itemROI['x_min'] = msg.x_min
-        self.__itemROI['x_Max'] = msg.x_Max
-        self.__itemROI['y_min'] = msg.y_min
-        self.__itemROI['y_Max'] = msg.y_Max
+        if(msg.score > self.__scoreThreshold and msg.class_name is 'defect')
+            self.__flawConuter += 1
+            if(self.__flawConuter > self.__flawThreshold)
+                self.__flawConuter = self.__flawThreshold + 1
+        if(msg.score > self.__scoreThreshold and msg.class_name is 'metal')
+            self.__itemCounter += 1
+            if(self.__itemCounter > self.__checkROI)
+                self.__itemCounter = self.__checkROI + 1
+            self.__itemROI['x_min'] = msg.x_min
+            self.__itemROI['x_Max'] = msg.x_Max
+            self.__itemROI['y_min'] = msg.y_min
+            self.__itemROI['y_Max'] = msg.y_Max
+        
 
     def Sub_Is_Grip(sefl,msg):
         self.__isGrip = msg.data
@@ -244,7 +256,6 @@ class NodeHandle(object):
     @property
     def pNFlaw(self):
         return self.__pNFlaw
-
     @property
     def checkROI(self):
         return self.__checkROI
@@ -274,3 +285,18 @@ class NodeHandle(object):
     @property
     def itemROI(self):
         return self.__itemROI
+    @property
+    def flawConuter(self):
+        return self.__flawConuter
+    
+    @flawConuter.setter
+    def flawConuter(self,value):
+        self.__flawConuter = value
+        
+    @property
+    def itemCounter(self):
+        return self.__itemCounter
+    
+    @flawConuter.setter
+    def itemCounter(self,value):
+        self.__itemCounter = value

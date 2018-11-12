@@ -46,10 +46,11 @@ class StepCenter(Enum):
     DECIDE_BOX  = 2
 
 class StepSliding(Enum):
-    GO_RIGHT    = 0
-    GO_CENTER   = 1
-    GO_LEFT     = 2
-    GO_BACK     = 3
+    GO_LTOP        = 0
+    GO_RTOP        = 1
+    GO_RBOTTOM     = 2
+    GO_LBOTTOM     = 3
+    GO_BACK        = 4
 
 class Strategy(object):
     r"""
@@ -89,8 +90,8 @@ class Strategy(object):
         self.__strategyBusy = -1
         self.__success = False
 
-        self.__itemCounter = 0
-        self.__flawConuter = 0
+        # self.__itemCounter = 0
+        # self.__flawConuter = 0
         self.__flaw = False
 
         self.__checkArrive = 0
@@ -117,12 +118,14 @@ class Strategy(object):
                 if(self.P2P_Strategy(self.nh.pHome)):
                     self.__state = State.CENTER.value
                     self.__stepCenter = StepCenter.ITEM_CENTER.value
+                    self.nh.itemCounter = 0
 
             elif(self.__state == State.CENTER.value):
                 print('Center')
                 if(self.P2P_Strategy(self.nh.pCenter)):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
-                        self.__state = State.ITEM_CENTER.value
+                        if(self.nh.itemCounter > self.nh.checkROI)
+                            self.__state = State.ITEM_CENTER.value
                     elif(self.__stepCenter == StepCenter.SUCTION.value):
                         self.__state == State.SUCTION.value
                     elif(self.__stepCenter == StepCenter.BOX.value):
@@ -136,6 +139,7 @@ class Strategy(object):
             elif(self.__state == State.ITEM_CENTER.value):
                 print('Item Center')
                 if(self.Item_Center_Strategy()):
+                    self.__flawConuter = 0
                     self.__state = State.SLIDING.value
             
             elif(self.__state == State.SLIDING.value):
@@ -163,6 +167,7 @@ class Strategy(object):
                 nh.Suction_cmd('vacuumOff')
                 self.__state = State.CENTER.value
                 self.__stepCenter = StepCenter.ITEM_CENTER.value
+                self.nh.itemCounter = 0
                 pass
                     
             elif(self.__state == State.FLAW_BOX.value):
@@ -174,6 +179,12 @@ class Strategy(object):
                 print('NFlaw box')
                 if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
+
+            elif(self.__state == State.DECIDE_BOX.value)
+                if(self.__flaw):
+                    self.__state = State.FLAW_BOX.value
+                else:
+                    self.__state = State.NO_FLAW_BOX.value
 
             elif(self.__state == State.MANUAL.value):
                 print('Manual')
@@ -227,45 +238,69 @@ class Strategy(object):
         return False
     
     def Sliding_Strategy(self):
-        if(self.__slidingStep == 0):
-            if(len(self.__pSliding['pos']) == 0):
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][0])
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][1])
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][2]+self.nh.slideZ)
+        # if(self.__slidingStep == 0):
+        #     if(len(self.__pSliding['pos']) == 0):
+        #         self.__pSliding['pos'].append(self.__pItemCenter['pos'][0])
+        #         self.__pSliding['pos'].append(self.__pItemCenter['pos'][1])
+        #         self.__pSliding['pos'].append(self.__pItemCenter['pos'][2]+self.nh.slideZ)
 
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][0])
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][1])
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][2])
-            elif(len(self.__pItemCenter['pos']) != 0):
-                if(self.P2P_Strategy(self.__pItemCenter)):
-                    self.__slidingStep = 1
+        #         self.__pSliding['euler'].append(self.__pItemCenter['euler'][0])
+        #         self.__pSliding['euler'].append(self.__pItemCenter['euler'][1])
+        #         self.__pSliding['euler'].append(self.__pItemCenter['euler'][2])
+        #     elif(len(self.__pItemCenter['pos']) != 0):
+        #         if(self.P2P_Strategy(self.__pItemCenter)):
+        #             self.__slidingStep = 1
         # return False
         ################################################################
-        if(self.__stepSliding == StepSliding.GO_RIGHT.value):
+        
+        if(self.__stepSliding == StepSliding.GO_LTOP.value):
+            goal_pos = self.__pItemCenter
+            goal_pos['pos'][0] -= self.nh.slideX
+            goal_pos['pos'][1] += self.nh.slideY
+            goal_pos['pos'][2]  = self.nh.slideZ
+            if(self.P2P_Strategy(goal_pos)):
+                self.__stepSliding = StepSliding.GO_RTOP.value
+                self.nh.flawConuter = 0
+                self.__flaw = False
+
+        elif(self.__stepSliding == StepSliding.GO_RTOP.value):
             goal_pos = self.__pItemCenter
             goal_pos['pos'][0] += self.nh.slideX
             goal_pos['pos'][1] += self.nh.slideY
-            goal_pos['pos'][2] += self.nh.slideZ
+            goal_pos['pos'][2]  = self.nh.slideZ
             if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_CENTER.value
+                if(self.nh.flawConuter >= self.nh.flawThreshold):
+                    self.__stepSliding = StepSliding.GO_BACK.value
+                    self.__flaw = True
+                else:
+                    self.__stepSliding = StepSliding.GO_RBOTTOM.value
 
-        elif(self.__stepSliding == StepSliding.GO_CENTER.value):
+        elif(self.__stepSliding == StepSliding.GO_RBOTTOM.value):
             goal_pos = self.__pItemCenter
-            goal_pos['pos'][2] += self.nh.slideZ
+            goal_pos['pos'][0] += self.nh.slideX
+            goal_pos['pos'][1] -= self.nh.slideY
+            goal_pos['pos'][2]  = self.nh.slideZ
             if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_LEFT.value
+                if(self.nh.flawConuter >= self.nh.flawThreshold):
+                    self.__stepSliding = StepSliding.GO_BACK.value
+                    self.__flaw = True
+                else:
+                    self.__stepSliding = StepSliding.GO_LBOTTOM.value
 
-        elif(self.__stepSliding == StepSliding.GO_LEFT.value):
+        elif(self.__stepSliding == StepSliding.GO_LBOTTOM.value):
             goal_pos = self.__pItemCenter
             goal_pos['pos'][0] -= self.nh.slideX
             goal_pos['pos'][1] -= self.nh.slideY
-            goal_pos['pos'][2] += self.nh.slideZ
+            goal_pos['pos'][2]  = self.nh.slideZ
             if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_BACK.value
-                
+                if(self.nh.flawConuter >= self.nh.flawThreshold):
+                    self.__flaw = True
+                else:
+                    self.__stepSliding = StepSliding.GO_BACK.value
+
         elif(self.__stepSliding == StepSliding.GO_BACK.value):
             if(self.P2P_Strategy(self.__pItemCenter)):
-                self.__stepSliding = StepSliding.GO_RIGHT.value
+                self.__stepSliding = StepSliding.GO_LTOP.value
                 return True
         return False
 
@@ -280,7 +315,7 @@ class Strategy(object):
         x_dis = (CAMERA_ROW/2)-x
         y_dis = (CAMERA_COL/2)-y
 
-        return x_dis*self.nh.pixelRate,y_dis*self.nh.pixelRate
+        return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
 
     def Delay(self,time):
         """ second """
