@@ -1,24 +1,22 @@
-checkROI: 100
-euler: [0, 0, 0]
-flaw_threshold: 1000
+checkROI: 20
+flaw_threshold: 20
 pCenter:
-  euler: [0, 0, 0]
-  pos: [0, 0, 0]
+  euler: [57, 0.0286, -176.6937]
+  pos: [-10, 400.1255, 549.6079]
 pFlaw:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
 pHome:
-  euler: [0, 0, 0]
-  pos: [12, 0, 0]
+  euler: [0.0156, 0.1352, 179.9712]
+  pos: [250.1909, -0.0388, 563.3216]
 pNFlaw:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
 pSuction:
-  euler: [0, 0, 0]
-  pos: [0, 0, 0]
-pixelRate: 0.2
-pos: [12, 0, 0]
+  euler: [0.023, 0.1678, 179.9692]
+  pos: [250.1638, -0.0451, 563.2059]
+pixelRate: 3.59
 score_threshold: 0.5
 slideX: 130
 slideY: 30
-slideZ: 10
+slideZ: 120

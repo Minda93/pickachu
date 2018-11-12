@@ -31,7 +31,7 @@ const GetPos = async (name) => {
         str = param.data.split(":");
 
         let obj = document.getElementsByName(name);
-        if (str[0] == 'Pos') {
+        if (str[0] == 'GetPos') {
             for (let i = 1; i < str.length; i++) {
                 obj[i - 1].value = str[i];
             }
@@ -47,7 +47,7 @@ const GetPos_Board = async (name, i) => {
         const param = await topicMsgString.Sub();
         str = param.data.split(":");
 
-        if (str[0] == 'Pos') {
+        if (str[0] == 'GetPos') {
             switch (name) {
                 case 'board1':
                     gomoku_pBoard_1[i].pos[0] = parseFloat(str[1]);

@@ -75,6 +75,8 @@ class ArmCmd(object):
             else:
                 if(self.__isBusy == False):
                     self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
+                    self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
+                    self.nh.Pub_DataPos(self.nh.tRobot.pos,self.nh.tRobot.euler)
                     self.__isBusy = True
                 print('p2p: not this point')
         else:

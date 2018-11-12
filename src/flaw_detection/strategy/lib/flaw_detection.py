@@ -82,7 +82,7 @@ class Strategy(object):
     def __init__(self):
         self.nh = NodeHandle()
 
-        self.__state = State.ITEM_CENTER.value
+        self.__state = State.INIT.value
         self.__stepCenter = StepCenter.ITEM_CENTER.value
         self.__stepSliding = StepSliding.GO_RIGHT.value
         # self.__state = State.INIT.value
@@ -114,6 +114,7 @@ class Strategy(object):
 
             elif(self.__state == State.HOME.value):
                 print('Home') 
+                print(self.nh.pHome['pos'],self.nh.pHome['euler'])
                 if(self.P2P_Strategy(self.nh.pHome)):
                     self.__state = State.CENTER.value
                     self.__stepCenter = StepCenter.ITEM_CENTER.value
@@ -134,7 +135,7 @@ class Strategy(object):
                             self.__state == State.SUCTION.value
             
             elif(self.__state == State.ITEM_CENTER.value):
-                print('Item Center')
+                # print('Item Center')
                 if(self.Item_Center_Strategy()):
                     self.__state = State.SLIDING.value
             
@@ -189,7 +190,7 @@ class Strategy(object):
     def P2P_Strategy(self,location):
         if(self.__strategyBusy == -1):
             self.__success = self.nh.Arm_Contorl('p2p',location)
-            if(self.__success):
+            if(self.__success == True):
                 self.__strategyBusy = 0
                 self.__success = False
 
@@ -208,18 +209,19 @@ class Strategy(object):
         if(self.__checkArrive >= self.nh.checkROI):
             if(self.nh.itemROI['name'] == 'metal' and len(self.__pItemCenter['pos']) == 0):
                 x,y = self.Pixel_To_mm()
-                
+                print('fuck  ',x,y)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][0]+x)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y)
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2])
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-100)
 
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][0])
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][1])
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][2])
 
             elif(len(self.__pItemCenter['pos']) != 0):
+                print('fuck!!!!!!!!!')
                 return self.P2P_Strategy(self.__pItemCenter)
-                    
+                
         else:
             if(self.nh.itemROI['name'] == 'metal'):
                 if(self.nh.itemROI['score'] >= self.nh.scoreThreshold):

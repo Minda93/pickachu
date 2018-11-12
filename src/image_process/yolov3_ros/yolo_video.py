@@ -152,7 +152,7 @@ def callback(data):
 
 FLAGS = None
 rospy.init_node('image_converter', anonymous=True)
-roi_array_pub = rospy.Publisher("/object/roi_array_pub",ROI_array,queue_size=10)
+roi_array_pub = rospy.Publisher("/object/ROI_array",ROI_array,queue_size=10)
 suckpoint_pub = rospy.Publisher("/object/suckpoint",Suck_point,queue_size=10)
 resultimg_pub = rospy.Publisher("/object/result_img",Image_ros,queue_size=10)
 

@@ -66,7 +66,7 @@ void NodeHandle::Init_Param()
 
   for (int i = 0; i < 6; i++)
   {
-    errorPos.push_back(0.01);
+    errorPos.push_back(1.0);
   }
   Load_Param();
 }
@@ -188,7 +188,7 @@ void NodeHandle::Sub_RobotPos(const std_msgs::String msg)
       rAction += msg.data[i];
     }
   }
-  if (rAction == "Pos")
+  if (rAction == "GetPos")
   {
     int j = 0;
     for (int i = 4; i < msg.data.size(); i++)

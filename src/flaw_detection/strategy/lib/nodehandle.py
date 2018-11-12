@@ -10,6 +10,7 @@ import subprocess
 from std_msgs.msg import Bool,Int32
 from geometry_msgs.msg import Twist
 from flaw_detection.msg import ROI
+from yolov3_ros.msg import ROI_array
 """ ros service lib """
 from arm_control.srv import armCmd,armCmdResponse
 
@@ -63,7 +64,7 @@ class NodeHandle(object):
         
         """ get vision """
         self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
-        
+        self.__defectROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
         """ topic pub """
 
         """ topic sub """
@@ -73,7 +74,8 @@ class NodeHandle(object):
         rospy.Subscriber("flaw_detection/behavior_state",Int32,self.Sub_Behavior)
         rospy.Subscriber("/accupick3d/is_busy",Bool,self.Sub_Is_Busy)
 
-        rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
+        # rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
+        rospy.Subscriber("/object/ROI_array",ROI_array,self.Sub_Item_ROI_Array)
         rospy.Subscriber('right/is_grip',Bool,self.Sub_Is_Grip)
 
         self.Load_Param()
@@ -114,12 +116,39 @@ class NodeHandle(object):
         self.__itemROI['y_min'] = msg.y_min
         self.__itemROI['y_Max'] = msg.y_Max
 
+    def Sub_Item_ROI_Array(self,msg):
+        """
+            msg.ROS_list[i].class_name
+            msg.ROS_list[i].score
+            msg.ROS_list[i].x_min
+            msg.ROS_list[i].x_Max
+            msg.ROS_list[i].y_min
+            msg.ROS_list[i].y_Max  
+        """
+        
+        for i in range(len(msg.ROI_list)):
+            # print(msg.ROI_list[0].class_name)
+            if(msg.ROI_list[i].class_name == 'metal'):
+                self.__itemROI['name']  = msg.ROI_list[i].class_name 
+                self.__itemROI['score'] = msg.ROI_list[i].score
+                self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+            else:
+                self.__defectROI['name']  = msg.ROI_list[i].class_name 
+                self.__defectROI['score'] = msg.ROI_list[i].score
+                self.__defectROI['x_min'] = msg.ROI_list[i].x_min
+                self.__defectROI['x_Max'] = msg.ROI_list[i].x_Max
+                self.__defectROI['y_min'] = msg.ROI_list[i].y_min
+                self.__defectROI['y_Max'] = msg.ROI_list[i].y_Max
+
     def Sub_Is_Grip(sefl,msg):
         self.__isGrip = msg.data
 
     """ save param """
     def Save_Param(self,msg):
-        self.Set_Param()
+        # self.Set_Param()
         if (rospy.has_param('accupick3d/flaw_detection')):
             print('dump')
             subprocess.call(['rosparam','dump',FILENAME,'/accupick3d/flaw_detection'])
@@ -274,3 +303,7 @@ class NodeHandle(object):
     @property
     def itemROI(self):
         return self.__itemROI
+    
+    @property
+    def defectROI(self):
+        return self.__defectROI

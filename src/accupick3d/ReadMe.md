@@ -21,7 +21,7 @@ rostopic pub /accupick3d/cmdString std_msgs/String "{data: 'HomePos:'}"
 #Rebot Get Position data
 rostopic pub /accupick3d/cmdString std_msgs/String "{data: 'GetPos:'}"
 ### Feed back ROS topics message /accupick3d/msgString  "Pos:x:y:z:ax:ay:az"
-# for example  Pos:100:200:300:180:0:0
+# for example  GetPos:100:200:300:180:0:0
 rostopic echo /accupick3d/msgString
 
 #Robot I/O Setting pinno low

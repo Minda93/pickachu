@@ -54,7 +54,7 @@ class NodeHandle(object):
         # self.__robot.pos = []
         # self.__robot.euler = []
 
-        self.__error = [0.01,0.01,0.01,0.01,0.01,0.01]
+        self.__error = [1.0,1.0,1.0,1.0,1.0,1.0]
 
         """ pub """
         self.pubCmdString  = rospy.Publisher('/accupick3d/cmdString',String, queue_size = 1)
@@ -133,7 +133,7 @@ class NodeHandle(object):
     def Sub_RobotCmd(self,msg):
         data_ = msg.data.split(':')
         
-        if(data_[0] == 'Pos'):
+        if(data_[0] == 'GetPos'):
             if(len(self.__robot.pos) != 0):
                 self.__robot.pos = []
                 self.__robot.euler = []
