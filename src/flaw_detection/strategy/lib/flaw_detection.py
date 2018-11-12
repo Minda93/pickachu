@@ -133,15 +133,16 @@ class Strategy(object):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
                         # if(self.nh.itemCounter > self.nh.checkROI):
                         self.__state = State.ITEM_CENTER.value
+                        self.__pItemCenter = {'pos':[],'euler':[]}  #####
                     elif(self.__stepCenter == StepCenter.SUCTION.value):
                         self.__state = State.SUCTION.value
                     elif(self.__stepCenter == StepCenter.BOX.value):
                         if(self.nh.isGrip is True):
                             self.__reSuc  = 0
-                            self.__state == State.DECIDE_BOX.value
+                            self.__state = State.DECIDE_BOX.value
                         else:
                             self.__reSuc += 1
-                            self.__state == State.SUCTION.value
+                            self.__state = State.SUCTION.value
             
             elif(self.__state == State.ITEM_CENTER.value):
                 # print('Item Center')

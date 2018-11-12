@@ -26,7 +26,9 @@ class NodeHandle(object):
             isBusy
         param
             pHome: home point
-            pCenter:  above item point
+            pCenter:    above item point
+            pObject:    set model place pos and orientation
+            rollObject: set model roll of "picking" 
             
 
             checkROI: 
@@ -45,18 +47,28 @@ class NodeHandle(object):
         self.__behavior = 0
         self.__isBusy = False
         self.__isGrip = False
+        self.__ROISuccess = False
 
         """ define param """
         self.__pHome = {'pos':[],'euler':[]}
         self.__pCenter = {'pos':[],'euler':[]}
+        self.__pCamRight = {'pos':[],'euler':[]}
+        self.__pCamLeft = {'pos':[],'euler':[]}
         self.__pSuction = {'pos':[],'euler':[]}
         self.__pHead = {'pos':[],'euler':[]}
-        self.__pMiddle = {'pos':[],'euler':[]}
+        self.__pFront = {'pos':[],'euler':[]}
         self.__pLeftWing = {'pos':[],'euler':[]}
         self.__pRightWing = {'pos':[],'euler':[]}
+        self.__pRear = {'pos':[],'euler':[]}
         self.__pTail = {'pos':[],'euler':[]}
+        self.__pObject = {'Head':self.__pHead,'Front':self.__pFront,'LeftWing':self.__pLeftWing,\
+                        'RightWing':self.__pRightWing,'Rear':self.__pRear,'Tail':self.__pTail}
 
-        self.__checkROI = 50
+        self.__rollObject = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+
+        self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+
+        self.__checkROI = 5
         self.__pixelRate = 0.2
         # self.__slideX = 130.0
         # self.__slideY = 30.0
@@ -89,20 +101,29 @@ class NodeHandle(object):
         self.__pCenter['pos'] = [0.0,0.0,0.0]
         self.__pCenter['euler'] = [0.0,0.0,0.0]
 
+        self.__pCamLeft['pos'] = [0.0,0.0,0.0]
+        self.__pCamLeft['euler'] = [0.0,0.0,0.0]
+
+        self.__pCamRight['pos'] = [0.0,0.0,0.0]
+        self.__pCamRight['euler'] = [0.0,0.0,0.0]
+
         self.__pSuction['pos'] = [0.0,0.0,0.0]
         self.__pSuction['euler'] = [0.0,0.0,0.0]
 
         self.__pHead['pos'] = [0.0,0.0,0.0]
         self.__pHead['euler'] = [0.0,0.0,0.0]
 
-        self.__pMiddle['pos'] = [0.0,0.0,0.0]
-        self.__pMiddle['euler'] = [0.0,0.0,0.0]
+        self.__pFront['pos'] = [0.0,0.0,0.0]
+        self.__pFront['euler'] = [0.0,0.0,0.0]
 
         self.__pLeftWing['pos'] = [0.0,0.0,0.0]
         self.__pLeftWing['euler'] = [0.0,0.0,0.0]
 
         self.__pRightWing['pos'] = [0.0,0.0,0.0]
         self.__pRightWing['euler'] = [0.0,0.0,0.0]
+
+        self.__pRear['pos'] = [0.0,0.0,0.0]
+        self.__pRear['euler'] = [0.0,0.0,0.0]
 
         self.__pTail['pos'] = [0.0,0.0,0.0]
         self.__pTail['euler'] = [0.0,0.0,0.0]
@@ -138,30 +159,19 @@ class NodeHandle(object):
         
         for i in range(len(msg.ROI_list)):
             # print(msg.ROI_list[0].class_name)
-            self.__itemROI['name']  = msg.ROI_list[i].class_name 
-            self.__itemROI['score'] = msg.ROI_list[i].score
-            self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-            self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-            self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-            self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-            # if(msg.ROI_list[i].class_name == 'metal'):
-            #     self.__itemROI['name']  = msg.ROI_list[i].class_name 
-            #     self.__itemROI['score'] = msg.ROI_list[i].score
-            #     self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-            #     self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-            #     self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-            #     self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-            # else:
-            #     self.__defectROI['name']  = msg.ROI_list[i].class_name 
-            #     self.__defectROI['score'] = msg.ROI_list[i].score
-            #     # self.__defectROI['x_min'] = msg.ROI_list[i].x_min
-            #     # self.__defectROI['x_Max'] = msg.ROI_list[i].x_Max
-            #     # self.__defectROI['y_min'] = msg.ROI_list[i].y_min
-            #     # self.__defectROI['y_Max'] = msg.ROI_list[i].y_Max
-            #     if(self.__defectROI['score'] > self.__scoreThreshold):
-            #         self.__flawConuter += 1
-            #         if(self.__flawConuter > self.__flawThreshold):
-            #             self.__flawConuter = self.__flawThreshold + 1
+            if(msg.ROI_list[i].score > self.__scoreThreshold):
+                self.__ROICounter[msg.ROI_list[i].class_name] += 1
+
+            if(self.__ROICounter[self.__itemROI['name']] > self.checkROI):
+                self.__ROISuccess = True
+                self.__itemROI['name']  = msg.ROI_list[i].class_name 
+                self.__itemROI['score'] = msg.ROI_list[i].score
+                self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+                break
 
     def Sub_Is_Grip(sefl,msg):
         self.__isGrip = msg.data
@@ -182,18 +192,26 @@ class NodeHandle(object):
             self.__pHome = rospy.get_param("accupick3d/aircraft/pHome")
         if (rospy.has_param('accupick3d/aircraft/pCenter')):
             self.__pCenter = rospy.get_param("accupick3d/aircraft/pCenter")
+        if (rospy.has_param('accupick3d/aircraft/pCamRight')):
+            self.__pCamRight = rospy.get_param("accupick3d/aircraft/pCamRight")
+        if (rospy.has_param('accupick3d/aircraft/pCamLeft')):
+            self.__pCamLeft = rospy.get_param("accupick3d/aircraft/pCamLeft")
         if (rospy.has_param('accupick3d/aircraft/pSuction')):
             self.__pSuction = rospy.get_param("accupick3d/aircraft/pSuction")
         if (rospy.has_param('accupick3d/aircraft/pHead')):
             self.__pFlaw = rospy.get_param("accupick3d/aircraft/pHead")
-        if (rospy.has_param('accupick3d/aircraft/pMiddle')):
-            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pMiddle")
+        if (rospy.has_param('accupick3d/aircraft/pFront')):
+            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pFront")
         if (rospy.has_param('accupick3d/aircraft/pLeftWing')):
             self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pLeftWing")
         if (rospy.has_param('accupick3d/aircraft/pRightWing')):
             self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pRightWing")
+        if (rospy.has_param('accupick3d/aircraft/pRear')):
+            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pRear")
         if (rospy.has_param('accupick3d/aircraft/pTail')):
             self.__pNFlaw = rospy.get_param("accupick3d/aircraft/pTail")
+        if (rospy.has_param('accupick3d/aircraft/rollObject')):
+            self.__pNFlaw = rospy.get_param("accupick3d/aircraft/rollObject")
 
         if (rospy.has_param('accupick3d/aircraft/checkROI')):
             self.__checkROI = rospy.get_param("accupick3d/aircraft/checkROI")
@@ -207,18 +225,22 @@ class NodeHandle(object):
         #     self.__slideZ = rospy.get_param("accupick3d/flaw_detection/slideZ")
         if (rospy.has_param('accupick3d/aircraft/score_threshold')):
             self.__scoreThreshold = rospy.get_param("accupick3d/aircraft/score_threshold")
-        if (rospy.has_param('accupick3d/aircraft/flaw_threshold')):
-            self.__flawThreshold = rospy.get_param("accupick3d/aircraft/flaw_threshold")
+        if (rospy.has_param('accupick3d/aircraft/rollObject')):
+            self.__scoreThreshold = rospy.get_param("accupick3d/aircraft/rollObject")
 
     def Set_Param(self):
         rospy.set_param('accupick3d/aircraft/pHome', self.__pHome)
         rospy.set_param('accupick3d/aircraft/pCenter', self.__pCenter)
+        rospy.set_param('accupick3d/aircraft/pCamRight', self.__pCamRight)
+        rospy.set_param('accupick3d/aircraft/pCamLeft', self.__pCamLeft)
         rospy.set_param('accupick3d/aircraft/pSuction', self.__pSuction)
         rospy.set_param('accupick3d/aircraft/pHead', self.__pHead)
-        rospy.set_param('accupick3d/aircraft/pMiddle', self.__pMiddle)
+        rospy.set_param('accupick3d/aircraft/pFront', self.__pFront)
         rospy.set_param('accupick3d/aircraft/pLeftWing', self.__pLeftWing)
         rospy.set_param('accupick3d/aircraft/pRightWing', self.__pRightWing)
+        rospy.set_param('accupick3d/aircraft/pRear', self.__pRear)
         rospy.set_param('accupick3d/aircraft/pTail', self.__pTail)
+        rospy.set_param('accupick3d/aircraft/rollObject', self.__rollObject)
 
         rospy.set_param('accupick3d/aircraft/checkROI', self.__checkROI)
         rospy.set_param('accupick3d/aircraft/pixelRate', self.__pixelRate)
@@ -294,6 +316,12 @@ class NodeHandle(object):
     def pCenter(self):
         return self.__pCenter
     @property
+    def pCamRight(self):
+        return self.__pCamRight
+    @property
+    def pCamLeft(self):
+        return self.__pCamLeft
+    @property
     def pSuction(self):
         return self.__pSuction
     # @property
@@ -337,8 +365,8 @@ class NodeHandle(object):
         return self.__pLeftWing
     
     @property
-    def pMiddle(self):
-        return self.__pMiddle
+    def pFront(self):
+        return self.__pFront
     
     @property
     def pRightWing(self):
@@ -347,8 +375,23 @@ class NodeHandle(object):
     @property
     def pTail(self):
         return self.__pTail
+    @property
+    def pObject(self):
+        return self.__pObject
+
+    @property
+    def rollObject(self):
+        return self.__rollObject
 
     """ vision """
     @property
     def itemROI(self):
         return self.__itemROI
+
+    @property
+    def ROISuccess(self):
+        return self.__ROISuccess
+    
+    @ROISuccess.setter
+    def ROISuccess(self,value):
+        self.__ROISuccess = value

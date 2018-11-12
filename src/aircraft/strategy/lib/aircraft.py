@@ -3,7 +3,7 @@
 
 import rospy
 import rospkg
-
+import copy
 from lib.nodehandle import NodeHandle
 from lib.counter import TimeCounter
 
@@ -28,28 +28,21 @@ class State(Enum):
         No_Flaw_box: go to Nflaw bow point
         DECIDE_BOX: 
     """
-    INIT =  0
-    MANUAL = 1
-    HOME = 2
-    CENTER = 3
-    ITEM_CENTER = 4
-    SLIDING = 5
-    SUCTION = 6
-    RELEASE_SUCTION = 7
-    FLAW_BOX = 8
-    NO_FLAW_BOX = 9
-    DECIDE_BOX = 10
+    INIT            = 0
+    MANUAL          = 1
+    HOME            = 2
+    CENTER          = 3
+    CAM             = 4
+    CAMLEFT         = 5
+    ITEM_CENTER     = 6
+    SUCTION         = 7
+    PLACE           = 8
+    RELEASE_SUCTION = 9
+    DECIDE_PLACE    = 10
 
 class StepCenter(Enum):
-    ITEM_CENTER = 0
-    SUCTION     = 1
-    DECIDE_BOX  = 2
-
-class StepSliding(Enum):
-    GO_RIGHT    = 0
-    GO_CENTER   = 1
-    GO_LEFT     = 2
-    GO_BACK     = 3
+    CAM             = 0
+    DECIDE_PLACE    = 1
 
 class Strategy(object):
     r"""
@@ -82,21 +75,22 @@ class Strategy(object):
     def __init__(self):
         self.nh = NodeHandle()
 
-        self.__state = State.ITEM_CENTER.value
-        self.__stepCenter = StepCenter.ITEM_CENTER.value
-        self.__stepSliding = StepSliding.GO_RIGHT.value
+        self.__state = State.INIT.value
+        self.__stepCenter = StepCenter.CAM.value
         # self.__state = State.INIT.value
         self.__strategyBusy = -1
+        
         self.__success = False
-
-        self.__itemCounter = 0
-        self.__flawConuter = 0
-        self.__flaw = False
-
+        self.__camRight = False
+        # self.__itemCounter = 0
+        # self.__flawConuter = 0
+        # self.__flaw = False
+        self.__ROIFail = 0
         self.__checkArrive = 0
         self.__pItemCenter = {'pos':[],'euler':[]}
-        
+        self.__ObjectName = ''
         self.__pSliding = {'pos':[],'euler':[]}
+        self.__cam_pos = {'pos':[],'euler':[]}
         self.__slidingStep = 0
 
         self.__reSuc = 0
@@ -114,66 +108,89 @@ class Strategy(object):
 
             elif(self.__state == State.HOME.value):
                 print('Home') 
+                print(self.nh.pHome['pos'],self.nh.pHome['euler'])
                 if(self.P2P_Strategy(self.nh.pHome)):
                     self.__state = State.CENTER.value
-                    self.__stepCenter = StepCenter.ITEM_CENTER.value
+                    self.__stepCenter = StepCenter.CAM.value
+                    self.nh.itemCounter = 0
 
             elif(self.__state == State.CENTER.value):
                 print('Center')
                 if(self.P2P_Strategy(self.nh.pCenter)):
-                    if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
-                        self.__state = State.ITEM_CENTER.value
-                    elif(self.__stepCenter == StepCenter.SUCTION.value):
-                        self.__state == State.SUCTION.value
-                    elif(self.__stepCenter == StepCenter.BOX.value):
-                        if(nh.isGrip is True):
-                            self.__reSuc  = 0
-                            self.__state == State.DECIDE_BOX.value
+                    if(self.__stepCenter == StepCenter.CAM.value):
+                        self.__state = State.CAM.value
+                    elif(self.__stepCenter == StepCenter.DECIDE_PLACE.value):
+                        if(self.nh.isGrip is True):
+                            self.__state = State.DECIDE_PLACE.value
                         else:
-                            self.__reSuc += 1
-                            self.__state == State.SUCTION.value
-            
+                            self.__stepCenter = StepCenter.CAM.value
+
+            elif(self.__state == State.CAM.value):
+                if(self.__camRight):
+                    print('CAM_RIGHT')
+                    self.__cam_pos = copy.deepcopy(self.nh.pCamRight)
+                else:
+                    print('CAM_LEFT')
+                    self.__cam_pos = copy.deepcopy(self.nh.pCamLeft)
+                if(self.P2P_Strategy(self.__cam_pos)):
+                    self.__state = State.ITEM_CENTER.value
+                    self.__pItemCenter = {'pos':[],'euler':[]}
+
             elif(self.__state == State.ITEM_CENTER.value):
                 print('Item Center')
+                if(self.__ROIFail > 1000):
+                    self.__ROIFail = 0
+                    self.__camRight = not self.__camRight
+                    self.__state = State.CAM.value
                 if(self.Item_Center_Strategy()):
-                    self.__state = State.SLIDING.value
-            
-            elif(self.__state == State.SLIDING.value):
-                print('Sliding')
-                if(self.Sliding_Strategy()):
-                    self.__state = State.CENTER.value
-                    self.__stepCenter = StepCenter.SUCTION.value
-                pass
-            
+                    self.__camRight = not self.__camRight
+                    self.__state = State.SUCTION.value
+                    self.nh.Suction_cmd('vacuumOn')
+
             #########################################
             elif(self.__state == State.SUCTION.value):
                 print('suction')
-                goal_pos = self.__pItemCenter
-                goal_pos['pos'][2] = self.nh.pSuction['pos'][2]
-                if(self.__reSuc is not 0):
-                    goal_pos['euler'][0] += (2*(self.__reSuc % 2) - 1) * 20
+                goal_pos = copy.deepcopy(self.__pItemCenter)
+                goal_pos['pos'][2] = copy.deepcopy(self.nh.pSuction['pos'][2])
                 if(self.P2P_Strategy(goal_pos)):
-                    nh.Suction_cmd('vacuumOn')
                     self.__state = State.CENTER.value
-                    self.__stepCenter = StepCenter.DECIDE_BOX.value
+                    self.__stepCenter = StepCenter.DECIDE_PLACE.value
                 pass
+
             #########################################
             elif(self.__state == State.RELEASE_SUCTION.value):
                 print('release suction')
-                nh.Suction_cmd('vacuumOff')
-                self.__state = State.CENTER.value
-                self.__stepCenter = StepCenter.ITEM_CENTER.value
+                self.nh.Suction_cmd('vacuumOff')
+                self.__state = State.DECIDE_PLACE.value
+                self.__stepCenter = StepCenter.CAM.value
+                self.nh.itemCounter = 0
                 pass
                     
-            elif(self.__state == State.FLAW_BOX.value):
-                print('Flaw box')
-                if(self.P2P_Strategy(self.nh.pFlaw)):
+            elif(self.__state == State.DECIDE_PLACE.value):
+                print(self.__ObjectName)
+                goal_pos = copy.deepcopy(self.nh.pObject[self.__ObjectName])
+                goal_pos['pos'][2] += 100
+                if(self.P2P_Strategy(goal_pos)):
+                    if(self.nh.isGrip is True):
+                        self.__state = State.PLACE.value
+                    else:
+                        self.__state = State.CENTER.value
+
+            elif(self.__state == State.PLACE.value):
+                print('PLACE')
+                if(self.P2P_Strategy(self.nh.pObject[self.__ObjectName])):
                     self.__state = State.RELEASE_SUCTION.value
 
             elif(self.__state == State.NO_FLAW_BOX.value):
                 print('NFlaw box')
                 if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
+
+            elif(self.__state == State.DECIDE_BOX.value):
+                if(self.__flaw):
+                    self.__state = State.FLAW_BOX.value
+                else:
+                    self.__state = State.NO_FLAW_BOX.value
 
             elif(self.__state == State.MANUAL.value):
                 print('Manual')
@@ -189,15 +206,16 @@ class Strategy(object):
     def P2P_Strategy(self,location):
         if(self.__strategyBusy == -1):
             self.__success = self.nh.Arm_Contorl('p2p',location)
-            if(self.__success):
+            if(self.__success == True):
                 self.__strategyBusy = 0
                 self.__success = False
 
         elif(self.__strategyBusy == 0):
-            if(self.nh.isBusy == True):
-                self.__strategyBusy = 1
-            else:
-                print("Don't get pos")
+            # if(self.nh.isBusy == True):
+            #     self.__strategyBusy = 1
+            # else:
+            #     print("Don't get pos")
+            self.__strategyBusy = 1
         else:
             if(self.nh.isBusy == False):
                 self.__strategyBusy = -1
@@ -205,68 +223,23 @@ class Strategy(object):
         return False
     
     def Item_Center_Strategy(self):
-        if(self.__checkArrive >= self.nh.checkROI):
-            if(self.nh.itemROI['name'] == 'metal' and len(self.__pItemCenter['pos']) == 0):
-                x,y = self.Pixel_To_mm()
-                
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][0]+x)
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y)
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2])
+        if(self.nh.ROISuccess and len(self.__pItemCenter['pos']) == 0):
+            x,y = self.Pixel_To_mm()
+            self.__ObjectName = self.nh.itemROI['name']
+            print('fuck  ',x,y)
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][0]+x)
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y)
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][2]-50)
 
-                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][0])
-                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][1])
-                self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][2])
-
-            elif(len(self.__pItemCenter['pos']) != 0):
-                return self.P2P_Strategy(self.__pItemCenter)
-                    
+            self.__pItemCenter['euler'].append(self.nh.rollObject[self.__ObjectName][0])
+            self.__pItemCenter['euler'].append(self.__cam_pos['euler'][1])
+            self.__pItemCenter['euler'].append(self.__cam_pos['euler'][2])
+            self.nh.ROISuccess = False
+        elif(len(self.__pItemCenter['pos']) != 0):
+            print('fuck!!!!!!!!!')
+            return self.P2P_Strategy(self.__pItemCenter)
         else:
-            if(self.nh.itemROI['name'] == 'metal'):
-                if(self.nh.itemROI['score'] >= self.nh.scoreThreshold):
-                    self.__checkArrive += 1
-        return False
-    
-    def Sliding_Strategy(self):
-        if(self.__slidingStep == 0):
-            if(len(self.__pSliding['pos']) == 0):
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][0])
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][1])
-                self.__pSliding['pos'].append(self.__pItemCenter['pos'][2]+self.nh.slideZ)
-
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][0])
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][1])
-                self.__pSliding['euler'].append(self.__pItemCenter['euler'][2])
-            elif(len(self.__pItemCenter['pos']) != 0):
-                if(self.P2P_Strategy(self.__pItemCenter)):
-                    self.__slidingStep = 1
-        # return False
-        ################################################################
-        if(self.__stepSliding == StepSliding.GO_RIGHT.value):
-            goal_pos = self.__pItemCenter
-            goal_pos['pos'][0] += self.nh.slideX
-            goal_pos['pos'][1] += self.nh.slideY
-            goal_pos['pos'][2] += self.nh.slideZ
-            if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_CENTER.value
-
-        elif(self.__stepSliding == StepSliding.GO_CENTER.value):
-            goal_pos = self.__pItemCenter
-            goal_pos['pos'][2] += self.nh.slideZ
-            if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_LEFT.value
-
-        elif(self.__stepSliding == StepSliding.GO_LEFT.value):
-            goal_pos = self.__pItemCenter
-            goal_pos['pos'][0] -= self.nh.slideX
-            goal_pos['pos'][1] -= self.nh.slideY
-            goal_pos['pos'][2] += self.nh.slideZ
-            if(self.P2P_Strategy(goal_pos)):
-                self.__stepSliding = StepSliding.GO_BACK.value
-                
-        elif(self.__stepSliding == StepSliding.GO_BACK.value):
-            if(self.P2P_Strategy(self.__pItemCenter)):
-                self.__stepSliding = StepSliding.GO_RIGHT.value
-                return True
+            self.__ROIFail += 1
         return False
 
     def Manual_Strategy(self):
@@ -277,10 +250,10 @@ class Strategy(object):
         x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
         y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
 
-        x_dis = (CAMERA_ROW/2)-x
-        y_dis = (CAMERA_COL/2)-y
+        y_dis = -((CAMERA_ROW/2)-x)
+        x_dis = -((CAMERA_COL/2)-y)
 
-        return x_dis*self.nh.pixelRate,y_dis*self.nh.pixelRate
+        return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
 
     def Delay(self,time):
         """ second """
