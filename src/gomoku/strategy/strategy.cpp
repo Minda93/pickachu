@@ -565,7 +565,10 @@ bool Strategy::Check_Decide()
                 if (nh.Is_grip())
                     pcState = 4;
                 else
+                {
                     pcState = 3;
+                    nh.suction_cmd_client(std::string("vacuumOff"));
+                }
             }
         }
         return false;
