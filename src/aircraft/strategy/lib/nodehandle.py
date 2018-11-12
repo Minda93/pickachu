@@ -28,13 +28,13 @@ class NodeHandle(object):
             pHome: home point
             pCenter:    above item point
             pObject:    set model place pos and orientation
-            rollObject: set model roll of "picking" 
+            rollObject: set model roll of "picking" in "setting time"
+            ROICounter: 
             
 
             checkROI: 
             pixelRate: 
-            slide_x: move slide x distance
-            slide_y: move slide y distance
+          
             scoreThreshold: detect flaw score threshold
             flawThreshold: calculate number of flaw threshold
         get vision
@@ -62,7 +62,7 @@ class NodeHandle(object):
         self.__pRear = {'pos':[],'euler':[]}
         self.__pTail = {'pos':[],'euler':[]}
         self.__pObject = {'Head':self.__pHead,'Front':self.__pFront,'LeftWing':self.__pLeftWing,\
-                        'RightWing':self.__pRightWing,'Rear':self.__pRear,'Tail':self.__pTail}
+                        'RightWing':self.__pRightWing,'Rear':self.__pRear,'Tail':self.__pTail}       # is this call by reference?????
 
         self.__rollObject = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
 

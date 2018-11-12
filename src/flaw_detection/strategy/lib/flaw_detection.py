@@ -143,6 +143,7 @@ class Strategy(object):
                         else:
                             self.__reSuc += 1
                             self.__state = State.SUCTION.value
+                            self.nh.Suction_cmd('vacuumOff')
             
             elif(self.__state == State.ITEM_CENTER.value):
                 # print('Item Center')

@@ -21,8 +21,8 @@ class State(Enum):
         Home: go to home point
         Center:  go to track center point
         Item_Center: go to item center point
-        Sliding : Slide above item 
-        Suction: open suction cup
+        CAM : go to left or right camPos
+        Suction: open suction cup and move to object
         Release_Suction: release suction cup
         Flaw_box: go to flaw bow point
         No_Flaw_box: go to Nflaw bow point
@@ -124,6 +124,7 @@ class Strategy(object):
                             self.__state = State.DECIDE_PLACE.value
                         else:
                             self.__stepCenter = StepCenter.CAM.value
+                            self.nh.Suction_cmd('vacuumOff')
 
             elif(self.__state == State.CAM.value):
                 if(self.__camRight):
@@ -185,12 +186,6 @@ class Strategy(object):
                 print('NFlaw box')
                 if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
-
-            elif(self.__state == State.DECIDE_BOX.value):
-                if(self.__flaw):
-                    self.__state = State.FLAW_BOX.value
-                else:
-                    self.__state = State.NO_FLAW_BOX.value
 
             elif(self.__state == State.MANUAL.value):
                 print('Manual')
