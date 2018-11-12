@@ -6,3 +6,11 @@ devel
 ecl_core
 ecl_lite
 ecl_tools
+
+
+*.swp
+*.pcd
+*weights
+*.h5
+
+CATKIN_IGNORE
