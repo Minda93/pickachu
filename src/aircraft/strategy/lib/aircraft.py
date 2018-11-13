@@ -130,7 +130,7 @@ class Strategy(object):
                     self.__pItemCenter = {'pos':[],'euler':[]}
 
             elif(self.__state == State.ITEM_CENTER.value):
-                print('Item Center')
+                # print('Item Center')
                 if(self.__ROIFail > 1000):
                     self.__ROIFail = 0
                     self.__camRight = not self.__camRight
@@ -145,6 +145,7 @@ class Strategy(object):
                 print('suction')
                 goal_pos = copy.deepcopy(self.__pItemCenter)
                 goal_pos['pos'][2] = copy.deepcopy(self.nh.pSuction['pos'][2])
+                print(goal_pos)
                 if(self.P2P_Strategy(goal_pos)):
                     self.__state = State.CENTER.value
                     self.__stepCenter = StepCenter.DECIDE_PLACE.value
@@ -172,11 +173,6 @@ class Strategy(object):
             elif(self.__state == State.PLACE.value):
                 print('PLACE')
                 if(self.P2P_Strategy(self.nh.pObject[self.__ObjectName])):
-                    self.__state = State.RELEASE_SUCTION.value
-
-            elif(self.__state == State.NO_FLAW_BOX.value):
-                print('NFlaw box')
-                if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
 
             elif(self.__state == State.MANUAL.value):
@@ -215,15 +211,17 @@ class Strategy(object):
             self.__ObjectName = self.nh.itemROI['name']
             print('fuck  ',x,y)
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][0]+x)
-            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y)
-            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][2]-50)
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y+40)
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][2]-100)
+            if(self.__pItemCenter['pos'][1] > 450):
+                self.__pItemCenter['pos'][1] = 450
 
-            self.__pItemCenter['euler'].append(self.nh.rollObject[self.__ObjectName][0])
+            self.__pItemCenter['euler'].append(self.nh.rollObject[self.__ObjectName])
             self.__pItemCenter['euler'].append(self.__cam_pos['euler'][1])
             self.__pItemCenter['euler'].append(self.__cam_pos['euler'][2])
             self.nh.ROISuccess = False
         elif(len(self.__pItemCenter['pos']) != 0):
-            print('fuck!!!!!!!!!')
+            print('item center',self.__pItemCenter['pos'])
             return self.P2P_Strategy(self.__pItemCenter)
         else:
             self.__ROIFail += 1
@@ -237,8 +235,8 @@ class Strategy(object):
         x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
         y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
 
-        y_dis = -((CAMERA_ROW/2)-x)
-        x_dis = -((CAMERA_COL/2)-y)
+        x_dis = -(x-(CAMERA_COL/2))
+        y_dis = (y-(CAMERA_ROW/2))
 
         return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
 

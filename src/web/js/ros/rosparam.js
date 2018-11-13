@@ -152,7 +152,7 @@ function Flaw_Set_Param(name) {
 
 const Init_Air_Param = async () => {
     try {
-        const param = await paramFlaw.Get();
+        const param = await paramAir.Get();
         if (param != null) {
             for (var item in param) {
                 switch (item) {

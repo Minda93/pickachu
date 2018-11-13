@@ -13,6 +13,7 @@ from flaw_detection.msg import ROI
 from yolov3_ros.msg import ROI_array
 """ ros service lib """
 from arm_control.srv import armCmd,armCmdResponse
+from vacuum_cmd_msg.srv import VacuumCmd
 
 FILENAME = rospkg.RosPack().get_path('flaw_detection')+'/config/'+'param.yaml'
 
@@ -148,6 +149,7 @@ class NodeHandle(object):
                 self.__itemROI['y_min'] = msg.ROI_list[i].y_min
                 self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
             else:
+                self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
                 self.__defectROI['name']  = msg.ROI_list[i].class_name 
                 self.__defectROI['score'] = msg.ROI_list[i].score
                 # self.__defectROI['x_min'] = msg.ROI_list[i].x_min
@@ -159,7 +161,7 @@ class NodeHandle(object):
                     if(self.__flawConuter > self.__flawThreshold):
                         self.__flawConuter = self.__flawThreshold + 1
 
-    def Sub_Is_Grip(sefl,msg):
+    def Sub_Is_Grip(self,msg):
         self.__isGrip = msg.data
 
     """ save param """
@@ -318,6 +320,10 @@ class NodeHandle(object):
     @property
     def itemROI(self):
         return self.__itemROI
+
+    @itemROI.setter
+    def itemROI(self,value):
+        self.__itemROI = value
     
     @property
     def defectROI(self):

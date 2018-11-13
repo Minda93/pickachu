@@ -128,15 +128,16 @@ class Strategy(object):
                 print('Center')
                 goal_pos = copy.deepcopy(self.nh.pCenter)
                 if(self.__stepCenter is not StepCenter.ITEM_CENTER.value):
-                    goal_pos['pos'][2] -= 450
+                    goal_pos['pos'][2] = 450
                 if(self.P2P_Strategy(goal_pos)):
                     if(self.__stepCenter == StepCenter.ITEM_CENTER.value):
+                        self.__checkArrive = 0
                         # if(self.nh.itemCounter > self.nh.checkROI):
                         self.__state = State.ITEM_CENTER.value
                         self.__pItemCenter = {'pos':[],'euler':[]}  #####
                     elif(self.__stepCenter == StepCenter.SUCTION.value):
                         self.__state = State.SUCTION.value
-                    elif(self.__stepCenter == StepCenter.BOX.value):
+                    elif(self.__stepCenter == StepCenter.DECIDE_BOX.value):
                         if(self.nh.isGrip is True):
                             self.__reSuc  = 0
                             self.__state = State.DECIDE_BOX.value
@@ -177,15 +178,16 @@ class Strategy(object):
                 self.__state = State.CENTER.value
                 self.__stepCenter = StepCenter.ITEM_CENTER.value
                 self.nh.itemCounter = 0
+                self.__pItemCenter = {'pos':[],'euler':[]}
                 pass
                     
             elif(self.__state == State.FLAW_BOX.value):
-                print('Flaw box')
+                print('Flaw box',self.nh.flawConuter)
                 if(self.P2P_Strategy(self.nh.pFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
 
             elif(self.__state == State.NO_FLAW_BOX.value):
-                print('NFlaw box')
+                print('NFlaw box',self.nh.flawConuter)
                 if(self.P2P_Strategy(self.nh.pNFlaw)):
                     self.__state = State.RELEASE_SUCTION.value
 
@@ -226,26 +228,30 @@ class Strategy(object):
         return False
     
     def Item_Center_Strategy(self):
+        print('item center arrive',self.__checkArrive,self.nh.checkROI)
         if(self.__checkArrive >= self.nh.checkROI):
             if(self.nh.itemROI['name'] == 'metal' and len(self.__pItemCenter['pos']) == 0):
                 x,y = self.Pixel_To_mm()
                 print('fuck  ',x,y)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][0]+x)
-                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y)
+                self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][1]+y+30)
                 self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-50)
+
+                if(self.__pItemCenter['pos'][1] > 450):
+                    self.__pItemCenter['pos'][1] = 450
 
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][0])
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][1])
                 self.__pItemCenter['euler'].append(self.nh.pCenter['euler'][2])
-
             elif(len(self.__pItemCenter['pos']) != 0):
-                print('fuck!!!!!!!!!')
+                print('item center',self.__pItemCenter['pos'])
                 return self.P2P_Strategy(self.__pItemCenter)
                 
         else:
             if(self.nh.itemROI['name'] == 'metal'):
                 if(self.nh.itemROI['score'] >= self.nh.scoreThreshold):
                     self.__checkArrive += 1
+                    self.nh.itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
         return False
     
     def Sliding_Strategy(self):
@@ -263,7 +269,7 @@ class Strategy(object):
         #             self.__slidingStep = 1
         # return False
         ################################################################
-        print('item center',self.__pItemCenter['pos'])
+        print('sliding item center',self.__pItemCenter['pos'])
         if(self.__stepSliding == StepSliding.GO_LTOP.value):
             goal_pos = copy.deepcopy(self.__pItemCenter)
             print('fuck11111111',goal_pos['pos'])
@@ -336,8 +342,7 @@ class Strategy(object):
             if(self.P2P_Strategy(goal_pos)):
                 if(self.nh.flawConuter >= self.nh.flawThreshold):
                     self.__flaw = True
-                else:
-                    self.__stepSliding = StepSliding.GO_BACK.value
+                self.__stepSliding = StepSliding.GO_BACK.value
 
         elif(self.__stepSliding == StepSliding.GO_BACK.value):
             if(self.P2P_Strategy(self.__pItemCenter)):
@@ -353,8 +358,11 @@ class Strategy(object):
         x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
         y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
 
-        y_dis = -((CAMERA_ROW/2)-x)
-        x_dis = -((CAMERA_COL/2)-y)
+        # y_dis = -((CAMERA_ROW/2)-x)
+        # x_dis = -((CAMERA_COL/2)-y)
+
+        x_dis = (x-(CAMERA_COL/2))
+        y_dis = -(y-(CAMERA_ROW/2))
 
         return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
 

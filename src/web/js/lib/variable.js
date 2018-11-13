@@ -47,12 +47,12 @@ var flaw_pNFlaw = new Point();
 
 class Roll {
     constructor() {
-        this.head = 0.0,
-        this.front = 0.0,
-        this.leftWing = 0.0,
-        this.rightWing = 0.0,
-        this.rear = 0.0,
-        this.tail = 0.0
+        this.Head = 0.0,
+        this.Front = 0.0,
+        this.LeftWing = 0.0,
+        this.RightWing = 0.0,
+        this.Rear = 0.0,
+        this.Tail = 0.0
     }
 }
 

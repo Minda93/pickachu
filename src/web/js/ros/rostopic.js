@@ -336,15 +336,76 @@ document.getElementById("air_paramSave").addEventListener("click", function () {
 document.getElementById("air_paramSet").addEventListener("click", function () {
     let valueList = document.getElementsByName("air_pElement");
 
-    air_roll.head = parseFloat(valueList[0].value);
-    air_roll.front = parseFloat(valueList[1].value);
-    air_roll.leftWing = parseFloat(valueList[2].value);
-    air_roll.rightWing = parseFloat(valueList[3].value);
-    air_roll.rear = parseFloat(valueList[4].value);
-    air_roll.tail = parseFloat(valueList[5].value);
+    air_roll.Head = parseFloat(valueList[0].value);
+    air_roll.Front = parseFloat(valueList[1].value);
+    air_roll.LeftWing = parseFloat(valueList[2].value);
+    air_roll.RightWing = parseFloat(valueList[3].value);
+    air_roll.Rear = parseFloat(valueList[4].value);
+    air_roll.Tail = parseFloat(valueList[5].value);
 
     paramAirRollObject.Set(air_roll);
     paramAirCheckROI.Set(parseFloat(valueList[6].value));
     paramAirPixelRate.Set(parseFloat(valueList[7].value));
     paramAirScoreTh.Set(parseFloat(valueList[8].value));
+});
+
+/*========================================================*/
+/*
+    air test button
+ */
+/*--------------------------------------------------------*/
+
+document.getElementsByName("air_tButtion")[0].addEventListener("click", function () {
+    Call_ArmControl(air_pHome);
+    console.log("Call Home");
+});
+
+document.getElementsByName("air_tButtion")[1].addEventListener("click", function () {
+    Call_ArmControl(air_pCenter);
+    console.log("Call Center");
+});
+
+document.getElementsByName("air_tButtion")[2].addEventListener("click", function () {
+    Call_ArmControl(air_pCamRight);
+    console.log("Call camRight");
+});
+
+document.getElementsByName("air_tButtion")[3].addEventListener("click", function () {
+    Call_ArmControl(air_pCamLeft);
+    console.log("Call CamLeft");
+});
+
+document.getElementsByName("air_tButtion")[4].addEventListener("click", function () {
+    Call_ArmControl(air_pSuction);
+    console.log("Call Suction");
+});
+
+document.getElementsByName("air_tButtion")[5].addEventListener("click", function () {
+    Call_ArmControl(air_pHead);
+    console.log("Call Head");
+});
+
+document.getElementsByName("air_tButtion")[6].addEventListener("click", function () {
+    Call_ArmControl(air_pFront);
+    console.log("Call Front");
+});
+
+document.getElementsByName("air_tButtion")[7].addEventListener("click", function () {
+    Call_ArmControl(air_pLeftWing);
+    console.log("Call LeftWing");
+});
+
+document.getElementsByName("air_tButtion")[8].addEventListener("click", function () {
+    Call_ArmControl(air_pRightWing);
+    console.log("Call RightWing");
+});
+
+document.getElementsByName("air_tButtion")[9].addEventListener("click", function () {
+    Call_ArmControl(air_pRear);
+    console.log("Call Rear");
+});
+
+document.getElementsByName("air_tButtion")[10].addEventListener("click", function () {
+    Call_ArmControl(air_pTail);
+    console.log("Call Tail");
 });

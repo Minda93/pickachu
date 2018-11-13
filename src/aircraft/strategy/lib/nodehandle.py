@@ -13,6 +13,7 @@ from aircraft.msg import ROI
 from yolov3_ros.msg import ROI_array
 """ ros service lib """
 from arm_control.srv import armCmd,armCmdResponse
+from vacuum_cmd_msg.srv import VacuumCmd
 
 FILENAME = rospkg.RosPack().get_path('aircraft')+'/config/'+'param.yaml'
 
@@ -61,9 +62,11 @@ class NodeHandle(object):
         self.__pRightWing = {'pos':[],'euler':[]}
         self.__pRear = {'pos':[],'euler':[]}
         self.__pTail = {'pos':[],'euler':[]}
+        self.__nsmeTrans = {'14.1':'Head','13.8':'Front','13.2':'LeftWing',\
+                            '12.5':'RightWing','8.0':'Rear','5.3':'Tail'}
         
 
-        self.__rollObject = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+        self.__rollObject = {'Head':0.0,'Front':0.0,'LeftWing':0.0,'RightWing':0.0,'Rear':0.0,'Tail':0.0}
 
         self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
 
@@ -157,13 +160,13 @@ class NodeHandle(object):
         """
         
         for i in range(len(msg.ROI_list)):
-            print(msg.ROI_list[0].class_name)
+            # print(msg.ROI_list[0].class_name)
             if(msg.ROI_list[i].score > self.__scoreThreshold):
-                self.__ROICounter[msg.ROI_list[i].class_name] += 1
+                self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
-            if(self.__ROICounter[self.__itemROI['name']] > self.checkROI):
+            if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
                 self.__ROISuccess = True
-                self.__itemROI['name']  = msg.ROI_list[i].class_name 
+                self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
                 self.__itemROI['score'] = msg.ROI_list[i].score
                 self.__itemROI['x_min'] = msg.ROI_list[i].x_min
                 self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
@@ -172,7 +175,7 @@ class NodeHandle(object):
                 self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
                 break
 
-    def Sub_Is_Grip(sefl,msg):
+    def Sub_Is_Grip(self,msg):
         self.__isGrip = msg.data
 
     """ save param """
