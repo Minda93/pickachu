@@ -383,7 +383,12 @@
                                                 </table>
                                             </div>
                                             <div id="aircraft_setting" class="tab-pane fade">
-                                                <label>fuck1</label>
+                                                <table id="air_table">
+                                                    <tr>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </div>
                                         </div>
                                     </td>
@@ -664,6 +669,38 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="flawUI_pNow">當前點</button>
                     <button type="button" class="btn btn-primary" id="flawUI_confirm">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- aircraft -->
+    <div class="modal fade UI_Background" id="airUI_button" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <h4 class="modal-title">aircraft</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="airUI_label">home</label>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Pos:</label>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Euler:</label>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                            <input type="text" class="form-control" name="airUI_pos" value=0>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="airUI_pNow">當前點</button>
+                    <button type="button" class="btn btn-primary" id="airUI_confirm">確認</button>
                 </div>
             </div>
         </div>
