@@ -61,8 +61,7 @@ class NodeHandle(object):
         self.__pRightWing = {'pos':[],'euler':[]}
         self.__pRear = {'pos':[],'euler':[]}
         self.__pTail = {'pos':[],'euler':[]}
-        self.__pObject = {'Head':self.__pHead,'Front':self.__pFront,'LeftWing':self.__pLeftWing,\
-                        'RightWing':self.__pRightWing,'Rear':self.__pRear,'Tail':self.__pTail}       # is this call by reference?????
+        
 
         self.__rollObject = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
 
@@ -85,11 +84,14 @@ class NodeHandle(object):
         rospy.Subscriber("aircraft/behavior_state",Int32,self.Sub_Behavior)
         rospy.Subscriber("/accupick3d/is_busy",Bool,self.Sub_Is_Busy)
 
-        rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
+        # rospy.Subscriber("/object/ROI",ROI,self.Sub_Item_ROI)
+        rospy.Subscriber("/object/ROI_array",ROI_array,self.Sub_Item_ROI_Array)
         rospy.Subscriber('right/is_grip',Bool,self.Sub_Is_Grip)
 
         self.Load_Param()
         # self.Test_Param()
+        self.__pObject = {'Head':self.__pHead,'Front':self.__pFront,'LeftWing':self.__pLeftWing,\
+                        'RightWing':self.__pRightWing,'Rear':self.__pRear,'Tail':self.__pTail}       # is this call by reference?????
 
     def Test_Param(self):
         self.__pHome['pos'] = [0.0,0.0,0.0]
@@ -175,7 +177,7 @@ class NodeHandle(object):
 
     """ save param """
     def Save_Param(self,msg):
-        self.Set_Param()
+        # self.Set_Param()
         if (rospy.has_param('accupick3d/aircraft')):
             print('dump')
             subprocess.call(['rosparam','dump',FILENAME,'/accupick3d/aircraft'])

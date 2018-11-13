@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="css/form.css">
     <link rel="stylesheet" href="css/gomoku.css">
     <link rel="stylesheet" href="css/flaw.css">
-
+    <link rel="stylesheet" href="css/air.css">
     <!-- js lib -->
     <script src="js/lib/CloseCenterRightButton.js"></script>
     <script src="js/lib/CloseReverseOut.js"></script>
@@ -384,8 +384,233 @@
                                             </div>
                                             <div id="aircraft_setting" class="tab-pane fade">
                                                 <table id="air_table">
+                                                    <tr class="air_tableTr20">
+                                                        <td>
+                                                            <table class="air_table100">
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Home</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Center</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">CamRight</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">CamLeft</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Suction</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Head</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Front</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">LeftWing</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">RightWing</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Rear</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Tail</button>
+                                                                    </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
                                                     <tr>
                                                         <td>
+                                                            <table class="air_table100 air_border">
+                                                                <tr class="air_tableTr5">
+                                                                    <td colspan="5">
+                                                                        <h3>Test</h3>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr10">
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Home</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Center</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">CamRight</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">CamLeft</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr10">
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Suction</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Head</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Front</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">LeftWing</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr10">
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">RightWing</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Rear</button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button name="air_pButtion" class="btn btn-default"
+                                                                            data-toggle="modal" data-target="#airUI_button">Tail</button>
+                                                                    </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr class="air_tableTr20">
+                                                                    <td colspan="4" class="air_center">
+                                                                        <div id="air_paramDiv" class="air_border">
+                                                                            <table class="air_table100">
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_head</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_front</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_leftWing</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_rightWing</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_rear</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>roll_tail</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>checkROI</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>pixelRate</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <label>scoreThreshold</label>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input name="air_pElement"
+                                                                                            class="air_input" value="0" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr5">
+                                                                    <td colspan="2">
+                                                                        <button id="air_paramSave" class="btn btn-default">Save</button>
+                                                                    </td>
+                                                                    <td colspan="2">
+                                                                        <button id="air_paramSet" class="btn btn-default">Set</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr5">
+                                                                    <td colspan="4">
+                                                                        <button id="air_Init" class="btn btn-default">Init_Strategy</button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="air_tableTr5">
+                                                                    <td colspan="2">
+                                                                        <button id="air_Start" class="btn btn-default">Start</button>
+                                                                    </td>
+                                                                    <td colspan="2">
+                                                                        <button id="air_Stop" class="btn btn-default">Stop</button>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -752,6 +977,7 @@
     <script src="js/lib/init.js"></script>
     <script src="js/lib/gomoku_adjust.js"></script>
     <script src="js/lib/flaw_adjust.js"></script>
+    <script src="js/lib/aircraft_adjust.js"></script>
     <script>
         $("#Lbutton_table").buttonset();
         $('input[name="Lbutton"]').click(function () {

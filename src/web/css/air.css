@@ -15,4 +15,39 @@
 .air_table100{
     width: 100%;
     height: 100%;
+    
 }
+
+.air_tableTr20{
+    width: 100%;
+    height: 20%;
+}
+
+.air_tableTr10{
+    width: 100%;
+    height: 10%;
+}
+
+.air_tableTr5{
+    width: 100%;
+    height: 5%;
+}
+
+.air_center{
+    padding-left: 80px;
+}
+
+.air_input{
+    /* width: 80%;
+    height: 80%; */
+}
+
+#air_paramDiv{
+    height: 150px;
+    width: 80%;
+    overflow: auto;
+    /* background-color: #ffffff; */
+    word-wrap: break-word;
+}
+
+

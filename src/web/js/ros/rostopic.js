@@ -287,3 +287,64 @@ document.getElementsByName("flaw_tButtion")[4].addEventListener("click", functio
 
 /*========================================================*/
 /*========================================================*/
+
+/*========================================================*/
+/*
+    air tool
+ */
+/*--------------------------------------------------------*/
+
+document.getElementById("air_Init").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: 0
+    });
+    topicAirState.Pub(msg);
+});
+
+document.getElementById("air_Start").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: true
+    });
+    topicAirStart.Pub(msg);
+});
+
+document.getElementById("air_Stop").addEventListener("click", function () {
+    var msg = new ROSLIB.Message({
+        data: false
+    });
+    topicAirStart.Pub(msg);
+});
+
+/*========================================================*/
+/*
+    air save
+ */
+/*--------------------------------------------------------*/
+
+function Pub_Air_Save() {
+    let msg = new ROSLIB.Message({
+        data: true
+    });
+    topicAirSave.Pub(msg);
+}
+
+document.getElementById("air_paramSave").addEventListener("click", function () {
+    Pub_Air_Save();
+    console.log('save');
+});
+
+document.getElementById("air_paramSet").addEventListener("click", function () {
+    let valueList = document.getElementsByName("air_pElement");
+
+    air_roll.head = parseFloat(valueList[0].value);
+    air_roll.front = parseFloat(valueList[1].value);
+    air_roll.leftWing = parseFloat(valueList[2].value);
+    air_roll.rightWing = parseFloat(valueList[3].value);
+    air_roll.rear = parseFloat(valueList[4].value);
+    air_roll.tail = parseFloat(valueList[5].value);
+
+    paramAirRollObject.Set(air_roll);
+    paramAirCheckROI.Set(parseFloat(valueList[6].value));
+    paramAirPixelRate.Set(parseFloat(valueList[7].value));
+    paramAirScoreTh.Set(parseFloat(valueList[8].value));
+});

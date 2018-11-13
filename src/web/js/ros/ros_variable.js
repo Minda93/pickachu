@@ -36,6 +36,11 @@ var topicFlawSave = new RosTopic(ros, '/flaw_detection/save', '/std_msgs/Bool');
 var topicFlawStart = new RosTopic(ros, '/flaw_detection/start', '/std_msgs/Bool');
 var topicFlawState = new RosTopic(ros, '/flaw_detection/behavior_state', '/std_msgs/Int32');
 
+// air
+var topicAirSave = new RosTopic(ros, '/aircraft/save', '/std_msgs/Bool');
+var topicAirStart = new RosTopic(ros, '/aircraft/start', '/std_msgs/Bool');
+var topicAirState = new RosTopic(ros, '/aircraft/behavior_state', '/std_msgs/Int32');
+
 // =======================================================================
 /* 
  * ros param
@@ -67,6 +72,26 @@ var paramFlawSlideY = new RosParam(ros, '/accupick3d/flaw_detection/slideY');
 var paramFlawSlideZ = new RosParam(ros, '/accupick3d/flaw_detection/slideZ');
 var paramFlawScoreTh = new RosParam(ros, '/accupick3d/flaw_detection/score_threshold');
 var paramFlawFlawTh = new RosParam(ros, '/accupick3d/flaw_detection/flaw_threshold');
+
+/* air point */
+var paramAir = new RosParam(ros, '/accupick3d/aircraft');
+var paramAirpHome = new RosParam(ros, 'accupick3d/aircraft/pHome');
+var paramAirpCenter = new RosParam(ros, 'accupick3d/aircraft/pCenter');
+var paramAirpCamRight = new RosParam(ros, 'accupick3d/aircraft/pCamRight');
+var paramAirpCamLeft = new RosParam(ros, 'accupick3d/aircraft/pCamLeft');
+var paramAirpSuction = new RosParam(ros, 'accupick3d/aircraft/pSuction');
+var paramAirpHead = new RosParam(ros, 'accupick3d/aircraft/pHead');
+var paramAirpFront = new RosParam(ros, 'accupick3d/aircraft/pFront');
+var paramAirpLeftWing = new RosParam(ros, 'accupick3d/aircraft/pLeftWing');
+var paramAirpRightWing = new RosParam(ros, 'accupick3d/aircraft/pRightWing');
+var paramAirpRear = new RosParam(ros, 'accupick3d/aircraft/pRear');
+var paramAirpTail = new RosParam(ros, 'accupick3d/aircraft/pTail');
+
+/* air param */
+var paramAirRollObject = new RosParam(ros, '/accupick3d/aircraft/rollObject');
+var paramAirCheckROI = new RosParam(ros, '/accupick3d/aircraft/checkROI');
+var paramAirPixelRate = new RosParam(ros, '/accupick3d/aircraft/pixelRate');
+var paramAirScoreTh = new RosParam(ros, '/accupick3d/aircraft/score_threshold');
 
 // =======================================================================
 /* 

@@ -1,40 +1,37 @@
-checkROI: 100
-euler: [0, 0, 0]
-flaw_threshold: 1000
-pCenter:
-  euler: [0, 0, 0]
-  pos: [0, 0, 0]
-pHome:
-  euler: [0, 0, 0]
-  pos: [12, 0, 0]
-pCamRight:
-  euler: [0, 0, 0]
-  pos: [12, 0, 0]
+checkROI: 0
 pCamLeft:
   euler: [0, 0, 0]
-  pos: [12, 0, 0]
-pSuction:
+  pos: [0, 0, 0]
+pCamRight:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
-pHead:
+pCenter:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
 pFront:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
-pLeftWing:
+pHead:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
-pRightWing:
+pHome:
+  euler: [0, 0, 0]
+  pos: [0, 0, 0]
+pLeftWing:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
 pRear:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
+pRightWing:
+  euler: [0, 0, 0]
+  pos: [0, 0, 0]
+pSuction:
+  euler: [0, 0, 0]
+  pos: [0, 0, 0]
 pTail:
   euler: [0, 0, 0]
   pos: [0, 0, 0]
-pixelRate: 0.2
-pos: [12, 0, 0]
-score_threshold: 0.5
-
+pixelRate: 0
+rollObject: {front: 0, head: 0, leftWing: 0, rear: 0, rightWing: 0, tail: 0}
+score_threshold: 0

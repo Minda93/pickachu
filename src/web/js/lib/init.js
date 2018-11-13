@@ -10,4 +10,8 @@ function Init(){
     setTimeout(function(){
         Init_Flaw_Param();
     },500);
+
+    setTimeout(function(){
+        Init_Air_Param();
+    },500);
 }
