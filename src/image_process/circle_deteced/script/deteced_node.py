@@ -46,12 +46,73 @@ black_hough_param.maxRadius = 30
 def draw_chess(image,circles):
     output_image = image.copy()
     if circles is not None:
-            circles = np.uint16(np.around(circles))
-            for i in circles[0,:]:
-                # draw the outer circle
-                cv2.circle(output_image,(i[0],i[1]),i[2],(0,255,0),2)
-                # draw the center of the circle
-                cv2.circle(output_image,(i[0],i[1]),2,(0,0,255),3)
+        circles = np.uint16(np.around(circles))
+        for i in circles[0,:]:
+            # draw the outer circle
+            x,y,r=i[0],i[1],i[2]
+            cv2.circle(output_image,(x,y),r,(0,255,0),2)
+            # draw the center of the circle
+            cv2.circle(output_image,(x,y),2,(0,255,0),3)
+    return output_image
+
+def Initial_checkerboard():
+    checkerboard=list()
+    for h in range(9):
+        for w in range(9):
+            checkerboard.append(0)
+    return checkerboard
+recognized_board = Initial_checkerboard()
+
+def recognizing(image,Bcircles,Wcircles,Line_show=False,Board_show=False):
+    global recognized_board
+    output_image = image.copy()
+    column = [0,22,44,66,88,110,132,154,176,200]    
+    row = [0,22,44,66,88,107,129,151,173,195]
+    offset_x,offset_y = 220,148
+    if Bcircles is not None and Wcircles is not None:
+        print(11)
+        for h in range(9):
+            for w in range(9):
+                Bcircles = np.uint16(np.around(Bcircles))
+                Wcircles = np.uint16(np.around(Wcircles))
+                for i in Bcircles[0,:]:
+                    x,y,r=i[0],i[1],i[2]
+                    x,y,r=i[0],i[1],i[2]
+                    cv2.circle(output_image,(x,y),r,(0,255,0),2)
+                    cv2.circle(output_image,(x,y),2,(0,255,0),3)
+                    if x >= column[h] + offset_x and x < column[h+1] + offset_x and \
+                    y >= row[w] + offset_y and y < row[w] + offset_y:
+                        recognized_board[h * 9 + w] = 1
+                        print("get one black")
+                for j in Wcircles[0,:]:
+                    x,y,r=j[0],j[1],j[2]
+                    cv2.circle(output_image,(x,y),r,(0,255,0),2)
+                    cv2.circle(output_image,(x,y),2,(0,255,0),3)
+                    if x >= column[h] + offset_x and x < column[h+1] + offset_x and \
+                    y >= row[w] + offset_y and y < row[w] + offset_y and (recognized_board[h * 9 + w] == 0):
+                        recognized_board[h * 9 + w] = -1
+                        print("get one white")
+        output_image = draw_chess(output_image,Bcircles)
+        output_image = draw_chess(output_image,Wcircles)
+    if Line_show:
+        for i in range(len(column)):
+            cv2.line(output_image,(column[i]+offset_x,row[0]+offset_y),(column[i]+offset_x,row[9]+offset_y), (0, 0, 255), 1)
+        for i in range(len(row)):
+            cv2.line(output_image,(column[0]+offset_x,row[i]+offset_y),(column[9]+offset_x,row[i]+offset_y), (0, 255, 255), 1)
+    if Board_show:
+        print("^^^^^^^^^^^^^^^^^^^^^^^^^")
+        for h in range(9):
+            w=0
+            print(recognized_board[h*9+w],\
+                  recognized_board[h*9+w+1],\
+                  recognized_board[h*9+w+2],\
+                  recognized_board[h*9+w+3],\
+                  recognized_board[h*9+w+4],\
+                  recognized_board[h*9+w+5],\
+                  recognized_board[h*9+w+6],\
+                  recognized_board[h*9+w+7],\
+                  recognized_board[h*9+w+8])
+        print("vvvvvvvvvvvvvvvvvvvvvvvvvv")
     return output_image
 
 def image_source_callback(data):
@@ -73,6 +134,8 @@ def image_source_callback(data):
         
         result = draw_chess(ori_image,Wcircles)
         result = draw_chess(result,Bcircles)
+        # result = recognizing(ori_image,Bcircles,Wcircles,True,False)
+
         # gray_image_pub.publish(bridge.cv2_to_imgmsg(gray_image, "mono8"))
         hsv_white_pub.publish(bridge.cv2_to_imgmsg(hsv_white, "mono8"))
         hsv_black_pub.publish(bridge.cv2_to_imgmsg(hsv_black, "mono8"))
