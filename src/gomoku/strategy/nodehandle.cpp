@@ -61,7 +61,7 @@ void NodeHandle::Init_Param()
   is_grip = false;
 
   pickChess_cnt = 0;
-  chess_offset = 40;
+  chess_offset = 20;
   // eButton = 3;
 
   for (int i = 0; i < 6; i++)
@@ -191,11 +191,12 @@ void NodeHandle::Sub_RobotPos(const std_msgs::String msg)
   if (rAction == "GetPos")
   {
     int j = 0;
-    for (int i = 4; i < msg.data.size(); i++)
+    for (int i = 7; i < msg.data.size(); i++)
     {
       if (msg.data[i] == ':')
       {
         str_ << data_;
+        // cout<<"Data: "<<data_<<endl;
         switch (j)
         {
         case 0:
@@ -281,7 +282,24 @@ void NodeHandle::Pub_DataPos(const geometry_msgs::Twist pos)
      << ":"
      << pos.angular.z;
 
+     cout << "DataPos:"
+     << pos.linear.x
+     << ":"
+     << pos.linear.y
+     << ":"
+     << pos.linear.z
+     << ":"
+     << pos.angular.x
+     << ":"
+     << pos.angular.y
+     << ":"
+     << pos.angular.z<<endl;
+
   msg.data = ss.str();
+  pubMove.publish(msg);
+  ros::Duration(0.1).sleep(); 
+  pubMove.publish(msg);
+  ros::Duration(0.1).sleep(); 
   pubMove.publish(msg);
 }
 
@@ -315,12 +333,13 @@ void NodeHandle::Sub_is_grip(const std_msgs::Bool::ConstPtr &msg)
   is_grip = msg->data;
 }
 
-void NodeHandle::suction_cmd_client(std::string cmd)
+void NodeHandle::suction_cmd_client(vacuum_cmd_msg::VacuumCmd cmd)
 {
-  suctionCmd.request.cmd = cmd;
-  if (suction_service.call(suctionCmd))
+  // suctionCmd = cmd;
+  std::cout<<"Cmd.request.cmd : "<<cmd.request.cmd<< std::endl;
+  if (suction_service.call(cmd))
   {
-    std::cout << "suction service success = " << suctionCmd.response.success << std::endl;
+    std::cout << "suction service success = " << cmd.response.success << std::endl;
   }
   else
     std::cout << "fail to call suction_service." << std::endl;
@@ -328,6 +347,8 @@ void NodeHandle::suction_cmd_client(std::string cmd)
 geometry_msgs::Twist NodeHandle::Get_pChess(bool pick, bool armBusy)
 {
   geometry_msgs::Twist Chess_pos = pChess;
+  if( pick && !armBusy)
+    pickChess_cnt = (pickChess_cnt < 3)? pickChess_cnt + 1 : 0;
   switch(pickChess_cnt)
   {
   case 0:
@@ -347,8 +368,6 @@ geometry_msgs::Twist NodeHandle::Get_pChess(bool pick, bool armBusy)
       Chess_pos.linear.y -= chess_offset;
       break;
   }
-  if( pick && !armBusy)
-    pickChess_cnt = (pickChess_cnt < 3)? pickChess_cnt + 1 : 0;
   if(!pick)
     Chess_pos.linear.z += 120;
   return Chess_pos;

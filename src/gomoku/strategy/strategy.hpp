@@ -1,6 +1,6 @@
 #include "nodehandle.hpp"
 
-#define TIME 5
+#define TIME 3
 
 enum ACTION
 {
@@ -72,11 +72,14 @@ class Strategy
     int first;
     bool isBusy;
 
+    bool isChess;
     int pcColor;
     int playerColor;
 
     int pcState; //robot decide state 
     int buttonState;  //push button state
+
+    // int firstState;
     ACTION state;
     
     Point chess;  //pc decide chess x:row y:col

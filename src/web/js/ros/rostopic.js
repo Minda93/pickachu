@@ -101,7 +101,9 @@ document.getElementsByName("gomoku_tButtion")[0].addEventListener("click", funct
 
 document.getElementsByName("gomoku_tButtion")[1].addEventListener("click", function () {
     let pos_ = new Point();
-    pos_.pos = gomoku_pChess.pos;
+    pos_.pos[0] = gomoku_pChess.pos[0];
+    pos_.pos[1] = gomoku_pChess.pos[1];
+    pos_.pos[2] = gomoku_pChess.pos[2];
     pos_.euler = gomoku_pChess.euler;
 
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);
@@ -121,7 +123,9 @@ document.getElementsByName("gomoku_tButtion")[3].addEventListener("click", funct
 
 document.getElementsByName("gomoku_tButtion")[4].addEventListener("click", function () {
     let pos_ = new Point();
-    pos_.pos = gomoku_pButton.pos;
+    pos_.pos[0] = gomoku_pButton.pos[0];
+    pos_.pos[1] = gomoku_pButton.pos[1];
+    pos_.pos[2] = gomoku_pButton.pos[2];
     pos_.euler = gomoku_pButton.euler;
 
     pos_.pos[2] += parseFloat(document.getElementsByName("gomoku_pElement")[0].value);

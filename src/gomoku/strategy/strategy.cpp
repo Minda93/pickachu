@@ -61,6 +61,7 @@ bool operator==(const geometry_msgs::Twist pos1, const geometry_msgs::Twist pos2
 Strategy::Strategy()
 {
     Init_Param();
+    first = -1;
 }
 
 Strategy::~Strategy()
@@ -70,10 +71,10 @@ Strategy::~Strategy()
 void Strategy::Init_Param()
 {
     state = INIT;
-    first = -1;
     pcState = 0;
     buttonState = 0;
     isBusy = false;
+    isChess = false;
 }
 
 /*=========================================
@@ -94,6 +95,10 @@ void Strategy::Process()
             }
             nh.Init_Load_State();
         }
+        // if(nh.IS_PushButton() && state != INIT && state != CHOOSE_SIDE && !isBusy){
+        //     state = PUSH_BUTTON;
+        //     buttonState = 3;
+        // }
         if (state == INIT)
         {
             Init_Param();
@@ -110,8 +115,11 @@ void Strategy::Process()
                 // state = PLAYER;
                 if (pcState == 0)
                 {
-                    PC_Strategy(SIDE_PC);
-                    pcState = 1;
+                    if (nh.IS_PlayDecide())
+                    { 
+                        PC_Strategy(SIDE_PC);
+                        pcState = 1;
+                    }
                 }
                 else if (Check_Decide())
                 {
@@ -135,27 +143,17 @@ void Strategy::Process()
         }
         else if (state == PLAYER)
         {
-            if (first == -1)
-            {
-                state = END;
-            }
-            else
-            {
+            
                 if (Player_1() != -1)
                 {
                     state = PC;
                     Show_Gomoku();
                 }
-            }
+            
         }
         else if (state == PC)
         {
-            if (first == -1)
-            {
-                state = END;
-            }
-            else
-            {
+            
                 if (pcState == 0)
                 {
                     PC_Strategy(SIDE_PC);
@@ -169,18 +167,21 @@ void Strategy::Process()
                 }
                 // PC_Strategy(SIDE_PC);
                 // state = PLAYER;
-            }
+            
         }
         else if (state == PUSH_BUTTON)
         {
             if (Check_Push_Buttion())
             {
                 printf("push button success: %d", buttonState);
-                state = PLAYER;
+                if(first == -1)
+                    state = INIT;
+                else
+                    state = PLAYER;
             }
             else
             {
-                printf("buttonState: %d", buttonState);
+                // printf("buttonState: %d\n", buttonState);
             }
         }
         else if (state == END)
@@ -354,7 +355,7 @@ void Strategy::Cin_First(bool s)
             pcColor = BLACK;
             playerColor = WHITE;
             nh.Init_Player();
-            Delay(TIME);
+            // Delay(TIME);
         }// player first
         else if (nh.IS_PushButton())
         { 
@@ -419,9 +420,27 @@ int Strategy::Player_1(bool s) //玩家1
         // }
 
         /* case 2 */
+        // if(nh.IS_PlayDecide()){
+        //     Delay(TIME);
+        //     Transform_Board();
+        //     Line_Check(SIDE_PLAYER);
+        //     nh.Init_Player();
+        //     return SIDE_PLAYER;
+        // }else{
+        //     return -1;
+        // }
+
+        /* case 2 */
         if(nh.IS_PlayDecide()){
             Delay(TIME);
-            Transform_Board();
+            cout << "輸入座標 x,y " << endl;
+            int a, b;
+            cin >> a;
+            if (cin.get() == ',') //數字+逗號
+            {
+                cin >> b;
+            }
+            gomoku[a][b] = 1;
             Line_Check(SIDE_PLAYER);
             nh.Init_Player();
             return SIDE_PLAYER;
@@ -518,6 +537,17 @@ int Strategy::PC_Strategy(SIDE s)
         chess.y = cMy;
     }
 
+    // for (i = 0; i < ROW; i++){
+    //     for (j = 0; j < COL; j++)
+    //     {
+    //         if(gomoku[i][j] == NOCOLOR){
+    //             gomoku[ROW / 2][COL / 2] = s;
+    //             chess.x = ROW / 2;
+    //             chess.y = COL / 2;
+    //         }
+    //     }
+    // }
+
     Line_Check(SIDE_PC);
     Show_Gomoku();
     return cMx * 100 + cMy;
@@ -530,7 +560,10 @@ int Strategy::PC_Strategy(SIDE s)
  ==========================================*/
 /* case 3 and 6 problem */
 bool Strategy::Check_Decide()
-{
+{   
+    geometry_msgs::Twist robot_ = nh.Get_Robot();
+    
+    // geometry_msgs::Twist goal_pos;
     switch (pcState)
     {
     case 1: // init home
@@ -553,13 +586,13 @@ bool Strategy::Check_Decide()
     case 2: // move chess pos
         if (isBusy == false)
         {
-            nh.Pub_DataPos(nh.Get_pChess(false, isBusy));
+            nh.Pub_DataPos(nh.Get_pHome());
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == nh.Get_pChess(false, isBusy))
+            if (nh.Get_Robot() == nh.Get_pHome())
             {
                 isBusy = false;
                 if (nh.Is_grip())
@@ -567,7 +600,8 @@ bool Strategy::Check_Decide()
                 else
                 {
                     pcState = 3;
-                    nh.suction_cmd_client(std::string("vacuumOff"));
+                    nh.suctionCmd.request.cmd = "vacuumOff";
+                    nh.suction_cmd_client(nh.suctionCmd);
                 }
             }
         }
@@ -575,12 +609,28 @@ bool Strategy::Check_Decide()
     case 3: // Suction chess
         if (isBusy == false)
         {
+            // goal_pos = nh.Get_pChess(true, isBusy);
             nh.Pub_DataPos(nh.Get_pChess(true, isBusy));
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
+            cout<<pcState<<" "<<robot_.linear.x
+                <<" "<<robot_.linear.y
+                <<" "<<robot_.linear.z
+                <<" "<<robot_.angular.x
+                <<" "<<robot_.angular.y
+                <<" "<<robot_.angular.z
+                <<endl;
+
+            cout<<"goal_pos"<<" "<<nh.Get_pChess(true, isBusy).linear.x
+                <<" "<<nh.Get_pChess(true, isBusy).linear.y
+                <<" "<<nh.Get_pChess(true, isBusy).linear.z
+                <<" "<<nh.Get_pChess(true, isBusy).angular.x
+                <<" "<<nh.Get_pChess(true, isBusy).angular.y
+                <<" "<<nh.Get_pChess(true, isBusy).angular.z
+                <<endl;
             if (nh.Get_Robot() == nh.Get_pChess(true, isBusy))
             {
                 isBusy = false;
@@ -603,8 +653,18 @@ bool Strategy::Check_Decide()
                 if (nh.Is_grip())
                     pcState = 5;
                 else
-                    return true;
-            }
+                    if(isChess == false)
+                    {
+                        pcState = 1;
+                        nh.suctionCmd.request.cmd = "vacuumOff";
+                        nh.suction_cmd_client(nh.suctionCmd);
+                    }
+                    else
+                    {
+                        isChess = false;
+                        return true;
+                    }
+            }       
         }
         return false;
     case 5: // move board (i,j)
@@ -619,6 +679,7 @@ bool Strategy::Check_Decide()
             if (nh.Get_Robot() == nh.Get_pBoard(chess.x, chess.y))
             {
                 isBusy = false;
+                isChess = true;
                 pcState = 7;
             }
         }
@@ -632,11 +693,14 @@ bool Strategy::Check_Decide()
     //     }
     //     return false;
     case 7: // plase chess
-        nh.suction_cmd_client(std::string("vacuumOff"));
+        nh.suctionCmd.request.cmd = "vacuumOff";
+        nh.suction_cmd_client(nh.suctionCmd);
         pcState = 4;
         return false;
+
     case 8: // pick chess
-        nh.suction_cmd_client(std::string("vacuumOn"));
+        nh.suctionCmd.request.cmd = "vacuumOn";
+        nh.suction_cmd_client(nh.suctionCmd);
         pcState = 2;
         return false;
     default:
@@ -645,21 +709,29 @@ bool Strategy::Check_Decide()
     }
 }
 
+/*=========================================
+ * 
+ * push button
+ * 
+ ==========================================*/
+
 bool Strategy::Check_Push_Buttion()
 {
     geometry_msgs::Twist robot_;
     switch (buttonState)
     {
     case 0: // go to button
+        robot_ = nh.Get_pButton();
+        robot_.linear.z += nh.Get_eButton();
         if (isBusy == false)
         {
-            nh.Pub_DataPos(nh.Get_pButton());
+            nh.Pub_DataPos(robot_);
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == nh.Get_pButton())
+            if (nh.Get_Robot() == robot_)
             {
                 isBusy = false;
 
@@ -680,16 +752,17 @@ bool Strategy::Check_Push_Buttion()
         }
         return false;
     case 1: // push button
-        robot_ = nh.Get_pButton();
-        robot_.linear.z += nh.Get_eButton();
+        // robot_ = nh.Get_pButton();
+        // robot_.linear.z += nh.Get_eButton();
         if (isBusy == false)
         {
-            nh.Pub_DataPos(robot_);
+            nh.Pub_DataPos(nh.Get_pButton());
             isBusy = true;
         }
         else
         {
             /* for push button */
+            // nh.Pub_GetPos();
             // if (nh.IS_PushButton())
             // {
             //     buttonState = 0;
@@ -703,8 +776,11 @@ bool Strategy::Check_Push_Buttion()
             //     buttonState = 0;
             // }
 
+            
+
             /* for no push button */
-            if (nh.Get_Robot() == robot_)
+            nh.Pub_GetPos();
+            if (nh.Get_Robot() == nh.Get_pButton())
             {
                 isBusy = false;
                 buttonState = 3;
@@ -729,15 +805,17 @@ bool Strategy::Check_Push_Buttion()
         }
         return false;
     case 3:
+        robot_ = nh.Get_pButton();
+        robot_.linear.z += nh.Get_eButton();
         if (isBusy == false)
         {
-            nh.Pub_DataPos(nh.Get_pButton());
+            nh.Pub_DataPos(robot_);
             isBusy = true;
         }
         else
         {
             nh.Pub_GetPos();
-            if (nh.Get_Robot() == nh.Get_pButton())
+            if (nh.Get_Robot() == robot_)
             {
                 isBusy = false;
                 buttonState = 2;
@@ -777,12 +855,14 @@ void Strategy::Transform_Board()
             for (int j = 0; j < COL; j++)
             {
                 color = nh.Get_vBoard(i,j);
-                if(color == pcColor){
-                    gomoku[i][j] = SIDE_PC;
-                }else if(color == playerColor){
-                    gomoku[i][j] = SIDE_PLAYER;
-                }else{
-                    gomoku[i][j] = NOCOLOR;
+                if(gomoku[i][j] == NOCOLOR){
+                    if(color == pcColor){
+                        gomoku[i][j] = SIDE_PC;
+                    }else if(color == playerColor){
+                        gomoku[i][j] = SIDE_PLAYER;
+                    }else{
+                        gomoku[i][j] = NOCOLOR;
+                    }
                 }
             }
         }

@@ -17,7 +17,7 @@
 #define ROW 9
 #define COL 9
 
-#define ERROR_DECIMAL 3
+#define ERROR_DECIMAL 0
 
 typedef struct Point
 {
@@ -78,9 +78,10 @@ public:
   void Pub_GetPos();
   void Pub_HomePos();
   void Pub_DataPos(const geometry_msgs::Twist pos);
-  void suction_cmd_client(std::string cmd);
+  void suction_cmd_client(vacuum_cmd_msg::VacuumCmd cmd);
 
   static std::vector<double> errorPos;
+  vacuum_cmd_msg::VacuumCmd suctionCmd;
 
 private:
   /* subscribe */
@@ -143,7 +144,6 @@ private:
   Player player;
   geometry_msgs::Twist Robot;
 
-  vacuum_cmd_msg::VacuumCmd suctionCmd;
 
   // Target pos param
   geometry_msgs::Twist pHome;
