@@ -60,6 +60,13 @@ void NodeHandle::Init_Param()
 
   is_grip = false;
 
+  vBoard_flag = false;
+
+  for(int i=0; i<81; i++)
+    vBoard.push_back(0);
+  // cout<<"vBoard[0].size : "<<vBoard.size()<<endl;
+  
+  // cout<<"vBoard2D[0].size : "<<vBoard2D[0].size()<<endl;
   pickChess_cnt = 0;
   chess_offset = 20;
   // eButton = 3;
@@ -151,13 +158,12 @@ void NodeHandle::Sub_vBoard(const std_msgs::Int32MultiArray msg)
     {
       vBoard.clear();
     }
-    else
+    vBoard_flag = true;
+    for (int i = 0; i < msg.data.size(); i++)
     {
-      for (int i = 0; i < msg.data.size(); i++)
-      {
-        vBoard.push_back(msg.data[i]);
-      }
+      vBoard.push_back(msg.data[i]);
     }
+    
 }
 
 void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)

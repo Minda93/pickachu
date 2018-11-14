@@ -1,7 +1,7 @@
 #include "nodehandle.hpp"
 
 #define TIME 3
-
+#define VBOARD 5
 enum ACTION
 {
     INIT,
@@ -60,7 +60,7 @@ class Strategy
     void Show_Player();
 
     /* tool */
-    void Transform_Board();
+    bool Transform_Board();
     void Delay(double time);
 
   private:
@@ -76,6 +76,9 @@ class Strategy
     int pcColor;
     int playerColor;
 
+    int chess_cnt;
+    int vBoard_cnt;
+
     int pcState; //robot decide state 
     int buttonState;  //push button state
 
@@ -84,5 +87,7 @@ class Strategy
     
     Point chess;  //pc decide chess x:row y:col
     int gomoku[ROW][COL];
+    std::vector< std::vector<int> > vBoard2D;
+
 
 };

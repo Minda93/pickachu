@@ -73,8 +73,13 @@ void Strategy::Init_Param()
     state = INIT;
     pcState = 0;
     buttonState = 0;
+    chess_cnt = 0;
+    vBoard_cnt = 0;
     isBusy = false;
     isChess = false;
+    for(int i=0; i<10; i++)
+        for(int j=0; j<81; j++) 
+            vBoard2D[i].push_back(0);
 }
 
 /*=========================================
@@ -420,15 +425,16 @@ int Strategy::Player_1(bool s) //玩家1
         // }
 
         /* case 2 */
-        // if(nh.IS_PlayDecide()){
-        //     Delay(TIME);
-        //     Transform_Board();
-        //     Line_Check(SIDE_PLAYER);
-        //     nh.Init_Player();
-        //     return SIDE_PLAYER;
-        // }else{
-        //     return -1;
-        // }
+        if(nh.IS_PlayDecide()){
+            Delay(TIME);
+            if(!Transform_Board());
+                return -1;
+            Line_Check(SIDE_PLAYER);
+            nh.Init_Player();
+            return SIDE_PLAYER;
+        }else{
+            return -1;
+        }
 
         /* case 2 */
         if(nh.IS_PlayDecide()){
@@ -846,15 +852,46 @@ void Strategy::Show_Player()
  * 
  ==========================================*/
 
-void Strategy::Transform_Board()
+bool Strategy::Transform_Board()
 {   
-    if(nh.Check_vBorad_Size()){
-        int color;
+    // if(nh.Check_vBorad_Size()){
+    //     int color;
+    //     for (int i = 0; i < ROW; i++)
+    //     {
+    //         for (int j = 0; j < COL; j++)
+    //         {
+    //             color = nh.Get_vBoard(i,j);
+    //             if(gomoku[i][j] == NOCOLOR){
+    //                 if(color == pcColor){
+    //                     gomoku[i][j] = SIDE_PC;
+    //                 }else if(color == playerColor){
+    //                     gomoku[i][j] = SIDE_PLAYER;
+    //                 }else{
+    //                     gomoku[i][j] = NOCOLOR;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    if(nh.vBoard_flag && nh.Check_vBorad_Size()){
+        nh.vBoard_flag = false;
+        vBoard2D[vBoard_cnt] = nh.Get_vBoard();
+        vBoard_cnt ++;
+    }
+    if( vBoard_cnt == VBOARD)
+    {
+        int color = 0;
         for (int i = 0; i < ROW; i++)
         {
             for (int j = 0; j < COL; j++)
             {
-                color = nh.Get_vBoard(i,j);
+                color = 0;
+                for(int k = 0; k < VBOARD; k++)
+                {
+                    color += vBoard2D[k][i * COL + j];
+                }
+                color = (abs(color) > (VBOARD/2)-1) ? color/abs(color) : 0;
                 if(gomoku[i][j] == NOCOLOR){
                     if(color == pcColor){
                         gomoku[i][j] = SIDE_PC;
@@ -866,7 +903,10 @@ void Strategy::Transform_Board()
                 }
             }
         }
+        vBoard_cnt = 0;
+        return true;
     }
+    return false;
 }
 
 void Strategy::Delay(double time){

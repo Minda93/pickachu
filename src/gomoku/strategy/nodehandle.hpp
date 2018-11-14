@@ -72,6 +72,7 @@ public:
   // inline double Get_ErrorPos(int i) const { return errorPos[i]; };
   inline double Get_eButton() const { return eButton; };
   inline int Get_vBoard(int i, int j) { return vBoard[i * COL + j]; };
+  inline std::vector<int> Get_vBoard() { return vBoard; };
   inline int Check_vBorad_Size() { return vBoard.size();};
   inline double Get_chess_offset() const { return chess_offset; };
   
@@ -82,6 +83,7 @@ public:
 
   static std::vector<double> errorPos;
   vacuum_cmd_msg::VacuumCmd suctionCmd;
+  bool vBoard_flag;
 
 private:
   /* subscribe */
