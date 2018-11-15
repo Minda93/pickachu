@@ -111,6 +111,12 @@ class NodeHandle(object):
         msg.data = msg.data + str(euler[2])  
 
         self.pubCmdString.publish(msg)
+        d = rospy.Duration(0.01)
+        rospy.sleep(d)
+        self.pubCmdString.publish(msg)
+        d = rospy.Duration(0.01)
+        rospy.sleep(d)
+        self.pubCmdString.publish(msg)
     
     def Pub_Take_Picture(self):
         # msg = cmd()
