@@ -78,6 +78,8 @@ void Strategy::Init_Param()
     isBusy = false;
     isChess = false;
     for(int i=0; i<10; i++)
+        vBoard2D.push_back(vector<int>());
+    for(int i=0; i<10; i++)
         for(int j=0; j<81; j++) 
             vBoard2D[i].push_back(0);
 }
@@ -179,8 +181,10 @@ void Strategy::Process()
             if (Check_Push_Buttion())
             {
                 printf("push button success: %d", buttonState);
-                if(first == -1)
-                    state = INIT;
+                if(first == -1){
+                    // state = INIT;
+                    state = END;
+                }
                 else
                     state = PLAYER;
             }
@@ -426,33 +430,33 @@ int Strategy::Player_1(bool s) //玩家1
 
         /* case 2 */
         if(nh.IS_PlayDecide()){
-            Delay(TIME);
-            if(!Transform_Board());
+            // Delay(TIME);
+            if(!Transform_Board())
                 return -1;
             Line_Check(SIDE_PLAYER);
-            nh.Init_Player();
+            // nh.Init_Player();
             return SIDE_PLAYER;
         }else{
             return -1;
         }
 
         /* case 2 */
-        if(nh.IS_PlayDecide()){
-            Delay(TIME);
-            cout << "輸入座標 x,y " << endl;
-            int a, b;
-            cin >> a;
-            if (cin.get() == ',') //數字+逗號
-            {
-                cin >> b;
-            }
-            gomoku[a][b] = 1;
-            Line_Check(SIDE_PLAYER);
-            nh.Init_Player();
-            return SIDE_PLAYER;
-        }else{
-            return -1;
-        }
+        // if(nh.IS_PlayDecide()){
+        //     Delay(TIME);
+        //     cout << "輸入座標 x,y " << endl;
+        //     int a, b;
+        //     cin >> a;
+        //     if (cin.get() == ',') //數字+逗號
+        //     {
+        //         cin >> b;
+        //     }
+        //     gomoku[a][b] = 1;
+        //     Line_Check(SIDE_PLAYER);
+        //     nh.Init_Player();
+        //     return SIDE_PLAYER;
+        // }else{
+        //     return -1;
+        // }
     }
 }
 /* -----------------------------------------*/
@@ -622,21 +626,21 @@ bool Strategy::Check_Decide()
         else
         {
             nh.Pub_GetPos();
-            cout<<pcState<<" "<<robot_.linear.x
-                <<" "<<robot_.linear.y
-                <<" "<<robot_.linear.z
-                <<" "<<robot_.angular.x
-                <<" "<<robot_.angular.y
-                <<" "<<robot_.angular.z
-                <<endl;
+            // cout<<pcState<<" "<<robot_.linear.x
+            //     <<" "<<robot_.linear.y
+            //     <<" "<<robot_.linear.z
+            //     <<" "<<robot_.angular.x
+            //     <<" "<<robot_.angular.y
+            //     <<" "<<robot_.angular.z
+            //     <<endl;
 
-            cout<<"goal_pos"<<" "<<nh.Get_pChess(true, isBusy).linear.x
-                <<" "<<nh.Get_pChess(true, isBusy).linear.y
-                <<" "<<nh.Get_pChess(true, isBusy).linear.z
-                <<" "<<nh.Get_pChess(true, isBusy).angular.x
-                <<" "<<nh.Get_pChess(true, isBusy).angular.y
-                <<" "<<nh.Get_pChess(true, isBusy).angular.z
-                <<endl;
+            // cout<<"goal_pos"<<" "<<nh.Get_pChess(true, isBusy).linear.x
+            //     <<" "<<nh.Get_pChess(true, isBusy).linear.y
+            //     <<" "<<nh.Get_pChess(true, isBusy).linear.z
+            //     <<" "<<nh.Get_pChess(true, isBusy).angular.x
+            //     <<" "<<nh.Get_pChess(true, isBusy).angular.y
+            //     <<" "<<nh.Get_pChess(true, isBusy).angular.z
+            //     <<endl;
             if (nh.Get_Robot() == nh.Get_pChess(true, isBusy))
             {
                 isBusy = false;
@@ -873,11 +877,12 @@ bool Strategy::Transform_Board()
     //         }
     //     }
     // }
-
-    if(nh.vBoard_flag && nh.Check_vBorad_Size()){
+    // cout<<"fuck2 "<<nh.vBoard_flag<<endl;
+    if(nh.vBoard_flag){
         nh.vBoard_flag = false;
         vBoard2D[vBoard_cnt] = nh.Get_vBoard();
         vBoard_cnt ++;
+        cout<<vBoard_cnt<<endl;
     }
     if( vBoard_cnt == VBOARD)
     {
@@ -891,15 +896,20 @@ bool Strategy::Transform_Board()
                 {
                     color += vBoard2D[k][i * COL + j];
                 }
-                color = (abs(color) > (VBOARD/2)-1) ? color/abs(color) : 0;
-                if(gomoku[i][j] == NOCOLOR){
-                    if(color == pcColor){
-                        gomoku[i][j] = SIDE_PC;
-                    }else if(color == playerColor){
-                        gomoku[i][j] = SIDE_PLAYER;
-                    }else{
-                        gomoku[i][j] = NOCOLOR;
+                color = (abs(color) > (VBOARD/3)+2) ? color/abs(color) : 0;
+                if(gomoku[j][i] == NOCOLOR){
+                    // if(color == pcColor){
+                    //     gomoku[i][j] = SIDE_PC;
+                    // }else if(color == playerColor){
+                    //     gomoku[i][j] = SIDE_PLAYER;
+                    // }else{
+                    //     gomoku[i][j] = NOCOLOR;
+                    // }
+                    if(color == playerColor){
+                        gomoku[j][i] = SIDE_PLAYER;
                     }
+                }else{
+                    cout<<"fuck "<<i<<" "<<j<<endl;
                 }
             }
         }

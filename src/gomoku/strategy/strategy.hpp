@@ -1,7 +1,7 @@
 #include "nodehandle.hpp"
 
 #define TIME 3
-#define VBOARD 5
+#define VBOARD 20
 enum ACTION
 {
     INIT,

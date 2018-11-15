@@ -153,7 +153,8 @@ void NodeHandle::Sub_Player(const geometry_msgs::Point msg)
 
 void NodeHandle::Sub_vBoard(const std_msgs::Int32MultiArray msg)
 {
-  if (msg.data.size() != 0) //maybe add protect
+  // cout<<"fuck "<<msg.data[0]<<endl;
+  // if (msg.data.size() != 0) //maybe add protect
     if (vBoard.size() != 0)
     {
       vBoard.clear();
@@ -163,7 +164,7 @@ void NodeHandle::Sub_vBoard(const std_msgs::Int32MultiArray msg)
     {
       vBoard.push_back(msg.data[i]);
     }
-    
+    // cout<<"fuck "<<vBoard_flag<<endl;
 }
 
 void NodeHandle::Sub_Player_PushButton(const std_msgs::Bool msg)

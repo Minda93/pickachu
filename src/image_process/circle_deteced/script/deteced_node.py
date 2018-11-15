@@ -22,6 +22,8 @@ gray_image = np.ndarray(0)
 hsv = np.ndarray(0)
 
 image_flag = False
+button_signal = False
+count=0
 lower_white = np.array([0,0,178])
 upper_white = np.array([255,255,215])
 white_hough_param = hough_param()
@@ -56,24 +58,34 @@ def draw_chess(image,circles,(R,G,B)):
             cv2.circle(output_image,(x,y),2,(R,G,B),3)
     return output_image
 
-def Initial_checkerboard():
+def Create_checkerboard():
     checkerboard=list()
     for h in range(9):
         for w in range(9):
             checkerboard.append(0)
     return checkerboard
-recognized_board = Initial_checkerboard()
+recognized_board = Create_checkerboard()
+
+def Initial_checkerboard():
+    for h in range(9):
+        for w in range(9):
+            recognized_board[h*9+w]=0
 
 def recognizing(image,Bcircles,Wcircles,Line_show=False,Board_show=False):
     global recognized_board
     board = Int32MultiArray()
 
     output_image = image.copy()
-    column = [0,22,44,66,88,110,132,154,176,200]    
-    row = [0,22,44,66,88,107,129,151,173,195]
+    column = [220, 242, 264, 286, 308, 330, 352, 374, 396, 420]    
+    row =    [150, 172, 194, 216, 238, 260, 282, 304, 326, 348]
     offset_x,offset_y = 220,148
-    n_column = [220, 242, 264, 286, 308, 330, 352, 374, 396, 420]
-    n_row    = [150, 172, 194, 216, 238, 260, 282, 304, 326, 348]
+    # n_column = [220, 242, 264, 286, 308, 330, 352, 374, 396, 420]
+    # n_row    = [150, 172, 194, 216, 238, 260, 282, 304, 326, 348]
+    n_column = [220 +8, 242+10, 264+10, 286+10, 308+13, 330+13, 352+13, 374+13, 396+13, 420+13]
+    n_row    = [150-20, 172-16, 194-16, 216-16, 238-16, 260-16, 282-20, 304-20, 326-20, 348-20]
+
+
+
     if Bcircles is not None and Wcircles is not None:
         for h in range(9):
             for w in range(9):
@@ -116,43 +128,51 @@ def recognizing(image,Bcircles,Wcircles,Line_show=False,Board_show=False):
         print("vvvvvvvvvvvvvvvvvvvvvvvvvv")
     return output_image,board
 
+def start_callback(data):
+    global button_signal
+    button_signal=data.data
 def image_source_callback(data):
     global ori_image
     global gray_image
     global hsv
     global image_flag
     global white_hough_param
-    try:
-        ori_image = bridge.imgmsg_to_cv2(data, "bgr8")
+    global button_signal
+    global count
 
-        # gray_image = cv2.cvtColor(ori_image,cv2.COLOR_BGR2GRAY)
-        hsv = cv2.cvtColor(ori_image,cv2.COLOR_BGR2HSV)
-        hsv_white = cv2.inRange(hsv, lower_white, upper_white)
-        hsv_black = cv2.inRange(hsv, lower_black, upper_black)
+    if button_signal:
+        try:
+            count = count +1
+            print(count)
+            ori_image = bridge.imgmsg_to_cv2(data, "bgr8")
 
-        Wcircles = cv2.HoughCircles(hsv_white,cv2.HOUGH_GRADIENT,white_hough_param.dp,white_hough_param.minDistx,param1=white_hough_param.param1,param2=white_hough_param.param2,minRadius=white_hough_param.minRadius,maxRadius=white_hough_param.maxRadius)#min = 100 max = 200 
-        Bcircles = cv2.HoughCircles(hsv_black,cv2.HOUGH_GRADIENT,black_hough_param.dp,black_hough_param.minDistx,param1=black_hough_param.param1,param2=black_hough_param.param2,minRadius=black_hough_param.minRadius,maxRadius=black_hough_param.maxRadius)#min = 100 max = 200 
-        
-        # result_tmp = draw_chess(ori_image,Bcircles,(0,255,0))
-        # result = draw_chess(result_tmp,Wcircles,(0,0,255))
-        
-        result,board_ = recognizing(ori_image,Bcircles,Wcircles,True,True)
+            # gray_image = cv2.cvtColor(ori_image,cv2.COLOR_BGR2GRAY)
+            hsv = cv2.cvtColor(ori_image,cv2.COLOR_BGR2HSV)
+            hsv_white = cv2.inRange(hsv, lower_white, upper_white)
+            hsv_black = cv2.inRange(hsv, lower_black, upper_black)
+            Wcircles = cv2.HoughCircles(hsv_white,cv2.HOUGH_GRADIENT,white_hough_param.dp,white_hough_param.minDistx,param1=white_hough_param.param1,param2=white_hough_param.param2,minRadius=white_hough_param.minRadius,maxRadius=white_hough_param.maxRadius)#min = 100 max = 200 
+            Bcircles = cv2.HoughCircles(hsv_black,cv2.HOUGH_GRADIENT,black_hough_param.dp,black_hough_param.minDistx,param1=black_hough_param.param1,param2=black_hough_param.param2,minRadius=black_hough_param.minRadius,maxRadius=black_hough_param.maxRadius)#min = 100 max = 200 
+            # result_tmp = draw_chess(ori_image,Bcircles,(0,255,0))
+            # result = draw_chess(result_tmp,Wcircles,(0,0,255))
 
-        # gray_image_pub.publish(bridge.cv2_to_imgmsg(gray_image, "mono8"))
-        hsv_white_pub.publish(bridge.cv2_to_imgmsg(hsv_white, "mono8"))
-        hsv_black_pub.publish(bridge.cv2_to_imgmsg(hsv_black, "mono8"))
+            result,board_ = recognizing(ori_image,Bcircles,Wcircles,True,True)
 
-        
-        board_pub.publish(board_)
-    except CvBridgeError as e:
-      print(e)
-      
-    # cv2.imshow("ORI Image", ori_image)
-    # cv2.imshow('GRAY Image',gray_image)
-    cv2.imshow('White_hsv',hsv_white)
-    cv2.imshow('Black_hsv',hsv_black)
-    cv2.imshow('result',result)
-    cv2.waitKey(3)
+            # gray_image_pub.publish(bridge.cv2_to_imgmsg(gray_image, "mono8"))
+            hsv_white_pub.publish(bridge.cv2_to_imgmsg(hsv_white, "mono8"))
+            hsv_black_pub.publish(bridge.cv2_to_imgmsg(hsv_black, "mono8"))
+            board_pub.publish(board_)
+        except CvBridgeError as e:
+              print(e)
+
+            # cv2.imshow("ORI Image", ori_image)
+        # cv2.imshow('GRAY Image',gray_image)
+        cv2.imshow('White_hsv',hsv_white)
+        cv2.imshow('Black_hsv',hsv_black)
+        cv2.imshow('result',result)
+        cv2.waitKey(3)
+    else:
+        Initial_checkerboard()
+        count = 0
     image_flag = True
 
 
@@ -209,6 +229,7 @@ if __name__ == '__main__':
     board_pub = rospy.Publisher("/gomoku/vBoard",Int32MultiArray,queue_size=10)
 
     ros_sub = rospy.Subscriber("/usb_cam/image_raw",Image_ros,image_source_callback)
+    start_sub = rospy.Subscriber("/gomoku/player_pushbutton",Bool,start_callback)
     param_white_sub = rospy.Subscriber("/object/parameters_save_White",deteced_param,set_White_Param_callback)
     param_black_sub = rospy.Subscriber("/object/parameters_save_Black",deteced_param,set_Black_Param_callback)
     try:
