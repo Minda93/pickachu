@@ -127,8 +127,8 @@ public:
     white_balance_      = int(msg.white_balance);
     autoexposure_       = msg.autoexposure;
     
-
-
+    focus_              = int(msg.focus);
+    autofocus_          = msg.autofocus;
     // check auto exposure
     if (!autoexposure_)
     {
@@ -161,6 +161,20 @@ public:
     {
       cam_.set_v4l_parameter("white_balance_temperature_auto", 0);
       cam_.set_v4l_parameter("white_balance_temperature", white_balance_);
+    }
+
+    if (autofocus_)
+    {
+      cam_.set_auto_focus(1);
+      cam_.set_v4l_parameter("focus_auto", 1);
+    }
+    else
+    {
+      cam_.set_v4l_parameter("focus_auto", 0);
+      if (focus_ >= 0)
+      {
+        cam_.set_v4l_parameter("focus_absolute", focus_);
+      }
     }
   }
   
