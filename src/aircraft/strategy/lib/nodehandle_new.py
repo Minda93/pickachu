@@ -80,7 +80,7 @@ class NodeHandle(object):
         
         """ get vision """
         self.__itemROI = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
-        
+        self.__tmpROI  = {'name':'','score':-999.0,'x_min':-999,'x_Max':-999,'y_min':-999,'y_Max':-999}
         """ topic pub """
 
         """ topic sub """
@@ -162,9 +162,10 @@ class NodeHandle(object):
             msg.ROS_list[i].y_Max  
         """
         # print('ROICounter', self.ROICounter)
-        for i in range(len(msg.ROI_list)):
+        
             # print(msg.ROI_list[0].class_name)
-            if(self.__goalObject is 'all'):
+        if(self.__goalObject is 'all'):
+            for i in range(len(msg.ROI_list)):
                 if(msg.ROI_list[i].score > self.__scoreThreshold):
                     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
@@ -178,46 +179,72 @@ class NodeHandle(object):
                     self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
                     self.__ROISuccess = True
                     break
-            else:
-                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear' \
-                or self.__goalObject == 'LeftWing' or self.__goalObject == 'RightWing'):
+        else:
+            self.__itemROI['name'] = self.__goalObject
+            self.__itemROI['score'] = 0
+            self.__itemROI['x_min'] = 0
+            self.__itemROI['x_Max'] = 0
+            self.__itemROI['y_min'] = 0
+            self.__itemROI['y_Max'] = 0
+            for i in range(len(msg.ROI_list)):
+                # if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear' \
+                # or self.__goalObject == 'LeftWing' or self.__goalObject == 'RightWing'):
+                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear'):
                     # if(msg.ROI_list[i].score > self.__scoreThreshold):
                     #     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
                     # if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
-                    if(self.__nsmeTrans[msg.ROI_list[i].class_name] == 'LeftWing' or self.__nsmeTrans[msg.ROI_list[i].class_name] == 'RightWing' or self.__goalObject == 'Front'):
-                        self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
-                        if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] \
-                           > self.__ROICheck[self.__nsmeTrans[msg.ROI_list[i].class_name]]):
-                            self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
-                            self.__itemROI['score'] = msg.ROI_list[i].score
-                            self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-                            self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-                            self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-                            self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-                            self.__ROISuccess = True
-                            break
+                    # if(self.__nsmeTrans[msg.ROI_list[i].class_name] == 'LeftWing' or self.__nsmeTrans[msg.ROI_list[i].class_name] == 'RightWing' or self.__goalObject == 'Front'):
+                    #     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
+                    #     if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] \
+                    #        > self.__ROICheck[self.__nsmeTrans[msg.ROI_list[i].class_name]]):
+                    #         self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
+                    #         self.__itemROI['score'] = msg.ROI_list[i].score
+                    #         self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                    #         self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                    #         self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                    #         self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                    #         self.__ROISuccess = True
+                    #         break
 
-                    elif(self.__goalObject == 'Front' and self.__ROICounter['Rear'] > 0):
-                        self.__itemROI['name'] = self.__nsmeTrans[msg.ROI_list[i].class_name]
-                        self.__itemROI['score'] = msg.ROI_list[i].score
-                        self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-                        self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-                        self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-                        self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-                        self.__ROISuccess = True
-                        break
+                    # if(self.__goalObject == 'Front' and self.__ROICounter['Rear'] > 0):
+                    #     self.__itemROI['name'] = self.__nsmeTrans[msg.ROI_list[i].class_name]
+                    #     self.__itemROI['score'] = msg.ROI_list[i].score
+                    #     self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                    #     self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                    #     self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                    #     self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                    #     self.__ROISuccess = True
+                    #     break
 
-                    else:
-                        self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
-                        self.__itemROI['score'] = msg.ROI_list[i].score
-                        self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-                        self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-                        self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-                        self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-                        self.__ROISuccess = True
-                        break
+                    # else:
+                    self.__tmpROI['name'] = self.__itemROI['name']
+                    self.__tmpROI['score'] = self.__itemROI['score']
+                    self.__tmpROI['x_min'] = self.__itemROI['x_min']
+                    self.__tmpROI['x_Max'] = self.__itemROI['x_Max']
+                    self.__tmpROI['y_min'] = self.__itemROI['y_min']
+                    self.__tmpROI['y_Max'] = self.__itemROI['y_Max']
 
+                    self.__itemROI['score'] = msg.ROI_list[i].score
+                    self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                    self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                    self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                    self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+
+                    x_item = (self.__itemROI['x_min']+self.__itemROI['x_Max'])/2.0
+                    y_item = (self.__itemROI['y_min']+self.__itemROI['y_Max'])/2.0
+                    x_dis = (x_item-(640/2))
+                    y_dis = (y_item-(480/2))
+                    x_tmp = (self.__tmpROI['x_min']+self.__tmpROI['x_Max'])/2.0
+                    y_tmp = (self.__tmpROI['y_min']+self.__tmpROI['y_Max'])/2.0
+                    x_dis_tmp = (x_tmp-(640/2))
+                    y_dis_tmp = (y_tmp-(480/2))
+
+                    if((x_dis_tmp*x_dis_tmp + y_dis_tmp*y_dis_tmp) < (x_dis*x_dis + y_dis*y_dis)):
+                        self.__itemROI = self.__tmpROI
+                    # self.__ROISuccess = True
+                    # break
+            self.__ROISuccess = True
     def Sub_Is_Grip(self,msg):
         self.__isGrip = msg.data
 
