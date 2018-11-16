@@ -1,5 +1,5 @@
 checkROI: 50
-flaw_threshold: 100
+flaw_threshold: 7
 pCenter:
   euler: [-0.0188, -0.0149, -177.3705]
   pos: [-18.5741, 280.1945, 578.5687]
@@ -18,5 +18,5 @@ pSuction:
 pixelRate: 0.359
 score_threshold: 0.3
 slideX: 130
-slideY: 20
+slideY: 15
 slideZ: 409

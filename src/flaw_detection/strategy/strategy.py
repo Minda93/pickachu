@@ -5,7 +5,8 @@ import roslib
 roslib.load_manifest('flaw_detection')
 import rospy
 
-from lib.flaw_detection import Strategy
+# from lib.flaw_detection import Strategy
+from lib.flaw_detection_new import Strategy
 
 
 
