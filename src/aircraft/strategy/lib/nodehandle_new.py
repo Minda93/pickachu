@@ -70,6 +70,8 @@ class NodeHandle(object):
         self.__suctionZ   = {'Head':0.0,'Front':0.0,'LeftWing':0.0,'RightWing':0.0,'Rear':0.0,'Tail':0.0}
 
         self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+        # self.__ROICheck = {'Head':5,'Front':20,'LeftWing':20,'RightWing':20,'Rear':1,'Tail':5}
+        self.__ROICheck = {'Head':2,'Front':10,'LeftWing':10,'RightWing':10,'Rear':1,'Tail':2}
 
         self.__checkROI = 5
         self.__pixelRate = 0.2
@@ -159,15 +161,14 @@ class NodeHandle(object):
             msg.ROS_list[i].y_min
             msg.ROS_list[i].y_Max  
         """
-        
+        # print('ROICounter', self.ROICounter)
         for i in range(len(msg.ROI_list)):
             # print(msg.ROI_list[0].class_name)
             if(self.__goalObject is 'all'):
                 if(msg.ROI_list[i].score > self.__scoreThreshold):
                     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
-                if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
-                    self.__ROISuccess = True
+                if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.__ROICheck[self.__nsmeTrans[msg.ROI_list[i].class_name]]):
                     self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
                     self.__itemROI['score'] = msg.ROI_list[i].score
                     self.__itemROI['x_min'] = msg.ROI_list[i].x_min
@@ -175,20 +176,46 @@ class NodeHandle(object):
                     self.__itemROI['y_min'] = msg.ROI_list[i].y_min
                     self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
                     self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
+                    self.__ROISuccess = True
                     break
             else:
-                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject):
-                    if(msg.ROI_list[i].score > self.__scoreThreshold):
-                        self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
+                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear' \
+                or self.__goalObject == 'LeftWing' or self.__goalObject == 'RightWing'):
+                    # if(msg.ROI_list[i].score > self.__scoreThreshold):
+                    #     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
-                    if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
+                    # if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
+                    if(self.__nsmeTrans[msg.ROI_list[i].class_name] == 'LeftWing' or self.__nsmeTrans[msg.ROI_list[i].class_name] == 'RightWing' or self.__goalObject == 'Front'):
+                        self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
+                        if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] \
+                           > self.__ROICheck[self.__nsmeTrans[msg.ROI_list[i].class_name]]):
+                            self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
+                            self.__itemROI['score'] = msg.ROI_list[i].score
+                            self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                            self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                            self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                            self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                            self.__ROISuccess = True
+                            break
+
+                    elif(self.__goalObject == 'Front' and self.__ROICounter['Rear'] > 0):
+                        self.__itemROI['name'] = self.__nsmeTrans[msg.ROI_list[i].class_name]
+                        self.__itemROI['score'] = msg.ROI_list[i].score
+                        self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                        self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                        self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                        self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
                         self.__ROISuccess = True
+                        break
+
+                    else:
                         self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
                         self.__itemROI['score'] = msg.ROI_list[i].score
                         self.__itemROI['x_min'] = msg.ROI_list[i].x_min
                         self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
                         self.__itemROI['y_min'] = msg.ROI_list[i].y_min
                         self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                        self.__ROISuccess = True
                         break
 
     def Sub_Is_Grip(self,msg):
@@ -223,7 +250,7 @@ class NodeHandle(object):
         if (rospy.has_param('accupick3d/aircraft/pLeftWing')):
             self.__pLeftWing = rospy.get_param("accupick3d/aircraft/pLeftWing")
         if (rospy.has_param('accupick3d/aircraft/pRightWing')):
-            self.__pRightWin = rospy.get_param("accupick3d/aircraft/pRightWing")
+            self.__pRightWing = rospy.get_param("accupick3d/aircraft/pRightWing")
         if (rospy.has_param('accupick3d/aircraft/pRear')):
             self.__pRear = rospy.get_param("accupick3d/aircraft/pRear")
         if (rospy.has_param('accupick3d/aircraft/pTail')):
@@ -397,4 +424,8 @@ class NodeHandle(object):
     @property
     def suctionZ(self):
         return self.__suctionZ
+
+    @property
+    def ROICounter(self):
+        return self.__ROICounter
     

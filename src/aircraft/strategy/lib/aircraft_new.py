@@ -13,7 +13,8 @@ from enum import Enum
 """ camera param """
 CAMERA_ROW = 480
 CAMERA_COL = 640
-
+# PIXEL_RATE2 = 0.1953  # down 100
+PIXEL_RATE2 =  0.24591  # down 70
 class State(Enum):
     r"""
         Init:
@@ -87,8 +88,10 @@ class Strategy(object):
         self.__ROIFail = 0
         self.__checkArrive = 0
         self.__cntItemCenter = 0
+        
 
         self.__pItemCenter = {'pos':[],'euler':[]}
+        self.__old_ItemCenter = {'pos':[],'euler':[]}
         self.__ObjectName = ''
         self.__cam_pos = {'pos':[],'euler':[]}
     
@@ -127,34 +130,43 @@ class Strategy(object):
                 if(self.__camSide):
                     print('CAM_RIGHT')
                     self.__cam_pos = copy.deepcopy(self.nh.pCamRight)
+                    self.__pItemCenter = {'pos':[],'euler':[]}
                 else:
                     print('CAM_LEFT')
                     self.__cam_pos = copy.deepcopy(self.nh.pCamLeft)
+                    self.__pItemCenter = {'pos':[],'euler':[]}
                 if(self.P2P_Strategy(self.__cam_pos)):
                     self.__state = State.ITEM_CENTER_FIRST.value
                     self.__pItemCenter = {'pos':[],'euler':[]}
                     self.nh.ROICounter_ini()
+                    self.nh.ROISuccess = False
 
             elif(self.__state == State.ITEM_CENTER_FIRST.value):
                 # print('Item Center')
-                if(self.__ROIFail > 1000):
+                if(self.__ROIFail > 150):
                     self.__ROIFail = 0
                     self.__camSide = not self.__camSide
                     self.__state = State.CAM.value
+                    self.nh.goalObject = 'all'
                 if(self.Item_Center_Strategy()):
                     self.nh.goalObject = copy.deepcopy(self.__ObjectName)
                     self.__camSide = not self.__camSide
                     self.__state = State.ITEM_CENTER.value
+                    # self.__state = State.SUCTION.value
+                    self.__old_ItemCenter = copy.deepcopy(self.__pItemCenter)
                     self.__pItemCenter = {'pos':[],'euler':[]}
                     self.nh.ROICounter_ini()
+                    self.nh.ROISuccess = False
+                    # self.nh.Suction_cmd('vacuumOn')
 
             elif(self.__state == State.ITEM_CENTER.value):
                 # print('Item Center')
-                if(self.__ROIFail > 1000):
+                if(self.__ROIFail > 150):
                     self.__ROIFail = 0
                     # self.__camSide = not self.__camSide
                     self.__state = State.CAM.value
-                if(self.Item_Center_Strategy()):
+                    self.nh.goalObject = 'all'
+                if(self.Item_Center_Strategy_2()):
                     self.nh.goalObject = 'all'
                     # self.__camSide = not self.__camSide
                     self.__state = State.SUCTION.value
@@ -191,7 +203,7 @@ class Strategy(object):
             elif(self.__state == State.SUCTION_UP.value):
                 print('suction_up')
                 goal_pos = copy.deepcopy(self.__pItemCenter)
-                goal_pos['pos'][2] = copy.deepcopy(self.__cam_pos['pos'][2])
+                # goal_pos['pos'][2] = copy.deepcopy(self.__cam_pos['pos'][2])
                 if(self.P2P_Strategy(goal_pos)):
                         if(self.nh.isGrip is True):
                             self.__state = State.DECIDE_PLACE.value
@@ -215,7 +227,13 @@ class Strategy(object):
             elif(self.__state == State.DECIDE_PLACE.value):
                 print(self.__ObjectName)
                 goal_pos = copy.deepcopy(self.nh.pObject[self.__ObjectName])
+
+                goal_pos['euler'][0] = self.nh.rollObject[self.__ObjectName]
+                # print('len GOAL', len(goal_pos['pos']))
+                # print('self.nh.pObject', self.nh.pObject)
+                
                 goal_pos['pos'][2] += 100
+                
                 if(self.P2P_Strategy(goal_pos)):
                     if(self.nh.isGrip is True):
                         self.__state = State.PLACE.value
@@ -226,7 +244,9 @@ class Strategy(object):
 
             elif(self.__state == State.PLACE.value):
                 print('PLACE')
-                if(self.P2P_Strategy(self.nh.pObject[self.__ObjectName])):
+                goal_pos = copy.deepcopy(self.nh.pObject[self.__ObjectName])
+                goal_pos['euler'][0] = self.nh.rollObject[self.__ObjectName]
+                if(self.P2P_Strategy(goal_pos)):
                     self.__state = State.RELEASE_SUCTION.value
 
             elif(self.__state == State.MANUAL.value):
@@ -261,41 +281,87 @@ class Strategy(object):
     
     def Item_Center_Strategy(self):
         if(self.nh.ROISuccess and len(self.__pItemCenter['pos']) == 0):
-            x,y = self.Pixel_To_mm()
+            x,y = self.Pixel_To_mm(self.nh.pixelRate)
             self.__ObjectName = self.nh.itemROI['name']
-            print('fuck  ',x,y)
+            # print('fuckaa  ',x,y)
+            # print('cam_pos ',self.__cam_pos)
+            
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][0]+x)
-            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y+40)
-            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2])
+            self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y)
+            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-70)
             if(self.__pItemCenter['pos'][1] > 450):
                 self.__pItemCenter['pos'][1] = 450
 
-            self.__pItemCenter['euler'].append(self.nh.rollObject[self.__ObjectName])
+            self.__pItemCenter['euler'].append(0)
             self.__pItemCenter['euler'].append(self.__cam_pos['euler'][1])
             self.__pItemCenter['euler'].append(self.__cam_pos['euler'][2])
-            self.nh.ROISuccess = False
+            # print('cam_pos2 ',self.__cam_pos)
+            # print('ItemCenter  ',self.__pItemCenter)
+            
         elif(len(self.__pItemCenter['pos']) != 0):
-            print('item center',self.__pItemCenter['pos'])
+            # print('item center',self.__pItemCenter['pos'])
             return self.P2P_Strategy(self.__pItemCenter)
         else:
             self.__ROIFail += 1
+            # print('ROICounter', self.nh.ROICounter)
+        return False
+
+    def Item_Center_Strategy_2(self):
+        if(self.nh.ROISuccess and len(self.__pItemCenter['pos']) == 0):
+            x,y = self.Pixel_To_mm(PIXEL_RATE2)
+            self.__ObjectName = self.nh.itemROI['name']
+            # print('fuckaa  ',x,y)
+            # print('cam_pos ',self.__cam_pos)
+            
+            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][0]+x)
+            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][1]+y+40)
+            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-100)
+            if(self.__pItemCenter['pos'][1] > 450):
+                self.__pItemCenter['pos'][1] = 450
+
+            self.__pItemCenter['euler'].append(0)
+            self.__pItemCenter['euler'].append(self.__old_ItemCenter['euler'][1])
+            self.__pItemCenter['euler'].append(self.__old_ItemCenter['euler'][2])
+            # print('cam_pos2 ',self.__cam_pos)
+            # print('ItemCenter  ',self.__pItemCenter)
+            
+        elif(len(self.__pItemCenter['pos']) != 0):
+            # print('item center',self.__pItemCenter['pos'])
+            return self.P2P_Strategy(self.__pItemCenter)
+        else:
+            self.__ROIFail += 1
+            # print('ROICounter', self.nh.ROICounter)
         return False
 
     def Manual_Strategy(self):
         pass
 
     """ tool """
-    def Pixel_To_mm(self):
+    def Pixel_To_mm(self, Rate):
         x = (self.nh.itemROI['x_min']+self.nh.itemROI['x_Max'])/2.0
         y = (self.nh.itemROI['y_min']+self.nh.itemROI['y_Max'])/2.0
 
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('')
+        print(self.nh.itemROI)
+        print('')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+        print('ROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROIROI')
+
         x_dis = -(x-(CAMERA_COL/2))
         y_dis = (y-(CAMERA_ROW/2))
-
-        x_rate = copy.deepcopy(self.nh.pixelRate)
+        
+        x_rate = copy.deepcopy(Rate)
         x_rate = (((10/9.0)-1) * (abs(x_dis) / (CAMERA_COL/2)) + 1) * x_rate
 
-        y_rate = copy.deepcopy(self.nh.pixelRate)
+        y_rate = copy.deepcopy(Rate)
         y_rate = (((10/9.0)-1) * (abs(y_dis) / (CAMERA_ROW/2)) + 1) * y_rate
         
         return x_dis*x_rate, y_dis*y_rate
