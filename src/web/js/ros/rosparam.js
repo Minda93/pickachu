@@ -206,6 +206,14 @@ const Init_Air_Param = async () => {
                     case "score_threshold":
                         document.getElementsByName("air_pElement")[8].value = param.score_threshold;
                         break;
+                    case "suctionZ":
+                        document.getElementsByName("air_pElement")[9].value = param.suctionZ.Head;
+                        document.getElementsByName("air_pElement")[10].value = param.suctionZ.Front;
+                        document.getElementsByName("air_pElement")[11].value = param.suctionZ.LeftWing;
+                        document.getElementsByName("air_pElement")[12].value = param.suctionZ.RightWing;
+                        document.getElementsByName("air_pElement")[13].value = param.suctionZ.Rear;
+                        document.getElementsByName("air_pElement")[14].value = param.suctionZ.Tail;
+                        break;
                     default:
                         break;
                 }

@@ -14,7 +14,7 @@ from enum import Enum
 CAMERA_ROW = 480
 CAMERA_COL = 640
 CAMERA_Y_ERROR = 30
-DELAY_SLIDING = 3
+DELAY_SLIDING = 1
 
 class State(Enum):
     r"""
@@ -159,7 +159,6 @@ class Strategy(object):
             elif(self.__state == State.ITEM_CENTER.value):
                 # print('Item Center')
                 if(self.Item_Center_Strategy()):
-                    self.__flawConuter = 0
                     self.__state = State.SLIDING.value
             
             elif(self.__state == State.SLIDING.value):

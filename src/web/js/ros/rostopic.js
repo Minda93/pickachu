@@ -351,6 +351,15 @@ document.getElementById("air_paramSet").addEventListener("click", function () {
     paramAirCheckROI.Set(parseFloat(valueList[6].value));
     paramAirPixelRate.Set(parseFloat(valueList[7].value));
     paramAirScoreTh.Set(parseFloat(valueList[8].value));
+
+    air_suctionZ.Head = parseFloat(valueList[9].value);
+    air_suctionZ.Front = parseFloat(valueList[10].value);
+    air_suctionZ.LeftWing = parseFloat(valueList[11].value);
+    air_suctionZ.RightWing = parseFloat(valueList[12].value);
+    air_suctionZ.Rear = parseFloat(valueList[13].value);
+    air_suctionZ.Tail = parseFloat(valueList[14].value);
+
+    paramAirSucctionZ.Set(air_suctionZ);
 });
 
 /*========================================================*/

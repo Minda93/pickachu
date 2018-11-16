@@ -69,3 +69,4 @@ var air_pRear = new Point();
 var air_pTail = new Point();
 
 var air_roll = new Roll();
+var air_suctionZ = new Roll(); // Z height

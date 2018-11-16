@@ -1,4 +1,4 @@
-checkROI: 50
+checkROI: 30
 flaw_threshold: 7
 pCenter:
   euler: [-0.0188, -0.0149, -177.3705]

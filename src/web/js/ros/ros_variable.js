@@ -92,6 +92,7 @@ var paramAirRollObject = new RosParam(ros, '/accupick3d/aircraft/rollObject');
 var paramAirCheckROI = new RosParam(ros, '/accupick3d/aircraft/checkROI');
 var paramAirPixelRate = new RosParam(ros, '/accupick3d/aircraft/pixelRate');
 var paramAirScoreTh = new RosParam(ros, '/accupick3d/aircraft/score_threshold');
+var paramAirSucctionZ = new RosParam(ros, '/accupick3d/aircraft/suctionZ');
 
 // =======================================================================
 /* 

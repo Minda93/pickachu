@@ -166,8 +166,8 @@ class Strategy(object):
                 if(self.P2P_Strategy(goal_pos)):
                     if(self.nh.isGrip is True):
                             self.__state = State.SUCTION_UP.value
-                        else:
-                            self.__state = State.RESUC.value
+                    else:
+                        self.__state = State.RESUC.value
                     # self.__state = State.SUCTION_UP.value
                     # self.__state = State.CENTER.value
                     # self.__stepCenter = StepCenter.DECIDE_PLACE.value
