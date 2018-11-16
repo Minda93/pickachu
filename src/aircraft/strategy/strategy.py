@@ -5,8 +5,8 @@ import roslib
 roslib.load_manifest('aircraft')
 import rospy
 
-# from lib.aircraft import Strategy
 from lib.aircraft_new import Strategy
+# from lib.aircraft_new import Strategy
 
 
 

@@ -32,8 +32,7 @@ pSuction:
 pTail:
   euler: [-0.0742, -0.012, -178.6183]
   pos: [284.8104, 23.3881, 401.7541]
-pixelRate: 0.3871875
-rollObject: {Front: 59.9916, Head: 59.9916, LeftWing: 59.9916, Rear: 59.9916, RightWing: 59.9916,
-  Tail: 59.9916}
-score_threshold: 0.5
-suctionZ: {Front: 413, Head: 413, LeftWing: 385.5, Rear: 413, RightWing: 385.5, Tail: 406}
+pixelRate: 0.364
+rollObject: {Front: 0, Head: 0, LeftWing: 0, Rear: 0, RightWing: 0, Tail: 0}
+score_threshold: 0.3
+suctionZ: {Front: 410, Head: 410, LeftWing: 382.5, Rear: 410, RightWing: 382.5, Tail: 403}

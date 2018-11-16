@@ -178,14 +178,18 @@ class NodeHandle(object):
                     break
             else:
                 if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject):
-                    self.__ROISuccess = True
-                    self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
-                    self.__itemROI['score'] = msg.ROI_list[i].score
-                    self.__itemROI['x_min'] = msg.ROI_list[i].x_min
-                    self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
-                    self.__itemROI['y_min'] = msg.ROI_list[i].y_min
-                    self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
-                    break
+                    if(msg.ROI_list[i].score > self.__scoreThreshold):
+                        self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
+
+                    if(self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] > self.checkROI):
+                        self.__ROISuccess = True
+                        self.__itemROI['name']  = self.__nsmeTrans[msg.ROI_list[i].class_name] 
+                        self.__itemROI['score'] = msg.ROI_list[i].score
+                        self.__itemROI['x_min'] = msg.ROI_list[i].x_min
+                        self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
+                        self.__itemROI['y_min'] = msg.ROI_list[i].y_min
+                        self.__itemROI['y_Max'] = msg.ROI_list[i].y_Max
+                        break
 
     def Sub_Is_Grip(self,msg):
         self.__isGrip = msg.data
@@ -254,6 +258,9 @@ class NodeHandle(object):
         rospy.set_param('accupick3d/aircraft/checkROI', self.__checkROI)
         rospy.set_param('accupick3d/aircraft/pixelRate', self.__pixelRate)
         rospy.set_param('accupick3d/aircraft/score_threshold', self.__scoreThreshold)
+
+    def ROICounter_ini(self):
+        self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
 
     """ service client """
     def Arm_Contorl(self,cmd,pos_):
@@ -390,3 +397,4 @@ class NodeHandle(object):
     @property
     def suctionZ(self):
         return self.__suctionZ
+    

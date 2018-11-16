@@ -133,6 +133,7 @@ class Strategy(object):
                 if(self.P2P_Strategy(self.__cam_pos)):
                     self.__state = State.ITEM_CENTER_FIRST.value
                     self.__pItemCenter = {'pos':[],'euler':[]}
+                    self.nh.ROICounter_ini()
 
             elif(self.__state == State.ITEM_CENTER_FIRST.value):
                 # print('Item Center')
@@ -141,19 +142,21 @@ class Strategy(object):
                     self.__camSide = not self.__camSide
                     self.__state = State.CAM.value
                 if(self.Item_Center_Strategy()):
-                    nh.goalObject = self.__ObjectName
+                    self.nh.goalObject = copy.deepcopy(self.__ObjectName)
                     self.__camSide = not self.__camSide
                     self.__state = State.ITEM_CENTER.value
+                    self.__pItemCenter = {'pos':[],'euler':[]}
+                    self.nh.ROICounter_ini()
 
             elif(self.__state == State.ITEM_CENTER.value):
                 # print('Item Center')
                 if(self.__ROIFail > 1000):
                     self.__ROIFail = 0
-                    self.__camSide = not self.__camSide
+                    # self.__camSide = not self.__camSide
                     self.__state = State.CAM.value
                 if(self.Item_Center_Strategy()):
-                    nh.goalObject = 'all'
-                    self.__camSide = not self.__camSide
+                    self.nh.goalObject = 'all'
+                    # self.__camSide = not self.__camSide
                     self.__state = State.SUCTION.value
                     self.nh.Suction_cmd('vacuumOn')
 
@@ -176,7 +179,8 @@ class Strategy(object):
             elif(self.__state == State.RESUC.value):
                 print('re suction')
                 goal_pos = copy.deepcopy(self.__pItemCenter)
-                goal_pos['pos'][2] = copy.deepcopy(self.nh.pObject[self.__ObjectName][2]) - 10
+                goal_pos['pos'][2] = copy.deepcopy(self.nh.suctionZ[self.__ObjectName]) - 5
+                print('self.__ObjectName', self.__ObjectName )
                 print(goal_pos)
                 if(self.P2P_Strategy(goal_pos)):
                     self.__state = State.SUCTION_UP.value
@@ -262,7 +266,7 @@ class Strategy(object):
             print('fuck  ',x,y)
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][0]+x)
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y+40)
-            self.__pItemCenter['pos'].append(self.nh.pCenter)
+            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2])
             if(self.__pItemCenter['pos'][1] > 450):
                 self.__pItemCenter['pos'][1] = 450
 
@@ -288,7 +292,13 @@ class Strategy(object):
         x_dis = -(x-(CAMERA_COL/2))
         y_dis = (y-(CAMERA_ROW/2))
 
-        return x_dis*self.nh.pixelRate, y_dis*self.nh.pixelRate
+        x_rate = copy.deepcopy(self.nh.pixelRate)
+        x_rate = (((10/9.0)-1) * (abs(x_dis) / (CAMERA_COL/2)) + 1) * x_rate
+
+        y_rate = copy.deepcopy(self.nh.pixelRate)
+        y_rate = (((10/9.0)-1) * (abs(y_dis) / (CAMERA_ROW/2)) + 1) * y_rate
+        
+        return x_dis*x_rate, y_dis*y_rate
 
     def Delay(self,time):
         """ second """
