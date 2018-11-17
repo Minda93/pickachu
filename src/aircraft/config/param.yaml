@@ -1,10 +1,10 @@
 checkROI: 5
 pCamLeft:
-  euler: [0.032, 0.1961, -177.637]
-  pos: [-115.0242, 276.6978, 590.133]
+  euler: [0.0074, 0.2027, -177.6936]
+  pos: [-115.0036, 276.8058, 619.8762]
 pCamRight:
   euler: [0.0143, 0.2245, -177.6299]
-  pos: [100.0371, 276.6212, 590.2407]
+  pos: [100.0371, 276.6212, 620]
 pCenter:
   euler: [0.3305, 1.5886, -177.0585]
   pos: [-51.605, 311.1598, 589.8727]
@@ -32,7 +32,7 @@ pSuction:
 pTail:
   euler: [-0.0216, -1.0534, -178.7295]
   pos: [298.6933, 26.9983, 403.2818]
-pixelRate: 0.364
-rollObject: {Front: 130, Head: -170, LeftWing: 120, Rear: -85, RightWing: 90, Tail: -90}
-score_threshold: 0.3
-suctionZ: {Front: 410, Head: 410, LeftWing: 385, Rear: 410, RightWing: 385, Tail: 403}
+pixelRate: 0.3953
+rollObject: {Front: -90, Head: 0, LeftWing: 90, Rear: -95, RightWing: 130, Tail: -90}
+score_threshold: 0.2
+suctionZ: {Front: 410, Head: 410, LeftWing: 385, Rear: 410, RightWing: 385, Tail: 410}

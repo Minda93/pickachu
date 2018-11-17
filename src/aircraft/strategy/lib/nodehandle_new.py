@@ -71,7 +71,7 @@ class NodeHandle(object):
 
         self.__ROICounter = {'Head':0,'Front':0,'LeftWing':0,'RightWing':0,'Rear':0,'Tail':0}
         # self.__ROICheck = {'Head':5,'Front':20,'LeftWing':20,'RightWing':20,'Rear':1,'Tail':5}
-        self.__ROICheck = {'Head':2,'Front':10,'LeftWing':10,'RightWing':10,'Rear':1,'Tail':2}
+        self.__ROICheck = {'Head':2,'Front':15,'LeftWing':10,'RightWing':10,'Rear':1,'Tail':2}
 
         self.__checkROI = 5
         self.__pixelRate = 0.2
@@ -189,7 +189,7 @@ class NodeHandle(object):
             for i in range(len(msg.ROI_list)):
                 # if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear' \
                 # or self.__goalObject == 'LeftWing' or self.__goalObject == 'RightWing'):
-                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear'):
+                if(self.__nsmeTrans[msg.ROI_list[i].class_name] is self.__goalObject or self.__goalObject == 'Rear' or self.__nsmeTrans[msg.ROI_list[i].class_name] is 'Rear'):
                     # if(msg.ROI_list[i].score > self.__scoreThreshold):
                     #     self.__ROICounter[self.__nsmeTrans[msg.ROI_list[i].class_name]] += 1
 
@@ -225,6 +225,7 @@ class NodeHandle(object):
                     self.__tmpROI['y_min'] = self.__itemROI['y_min']
                     self.__tmpROI['y_Max'] = self.__itemROI['y_Max']
 
+                    self.__itemROI['name'] = self.__goalObject
                     self.__itemROI['score'] = msg.ROI_list[i].score
                     self.__itemROI['x_min'] = msg.ROI_list[i].x_min
                     self.__itemROI['x_Max'] = msg.ROI_list[i].x_Max
@@ -242,6 +243,9 @@ class NodeHandle(object):
 
                     if((x_dis_tmp*x_dis_tmp + y_dis_tmp*y_dis_tmp) < (x_dis*x_dis + y_dis*y_dis)):
                         self.__itemROI = self.__tmpROI
+                    
+                    if(self.__nsmeTrans[msg.ROI_list[i].class_name] is 'Rear'):
+                        self.__itemROI['name'] = 'Rear'
                     # self.__ROISuccess = True
                     # break
             self.__ROISuccess = True

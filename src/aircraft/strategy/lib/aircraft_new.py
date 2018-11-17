@@ -15,6 +15,7 @@ CAMERA_ROW = 480
 CAMERA_COL = 640
 # PIXEL_RATE2 = 0.1953  # down 100
 PIXEL_RATE2 =  0.24591  # down 70
+# PIXEL_RATE2 =  0.23591  # down 70
 class State(Enum):
     r"""
         Init:
@@ -191,7 +192,7 @@ class Strategy(object):
             elif(self.__state == State.RESUC.value):
                 print('re suction')
                 goal_pos = copy.deepcopy(self.__pItemCenter)
-                goal_pos['pos'][2] = copy.deepcopy(self.nh.suctionZ[self.__ObjectName]) - 5
+                goal_pos['pos'][2] = copy.deepcopy(self.nh.suctionZ[self.__ObjectName]) - 10
                 print('self.__ObjectName', self.__ObjectName )
                 print(goal_pos)
                 if(self.P2P_Strategy(goal_pos)):
@@ -288,7 +289,7 @@ class Strategy(object):
             
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][0]+x)
             self.__pItemCenter['pos'].append(self.__cam_pos['pos'][1]+y)
-            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-70)
+            self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-100)
             if(self.__pItemCenter['pos'][1] > 450):
                 self.__pItemCenter['pos'][1] = 450
 
@@ -313,8 +314,10 @@ class Strategy(object):
             # print('fuckaa  ',x,y)
             # print('cam_pos ',self.__cam_pos)
             
-            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][0]+x)
-            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][1]+y+40)
+            # self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][0]+x)
+            # self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][1]+y+40)
+            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][0]+x-16)
+            self.__pItemCenter['pos'].append(self.__old_ItemCenter['pos'][1]+y+45)
             self.__pItemCenter['pos'].append(self.nh.pCenter['pos'][2]-100)
             if(self.__pItemCenter['pos'][1] > 450):
                 self.__pItemCenter['pos'][1] = 450
